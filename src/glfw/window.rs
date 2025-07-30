@@ -1,4 +1,4 @@
-use std::ffi::{NulError, c_int, c_void};
+use std::ffi::{NulError, c_int};
 
 use crate::glfw::GlfwError;
 
