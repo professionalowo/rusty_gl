@@ -2,7 +2,6 @@ use std::ffi::{NulError, c_int, c_void};
 
 use crate::glfw::GlfwError;
 
-#[link(name = "glfw", kind = "dylib")]
 unsafe extern "C" {
     unsafe fn glfwGetPrimaryMonitor() -> GLFWmonitor;
     unsafe fn glfwCreateWindow(

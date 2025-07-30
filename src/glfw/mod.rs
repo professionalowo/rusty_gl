@@ -4,7 +4,11 @@ pub mod window;
 
 const GLFW_TRUE: c_int = 1;
 
-#[link(name = "glfw", kind = "dylib")]
+#[link(name = "glfw")]
+#[allow(missing_abi)]
+unsafe extern {}
+
+
 unsafe extern "C" {
     unsafe fn glfwInit() -> c_int;
     unsafe fn glfwTerminate();
