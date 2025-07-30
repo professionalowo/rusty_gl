@@ -23,7 +23,7 @@ pub struct Window {
 }
 
 impl Window {
-    pub fn new(width: u32, height: u32, title: &str) -> Result<Self, NulError> {
+    pub fn try_new(width: u32, height: u32, title: &str) -> Result<Self, NulError> {
         let handle = create_window(width, height, title, None, None)?;
         Ok(Window { handle })
     }

@@ -8,7 +8,7 @@ fn main() {
         Ok(_) => println!("GLFW initialized successfully!"),
         Err(e) => panic!("Failed to initialize GLFW: {:?}", e),
     }
-    let window = match Window::new(640, 320, "Rust") {
+    let window = match Window::try_new(640, 320, "Rust") {
         Ok(w) => w,
         Err(e) => panic!("Failed to create window: {:#?}", e),
     };
