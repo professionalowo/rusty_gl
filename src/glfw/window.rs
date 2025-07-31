@@ -1,4 +1,4 @@
-use std::ffi::{NulError, c_int};
+use std::ffi::{NulError, c_int, CString};
 
 use crate::glfw::GlfwError;
 
@@ -75,7 +75,7 @@ fn create_window(
     share: Option<GLFWwindow>,
 ) -> Result<GLFWwindow, NulError> {
     unsafe {
-        let title_cstr = std::ffi::CString::new(title)?;
+        let title_cstr = CString::new(title)?;
         let window = glfwCreateWindow(
             width as c_int,
             height as c_int,
