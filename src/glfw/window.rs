@@ -1,6 +1,6 @@
 use std::ffi::{NulError, c_int, CString};
 
-use crate::glfw::GlfwError;
+use crate::glfw::GLFWError;
 
 unsafe extern "C" {
     unsafe fn glfwGetPrimaryMonitor() -> GLFWmonitor;
@@ -27,7 +27,7 @@ impl Window {
         Ok(Window { handle })
     }
 
-    pub fn should_close(&self) -> Result<bool, GlfwError> {
+    pub fn should_close(&self) -> Result<bool, GLFWError> {
         unsafe {
             let result = glfwWindowShouldClose(self.handle);
             if result == 0 {
@@ -35,7 +35,7 @@ impl Window {
             } else if result == 1 {
                 Ok(true)
             } else {
-                Err(GlfwError(result))
+                Err(GLFWError(result))
             }
         }
     }
@@ -87,11 +87,11 @@ fn create_window(
     }
 }
 
-fn get_primary_monitor() -> Result<GLFWmonitor, GlfwError> {
+fn get_primary_monitor() -> Result<GLFWmonitor, GLFWError> {
     unsafe {
         let monitor = glfwGetPrimaryMonitor();
         if monitor.0.is_null() {
-            Err(GlfwError(-1)) // Replace with appropriate error code
+            Err(GLFWError(-1)) // Replace with appropriate error code
         } else {
             Ok(monitor)
         }

@@ -14,11 +14,11 @@ unsafe extern "C" {
     unsafe fn glfwTerminate();
 }
 
-pub fn init() -> Result<(), GlfwError> {
+pub fn init() -> Result<(), GLFWError> {
     unsafe {
         let code = glfwInit();
         if code != GLFW_TRUE {
-            return Err(GlfwError(code));
+            return Err(GLFWError(code));
         }
     }
     Ok(())
@@ -30,4 +30,4 @@ pub fn terminate() {
     }
 }
 #[derive(Debug)]
-pub struct GlfwError(i32);
+pub struct GLFWError(pub i32);
