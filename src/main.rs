@@ -11,7 +11,10 @@ fn main() {
         Ok(w) => w,
         Err(e) => panic!("Failed to create window: {:#?}", e),
     };
+    
     while let Ok(false) = window.should_close() {
+        gl::clear_color(1.0, 0.0, 0.0, 1.0);
+        gl::clear(gl::COLOR_BUFFER_BIT);
         window.swap_buffers();
         window.poll_events();
     }
