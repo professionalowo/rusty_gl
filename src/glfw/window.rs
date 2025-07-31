@@ -35,7 +35,7 @@ impl Window {
             } else if result == 1 {
                 Ok(true)
             } else {
-                Err(GLFWError(result))
+                Err(GLFWError::from(result))
             }
         }
     }
@@ -87,13 +87,13 @@ fn create_window(
     }
 }
 
-fn get_primary_monitor() -> Result<GLFWmonitor, GLFWError> {
+fn get_primary_monitor() -> Option<GLFWmonitor> {
     unsafe {
         let monitor = glfwGetPrimaryMonitor();
         if monitor.0.is_null() {
-            Err(GLFWError(-1)) // Replace with appropriate error code
+            None
         } else {
-            Ok(monitor)
+            Some(monitor)
         }
     }
 }
