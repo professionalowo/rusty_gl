@@ -1,5 +1,7 @@
 use std::path::PathBuf;
 
+use super::{GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH};
+
 unsafe extern "C" {
     unsafe fn glCreateShader(shader_type: u32) -> u32;
     unsafe fn glShaderSource(shader: u32, count: i32, string: *const *const i8, length: *const i32);

@@ -36,21 +36,20 @@ pub fn enable_vertex_attrib_array(index: u32) {
     }
 }
 
-pub fn vertex_attrib_pointer(
+pub fn vertex_attrib_pointer<T>(
     index: u32,
     size: u32,
     type_: u32,
     normalized: u8,
-    stride: u32,
     pointer: *const std::ffi::c_void,
 ) {
     unsafe {
-        glVertexAttribPointer(index, size, type_, normalized, stride, pointer);
+        glVertexAttribPointer(index, size, type_, normalized, size * std::mem::size_of::<T>() as u32, pointer);
     }
 }
 
-pub fn buffer_data(n: u32, size: isize, data: *const std::ffi::c_void, usage: u32) {
+pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) {
     unsafe {
-        glBufferData(n, size, data, usage);
+        glBufferData(n, data.len() as isize * std::mem::size_of::<T>() as isize, data.as_ptr() as *const std::ffi::c_void, usage);
     }
 }

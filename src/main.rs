@@ -20,14 +20,12 @@ fn main() {
         Err(e) => panic!("Failed to create window: {:#?}", e),
     };
 
-    let vertex_shader = Shader::try_from_path(
-        gl::shader::GL_VERTEX_SHADER,
-        get_shader_file_path("vertex.vert"),
-    )
-    .expect("Failed to create vertex shader");
+    let vertex_shader =
+        Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
+            .expect("Failed to create vertex shader");
 
     let fragment_shader = Shader::try_from_path(
-        gl::shader::GL_FRAGMENT_SHADER,
+        gl::GL_FRAGMENT_SHADER,
         get_shader_file_path("fragment.frag"),
     )
     .expect("Failed to create fragment shader");
@@ -37,6 +35,7 @@ fn main() {
 
     let vao = gl::vao::gen_vertex_arrays();
     let vbo = gl::vbo::gen_buffers();
+    let cbo = gl::vbo::gen_buffers();
 
     let vertices: [f32; 6] = [
         -0.5, -0.5, // bottom-left
@@ -44,37 +43,53 @@ fn main() {
         0.0, 0.5, // top-center
     ];
 
+    let colors: [f32; 9] = [
+        1.0, 0.0, 0.0, // red
+        0.0, 1.0, 0.0, // green
+        0.0, 0.0, 1.0, // blue
+    ];
+
     gl::vao::bind_vertex_array(vao);
 
     gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, vbo);
-    gl::vbo::buffer_data(
-        gl::GL_ARRAY_BUFFER,
-        vertices.len() as isize * std::mem::size_of::<f32>() as isize,
-        vertices.as_ptr() as *const std::ffi::c_void,
-        gl::GL_STATIC_DRAW,
-    );
+    gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &vertices, gl::GL_STATIC_DRAW);
 
     gl::vbo::enable_vertex_attrib_array(0);
-    gl::vbo::vertex_attrib_pointer(
+    gl::vbo::vertex_attrib_pointer::<f32>(
         0,
         2, // size
         gl::GL_FLOAT,
         gl::GL_FALSE,
-        2 * std::mem::size_of::<f32>() as u32, // stride
         std::ptr::null(), // offset
     );
 
-    gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, vbo);
+    gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, cbo);
+    gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &colors, gl::GL_STATIC_DRAW);
+    gl::vbo::vertex_attrib_pointer::<f32>(
+        1, // layout location
+        3, // vec3
+        gl::GL_FLOAT,
+        gl::GL_FALSE,
+        std::ptr::null(),
+    );
+
+    gl::vbo::enable_vertex_attrib_array(1);
+
+    gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, 0);
     gl::vao::bind_vertex_array(0);
 
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
+
         program.bind();
+
         gl::vao::bind_vertex_array(vao);
         gl::draw_arrays(gl::GL_TRIANGLES, 0, 3);
         gl::vao::bind_vertex_array(0);
+
         program.unbind();
+
         window.swap_buffers();
         window.poll_events();
     }
