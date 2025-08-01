@@ -1,25 +1,9 @@
 use std::ffi::{NulError, c_int, CString};
 
 use crate::glfw::GLFWError;
-
-unsafe extern "C" {
-    unsafe fn glfwGetPrimaryMonitor() -> GLFWmonitor;
-    unsafe fn glfwCreateWindow(
-        width: c_int,
-        height: c_int,
-        title: *const i8,
-        monitor: GLFWmonitor,
-        share: GLFWwindow,
-    ) -> GLFWwindow;
-    unsafe fn glfwDestroyWindow(handle: GLFWwindow);
-    unsafe fn glfwWindowShouldClose(handle: GLFWwindow) -> c_int;
-    unsafe fn glfwPollEvents();
-    unsafe fn glfwMakeContextCurrent(handle: GLFWwindow);
-    unsafe fn glfwSwapBuffers(handle: GLFWwindow);
-}
-
+use crate::gl;
 pub struct Window {
-    handle: GLFWwindow,
+    handle: *mut gl::GLFWwindow,
 }
 
 impl Window {
@@ -30,7 +14,7 @@ impl Window {
 
     pub fn should_close(&self) -> Result<bool, GLFWError> {
         unsafe {
-            let result = glfwWindowShouldClose(self.handle);
+            let result = gl::glfwWindowShouldClose(self.handle);
             if result == 0 {
                 Ok(false)
             } else if result == 1 {
@@ -43,13 +27,13 @@ impl Window {
 
     pub fn poll_events(&self) {
         unsafe {
-            glfwPollEvents();
+            gl::glfwPollEvents();
         }
     }
 
     pub fn swap_buffers(&self) {
         unsafe {
-            glfwSwapBuffers(self.handle);
+            gl::glfwSwapBuffers(self.handle);
         }
     }
 }
@@ -57,54 +41,35 @@ impl Window {
 impl Drop for Window {
     fn drop(&mut self) {
         unsafe {
-            glfwDestroyWindow(self.handle);
+            gl::glfwDestroyWindow(self.handle);
         }
     }
-}
-
-#[repr(C)]
-#[derive(Clone, Copy)]
-struct GLFWwindow(*mut std::ffi::c_void);
-
-impl GLFWwindow {
-    const fn is_null(&self) -> bool {
-        self.0.is_null()
-    }
-}
-
-#[repr(C)]
-pub struct GLFWmonitor(*mut std::ffi::c_void);
-
-impl GLFWmonitor {
-    const fn is_null(&self) -> bool {
-        self.0.is_null()
-    }   
 }
 
 fn create_window(
     width: u32,
     height: u32,
     title: &str,
-    monitor: Option<GLFWmonitor>,
-    share: Option<GLFWwindow>,
-) -> Result<GLFWwindow, NulError> {
+    monitor: Option<*mut gl::GLFWmonitor>,
+    share: Option<*mut gl::GLFWwindow>,
+) -> Result<*mut gl::GLFWwindow, NulError> {
     unsafe {
         let title_cstr = CString::new(title)?;
-        let window = glfwCreateWindow(
+        let window = gl::glfwCreateWindow(
             width as c_int,
             height as c_int,
             title_cstr.as_ptr(),
-            monitor.unwrap_or(GLFWmonitor(std::ptr::null_mut())),
-            share.unwrap_or(GLFWwindow(std::ptr::null_mut())),
+            monitor.unwrap_or(std::ptr::null_mut()),
+            share.unwrap_or(std::ptr::null_mut()),
         );
-        glfwMakeContextCurrent(window);
+        gl::glfwMakeContextCurrent(window);
         Ok(window)
     }
 }
 
-fn get_primary_monitor() -> Option<GLFWmonitor> {
+fn get_primary_monitor() -> Option<*mut gl::GLFWmonitor> {
     unsafe {
-        let monitor = glfwGetPrimaryMonitor();
+        let monitor = gl::glfwGetPrimaryMonitor();
         if monitor.is_null() {
             None
         } else {
