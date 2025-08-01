@@ -1,10 +1,5 @@
 use std::path::PathBuf;
 
-pub const GL_VERTEX_SHADER: u32 = 0x8B31;
-pub const GL_FRAGMENT_SHADER: u32 = 0x8B30;
-pub const GL_COMPILE_STATUS: u32 = 0x8B81;
-pub const GL_INFO_LOG_LENGTH: u32 = 0x8B84;
-
 unsafe extern "C" {
     unsafe fn glCreateShader(shader_type: u32) -> u32;
     unsafe fn glShaderSource(shader: u32, count: i32, string: *const *const i8, length: *const i32);
@@ -69,6 +64,10 @@ impl Shader {
         }
 
         Ok(Shader { id: shader_id })
+    }
+
+    pub const fn id(&self) -> u32 {
+        self.id
     }
 }
 
