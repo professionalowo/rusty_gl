@@ -1,3 +1,5 @@
+pub mod shader;
+
 #[cfg(target_os = "macos")]
 #[link(name = "OpenGL", kind = "framework")]
 #[allow(missing_abi)]
