@@ -1,15 +1,5 @@
 use std::path::PathBuf;
-
-use super::{GL_COMPILE_STATUS, GL_INFO_LOG_LENGTH};
-
-unsafe extern "C" {
-    unsafe fn glCreateShader(shader_type: u32) -> u32;
-    unsafe fn glShaderSource(shader: u32, count: i32, string: *const *const i8, length: *const i32);
-    unsafe fn glCompileShader(shader: u32);
-    unsafe fn glGetShaderiv(shader: u32, pname: u32, params: *mut i32);
-    unsafe fn glGetShaderInfoLog(shader: u32, buf_size: i32, length: *mut i32, info_log: *mut i8);
-    unsafe fn glDeleteShader(shader: u32);
-}
+use crate::gl::*;
 
 pub struct Shader {
     id: u32,

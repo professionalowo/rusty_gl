@@ -1,8 +1,4 @@
-unsafe extern "C" {
-    unsafe fn glGenVertexArrays(n: u32, arrays: *mut u32);
-    unsafe fn glBindVertexArray(n: u32);
-    unsafe fn glDeleteVertexArrays(n: u32, arrays: *const u32);
-}
+use crate::gl::{glBindVertexArray, glDeleteVertexArrays, glGenVertexArrays};
 
 pub fn gen_vertex_arrays() -> u32 {
     let mut vao = 0;
