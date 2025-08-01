@@ -1,6 +1,6 @@
 use std::ffi::{NulError, c_int, CString};
 
-use crate::{gl, glfw::GLFWError};
+use crate::glfw::GLFWError;
 
 unsafe extern "C" {
     unsafe fn glfwGetPrimaryMonitor() -> GLFWmonitor;
