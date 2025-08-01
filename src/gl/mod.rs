@@ -2,8 +2,8 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
-pub mod shader;
 pub mod program;
+pub mod shader;
 pub mod vao;
 pub mod vbo;
 
@@ -12,19 +12,17 @@ include!(concat!(env!("OUT_DIR"), "/gl_bindings.rs"));
 #[cfg(target_os = "macos")]
 #[link(name = "OpenGL", kind = "framework")]
 #[allow(missing_abi)]
-unsafe extern {}
+unsafe extern "C" {}
 
 #[cfg(target_os = "linux")]
 #[link(name = "GL")]
 #[allow(missing_abi)]
-unsafe extern {}
+unsafe extern "C" {}
 
 #[cfg(target_os = "windows")]
 #[link(name = "opengl32")]
 #[allow(missing_abi)]
-unsafe extern {}
-
-
+unsafe extern "C" {}
 
 pub fn draw_arrays(mode: u32, first: i32, count: i32) {
     unsafe { glDrawArrays(mode, first, count) };

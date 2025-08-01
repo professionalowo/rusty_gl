@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use crate::gl::*;
+use std::path::PathBuf;
 
 pub struct Shader {
     id: u32,

@@ -1,8 +1,11 @@
-use crate::gl::{glAttachShader, glCreateProgram, glDeleteProgram, glGetProgramInfoLog, glGetProgramiv, glLinkProgram, glUseProgram, shader::Shader, GL_INFO_LOG_LENGTH, GL_LINK_STATUS};
+use crate::gl::{
+    GL_INFO_LOG_LENGTH, GL_LINK_STATUS, glAttachShader, glCreateProgram, glDeleteProgram,
+    glGetProgramInfoLog, glGetProgramiv, glLinkProgram, glUseProgram, shader::Shader,
+};
 
 pub struct Program {
     id: u32,
-    _shaders: Vec<Shader>
+    _shaders: Vec<Shader>,
 }
 
 impl Program {
@@ -41,7 +44,10 @@ impl Program {
             }
             return Err(error_msg);
         }
-        Ok(Program { id, _shaders: shaders })
+        Ok(Program {
+            id,
+            _shaders: shaders,
+        })
     }
 
     pub fn bind(&self) {

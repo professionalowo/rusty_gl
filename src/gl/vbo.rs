@@ -1,4 +1,7 @@
-use crate::gl::{glBindBuffer, glBufferData, glDeleteBuffers, glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer};
+use crate::gl::{
+    glBindBuffer, glBufferData, glDeleteBuffers, glEnableVertexAttribArray, glGenBuffers,
+    glVertexAttribPointer,
+};
 
 pub fn gen_buffers() -> u32 {
     let mut buffer = 0;
@@ -8,7 +11,7 @@ pub fn gen_buffers() -> u32 {
     buffer
 }
 
-pub fn bind_buffer(n:u32, buffer: u32) {
+pub fn bind_buffer(n: u32, buffer: u32) {
     unsafe {
         glBindBuffer(n, buffer);
     }
@@ -34,12 +37,24 @@ pub fn vertex_attrib_pointer<T>(
     pointer: *const std::ffi::c_void,
 ) {
     unsafe {
-        glVertexAttribPointer(index, size, type_, normalized, size * std::mem::size_of::<T>() as i32, pointer);
+        glVertexAttribPointer(
+            index,
+            size,
+            type_,
+            normalized,
+            size * std::mem::size_of::<T>() as i32,
+            pointer,
+        );
     }
 }
 
 pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) {
     unsafe {
-        glBufferData(n, (data.len() * std::mem::size_of::<T>()) as isize, data.as_ptr() as *const std::ffi::c_void, usage);
+        glBufferData(
+            n,
+            (data.len() * std::mem::size_of::<T>()) as isize,
+            data.as_ptr() as *const std::ffi::c_void,
+            usage,
+        );
     }
 }

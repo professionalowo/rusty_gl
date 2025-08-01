@@ -4,7 +4,6 @@ use std::env;
 use std::path::PathBuf;
 use std::process::Command;
 
-
 fn main() {
     let mut builder = bindgen::Builder::default()
         .header("glwrapper.h")
@@ -28,14 +27,16 @@ fn main() {
 
         // Add the SDK include path
         builder = builder
-            .clang_arg(format!("-I{}/System/Library/Frameworks/OpenGL.framework/Headers", sdk_path))
+            .clang_arg(format!(
+                "-I{}/System/Library/Frameworks/OpenGL.framework/Headers",
+                sdk_path
+            ))
             .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path)) // For frameworks themselves
             .clang_arg("-I/opt/homebrew/include") // Still useful for other Homebrew headers
             .clang_arg("-I/opt/homebrew/opt/glfw/include");
     }
-    
-    let bindings =  builder.generate()
-        .expect("Unable to generate bindings");
+
+    let bindings = builder.generate().expect("Unable to generate bindings");
 
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings

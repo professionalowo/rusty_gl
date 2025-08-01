@@ -1,7 +1,7 @@
-use std::ffi::{NulError, c_int, CString};
+use std::ffi::{CString, NulError, c_int};
 
-use crate::glfw::GLFWError;
 use crate::gl;
+use crate::glfw::GLFWError;
 pub struct Window {
     handle: *mut gl::GLFWwindow,
 }

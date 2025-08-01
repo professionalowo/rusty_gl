@@ -7,7 +7,6 @@ use gl::program::Program;
 use gl::shader::Shader;
 use glfw::window::Window;
 
-
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
