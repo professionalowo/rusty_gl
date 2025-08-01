@@ -40,6 +40,6 @@ pub fn vertex_attrib_pointer<T>(
 
 pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) {
     unsafe {
-        glBufferData(n, data.len() as i64 * std::mem::size_of::<T>() as i64, data.as_ptr() as *const std::ffi::c_void, usage);
+        glBufferData(n, (data.len() * std::mem::size_of::<T>()) as isize, data.as_ptr() as *const std::ffi::c_void, usage);
     }
 }
