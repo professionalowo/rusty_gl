@@ -1,6 +1,4 @@
-use core::str;
-
-use crate::gl::{glBindBuffer, glBufferData, glDeleteBuffers, glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer, GL_ARRAY_BUFFER};
+use crate::gl::{glBindBuffer, glBufferData, glDeleteBuffers, glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer};
 
 pub fn gen_buffers() -> u32 {
     let mut buffer = 0;
