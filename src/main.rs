@@ -7,6 +7,7 @@ use gl::program::Program;
 use gl::shader::Shader;
 use glfw::window::Window;
 
+
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
@@ -59,7 +60,7 @@ fn main() {
         0,
         2, // size
         gl::GL_FLOAT,
-        gl::GL_FALSE,
+        gl::GL_FALSE as u8,
         std::ptr::null(), // offset
     );
 
@@ -69,7 +70,7 @@ fn main() {
         1, // layout location
         3, // vec3
         gl::GL_FLOAT,
-        gl::GL_FALSE,
+        gl::GL_FALSE as u8,
         std::ptr::null(),
     );
 

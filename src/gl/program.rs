@@ -1,15 +1,5 @@
-use crate::gl::{shader::Shader, GL_INFO_LOG_LENGTH, GL_LINK_STATUS};
+use crate::gl::{glAttachShader, glCreateProgram, glDeleteProgram, glGetProgramInfoLog, glGetProgramiv, glLinkProgram, glUseProgram, shader::Shader, GL_INFO_LOG_LENGTH, GL_LINK_STATUS};
 
-
-unsafe extern "C" {
-    unsafe fn glUseProgram(program: u32);
-    unsafe fn glDeleteProgram(program: u32);
-    unsafe fn glCreateProgram() -> u32;
-    unsafe fn glAttachShader(program: u32, shader: u32);
-    unsafe fn glLinkProgram(program: u32);
-    unsafe fn glGetProgramiv(program: u32, pname: u32, params: *mut i32);
-    unsafe fn glGetProgramInfoLog(program: u32, buf_size: i32, length: *mut i32, info_log: *mut i8);
-}
 pub struct Program {
     id: u32,
     _shaders: Vec<Shader>
