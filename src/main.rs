@@ -17,10 +17,7 @@ fn main() {
     glfw::window_hint(gl::GLFW_OPENGL_PROFILE, gl::GLFW_OPENGL_CORE_PROFILE);
     glfw::window_hint(gl::GLFW_OPENGL_FORWARD_COMPAT, gl::GLFW_TRUE);
 
-    let window = match Window::try_new(640, 320, "Rust") {
-        Ok(w) => w,
-        Err(e) => panic!("Failed to create window: {:#?}", e),
-    };
+    let window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
