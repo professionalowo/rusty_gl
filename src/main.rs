@@ -40,10 +40,10 @@ fn main() {
     let vbo = gl::vbo::gen_buffers();
     let cbo = gl::vbo::gen_buffers();
 
-    let vertices: [Vec2<f32>; 3] = [
-        Vec2::new(-0.5, -0.5), // bottom-left
-        Vec2::new(0.5, -0.5),  // bottom-right
-        Vec2::new(0.0, 0.5),   // top-center
+    let vertices: [Vec3<f32>; 3] = [
+        Vec3::new(-0.5, -0.5, 0.0), // bottom-left
+        Vec3::new(0.5, -0.5, 0.0),  // bottom-right
+        Vec3::new(0.0, 0.5, 0.0),   // top-center
     ];
 
     let colors: [Vec3<f32>; 3] = [
@@ -58,7 +58,7 @@ fn main() {
     gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &vertices, gl::GL_STATIC_DRAW);
 
     gl::vbo::enable_vertex_attrib_array(0);
-    gl::vbo::vertex_attrib_pointer::<f32>(0, Vec2::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None);
+    gl::vbo::vertex_attrib_pointer::<f32>(0, Vec3::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None);
 
     gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, cbo);
     gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &colors, gl::GL_STATIC_DRAW);
