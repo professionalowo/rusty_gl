@@ -6,14 +6,24 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-
+  build-linux:
     runs-on: ubuntu-latest
-
     steps:
     - name: Install Dependencies
       run: |
         sudo apt-get install -qy libglfw3-dev libgl1-mesa-dev
+    - uses: actions/checkout@v4
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - name: Install Dependencies
+      run: |
+        brew install glfw libgl1-mesa-dev
     - uses: actions/checkout@v4
     - name: Build
       run: cargo build --verbose
