@@ -1,4 +1,4 @@
-name: Rust
+name: Build and Test
 
 on: push
 
@@ -6,26 +6,20 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            install: sudo apt-get install -qy libglfw3-dev libgl1-mesa-dev
+          - os: macos-latest
+            install: brew install glfw
     steps:
-    - name: Install Dependencies
-      run: |
-        sudo apt-get install -qy libglfw3-dev libgl1-mesa-dev
-    - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
-
-  build-macos:
-    runs-on: macos-latest
-    steps:
-    - name: Install Dependencies
-      run: |
-        brew install glfw
-    - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
-    - name: Run tests
-      run: cargo test --verbose
+      - name: Install Dependencies
+        run: ${{ matrix.install }}
+      - uses: actions/checkout@v4
+      - name: Build
+        run: cargo build --verbose
+      - name: Run tests
+        run: cargo test --verbose
