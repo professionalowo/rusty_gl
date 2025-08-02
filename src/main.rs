@@ -7,7 +7,6 @@ use std::path::PathBuf;
 use gl::program::Program;
 use gl::shader::Shader;
 use glfw::window::Window;
-use math::vec2::Vec2;
 use math::vec3::Vec3;
 
 fn main() {
