@@ -23,7 +23,7 @@ jobs:
     steps:
     - name: Install Dependencies
       run: |
-        brew install glfw libgl1-mesa-dev
+        brew install glfw
     - uses: actions/checkout@v4
     - name: Build
       run: cargo build --verbose
