@@ -9,6 +9,8 @@ use gl::shader::Shader;
 use glfw::window::Window;
 use math::vec3::Vec3;
 
+use crate::math::mat3::Mat3;
+
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
@@ -68,7 +70,6 @@ fn main() {
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
-
         program.bind();
 
         gl::vao::bind_vertex_array(vao);

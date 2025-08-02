@@ -17,8 +17,18 @@ impl<T: Copy> Mat3<T> {
         Self { cols: [c0, c1, c2] }
     }
 
-    pub fn cols(&self) -> [Vec3<T>; RANK] {
-        self.cols
+    pub fn cols(&self) -> [T; RANK * 3] {
+        [
+            self.cols[0].x(),
+            self.cols[0].y(),
+            self.cols[0].z(),
+            self.cols[1].x(),
+            self.cols[1].y(),
+            self.cols[1].z(),
+            self.cols[2].x(),
+            self.cols[2].y(),
+            self.cols[2].z(),
+        ]
     }
 }
 

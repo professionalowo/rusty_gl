@@ -61,4 +61,8 @@ impl Program {
             glUseProgram(0);
         }
     }
+
+    pub const fn id(&self) -> u32 {
+        self.id
+    }
 }
