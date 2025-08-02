@@ -48,8 +48,8 @@ pub fn vertex_attrib_pointer<T>(
 
 pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) {
     let pointer = data.as_ptr() as *const std::ffi::c_void;
-    let size = (data.len() * std::mem::size_of::<T>()) as i64;
+    let size = (data.len() * std::mem::size_of::<T>()) as isize;
     unsafe {
-        glBufferData(n, size, pointer, usage);
+        glBufferData(n, size.try_into().unwrap(), pointer, usage);
     }
 }
