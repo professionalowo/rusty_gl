@@ -1,11 +1,14 @@
 mod gl;
 mod glfw;
+mod math;
 
 use std::path::PathBuf;
 
 use gl::program::Program;
 use gl::shader::Shader;
 use glfw::window::Window;
+use math::vec2::Vec2;
+use math::vec3::Vec3;
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
@@ -37,16 +40,16 @@ fn main() {
     let vbo = gl::vbo::gen_buffers();
     let cbo = gl::vbo::gen_buffers();
 
-    let vertices: [f32; 6] = [
-        -0.5, -0.5, // bottom-left
-        0.5, -0.5, // bottom-right
-        0.0, 0.5, // top-center
+    let vertices: [Vec2<f32>; 3] = [
+        Vec2::new(-0.5, -0.5), // bottom-left
+        Vec2::new(0.5, -0.5),  // bottom-right
+        Vec2::new(0.0, 0.5),   // top-center
     ];
 
-    let colors: [f32; 9] = [
-        1.0, 0.0, 0.0, // red
-        0.0, 1.0, 0.0, // green
-        0.0, 0.0, 1.0, // blue
+    let colors: [Vec3<f32>; 3] = [
+        Vec3::new(1.0, 0.0, 0.0), // red
+        Vec3::new(0.0, 1.0, 0.0), // green
+        Vec3::new(0.0, 0.0, 1.0), // blue
     ];
 
     gl::vao::bind_vertex_array(vao);
