@@ -31,30 +31,25 @@ pub fn enable_vertex_attrib_array(index: u32) {
 
 pub fn vertex_attrib_pointer<T>(
     index: u32,
-    size: i32,
+    size: impl TryInto<i32>,
     type_: u32,
-    normalized: u8,
-    pointer: *const std::ffi::c_void,
+    normalized: impl TryInto<u8>,
+    pointer: Option<*const std::ffi::c_void>,
 ) {
+    let size = size.try_into().unwrap_or(2);
+    let stride = size * std::mem::size_of::<T>() as i32;
+    let normalized: u8 = normalized.try_into().unwrap_or(0);
+
+    let pointer = pointer.unwrap_or(std::ptr::null());
     unsafe {
-        glVertexAttribPointer(
-            index,
-            size,
-            type_,
-            normalized,
-            size * std::mem::size_of::<T>() as i32,
-            pointer,
-        );
+        glVertexAttribPointer(index, size, type_, normalized, stride, pointer);
     }
 }
 
 pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) {
+    let pointer = data.as_ptr() as *const std::ffi::c_void;
+    let size = (data.len() * std::mem::size_of::<T>()) as isize;
     unsafe {
-        glBufferData(
-            n,
-            (data.len() * std::mem::size_of::<T>()) as isize,
-            data.as_ptr() as *const std::ffi::c_void,
-            usage,
-        );
+        glBufferData(n, size, pointer, usage);
     }
 }

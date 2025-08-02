@@ -26,6 +26,10 @@ impl<T: Copy> Vec3<T> {
     pub const fn data(&self) -> [T; 3] {
         [self.x, self.y, self.z]
     }
+
+    pub const fn size() -> usize {
+        3
+    }
 }
 
 impl<T: Copy + std::ops::Add<Output = T>> std::ops::Add for Vec3<T> {

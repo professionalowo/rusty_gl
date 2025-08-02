@@ -58,23 +58,11 @@ fn main() {
     gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &vertices, gl::GL_STATIC_DRAW);
 
     gl::vbo::enable_vertex_attrib_array(0);
-    gl::vbo::vertex_attrib_pointer::<f32>(
-        0,
-        2, // size
-        gl::GL_FLOAT,
-        gl::GL_FALSE as u8,
-        std::ptr::null(), // offset
-    );
+    gl::vbo::vertex_attrib_pointer::<f32>(0, Vec2::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None);
 
     gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, cbo);
     gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &colors, gl::GL_STATIC_DRAW);
-    gl::vbo::vertex_attrib_pointer::<f32>(
-        1, // layout location
-        3, // vec3
-        gl::GL_FLOAT,
-        gl::GL_FALSE as u8,
-        std::ptr::null(),
-    );
+    gl::vbo::vertex_attrib_pointer::<f32>(1, Vec3::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None);
 
     gl::vbo::enable_vertex_attrib_array(1);
 
