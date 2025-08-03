@@ -1,6 +1,6 @@
 use crate::gl::{
-    glBindBuffer, glBufferData, glDeleteBuffers, glEnableVertexAttribArray, glGenBuffers,
-    glVertexAttribPointer,
+    GLboolean, GLint, GLsizeiptr, glBindBuffer, glBufferData, glDeleteBuffers,
+    glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer,
 };
 
 pub fn gen_buffers() -> u32 {
@@ -31,9 +31,9 @@ pub fn enable_vertex_attrib_array(index: u32) {
 
 pub fn vertex_attrib_pointer<T>(
     index: u32,
-    size: impl TryInto<i32>,
+    size: impl TryInto<GLint>,
     type_: u32,
-    normalized: impl TryInto<u8>,
+    normalized: impl TryInto<GLboolean>,
     pointer: Option<*const std::ffi::c_void>,
 ) -> Result<(), VBOError> {
     let size = match size.try_into() {
@@ -55,7 +55,7 @@ pub fn vertex_attrib_pointer<T>(
 
 pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) -> Result<(), VBOError> {
     let pointer = data.as_ptr() as *const std::ffi::c_void;
-    let size = match isize::try_from(data.len() * std::mem::size_of::<T>()) {
+    let size = match GLsizeiptr::try_from(data.len() * std::mem::size_of::<T>()) {
         Ok(s) => s,
         Err(_) => return Err(VBOError::CastError),
     };
