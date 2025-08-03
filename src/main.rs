@@ -53,14 +53,18 @@ fn main() {
     gl::vao::bind_vertex_array(vao);
 
     gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, vbo);
-    gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &vertices, gl::GL_STATIC_DRAW);
+    gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &vertices, gl::GL_STATIC_DRAW)
+        .expect("Failed to buffer vertex data");
 
     gl::vbo::enable_vertex_attrib_array(0);
-    gl::vbo::vertex_attrib_pointer::<f32>(0, Vec3::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None);
+    gl::vbo::vertex_attrib_pointer::<f32>(0, Vec3::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None)
+        .expect("Failed to set vertex attribute pointer");
 
     gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, cbo);
-    gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &colors, gl::GL_STATIC_DRAW);
-    gl::vbo::vertex_attrib_pointer::<f32>(1, Vec3::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None);
+    gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &colors, gl::GL_STATIC_DRAW)
+        .expect("Failed to buffer color data");
+    gl::vbo::vertex_attrib_pointer::<f32>(1, Vec3::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None)
+        .expect("Failed to set color attribute pointer");
 
     gl::vbo::enable_vertex_attrib_array(1);
 
