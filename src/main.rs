@@ -9,8 +9,6 @@ use gl::shader::Shader;
 use glfw::window::Window;
 use math::vec3::Vec3;
 
-use crate::math::mat3::Mat3;
-
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
