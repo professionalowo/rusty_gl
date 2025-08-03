@@ -1,4 +1,7 @@
-use crate::{gl::{glGetUniformLocation, glUniformMatrix3fv}, math::mat3::Mat3};
+use crate::{
+    gl::{glGetUniformLocation, glUniformMatrix3fv},
+    math::mat3::Mat3,
+};
 
 pub fn mat3f(location: i32, transpose: bool, matrix: Mat3<f32>) {
     let cols = matrix.cols();
