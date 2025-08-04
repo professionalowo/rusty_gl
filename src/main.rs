@@ -12,25 +12,12 @@ use math::vec3::Vec3;
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
-    glfw::window_hint(gl::GLFW_CONTEXT_VERSION_MAJOR, 4);
-    glfw::window_hint(gl::GLFW_CONTEXT_VERSION_MINOR, 1);
+    glfw::window_hint(gl::GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfw::window_hint(gl::GLFW_CONTEXT_VERSION_MINOR, 3);
     glfw::window_hint(gl::GLFW_OPENGL_PROFILE, gl::GLFW_OPENGL_CORE_PROFILE);
     glfw::window_hint(gl::GLFW_OPENGL_FORWARD_COMPAT, gl::GLFW_TRUE);
 
     let window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
-
-    let vertex_shader =
-        Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
-            .expect("Failed to create vertex shader");
-
-    let fragment_shader = Shader::try_from_path(
-        gl::GL_FRAGMENT_SHADER,
-        get_shader_file_path("fragment.frag"),
-    )
-    .expect("Failed to create fragment shader");
-
-    let program = Program::from_shaders(vec![vertex_shader, fragment_shader])
-        .expect("Failed to create shader program");
 
     let vao = gl::vao::gen_vertex_arrays();
     let vbo = gl::vbo::gen_buffers();
@@ -67,16 +54,26 @@ fn main() {
     gl::vbo::enable_vertex_attrib_array(1);
 
     gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, 0);
-    gl::vao::bind_vertex_array(0);
+
+    let vertex_shader =
+        Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
+            .expect("Failed to create vertex shader");
+
+    let fragment_shader = Shader::try_from_path(
+        gl::GL_FRAGMENT_SHADER,
+        get_shader_file_path("fragment.frag"),
+    )
+    .expect("Failed to create fragment shader");
+
+    let program = Program::from_shaders(vec![vertex_shader, fragment_shader])
+        .expect("Failed to create shader program");
 
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
         program.bind();
 
-        gl::vao::bind_vertex_array(vao);
         gl::draw_arrays(gl::GL_TRIANGLES, 0, 3);
-        gl::vao::bind_vertex_array(0);
 
         program.unbind();
 
