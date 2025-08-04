@@ -1,6 +1,7 @@
 use crate::gl::{
-    GL_INFO_LOG_LENGTH, GL_LINK_STATUS, glAttachShader, glCreateProgram, glDeleteProgram,
-    glGetProgramInfoLog, glGetProgramiv, glLinkProgram, glUseProgram, shader::Shader,
+    GL_INFO_LOG_LENGTH, GL_LINK_STATUS, GL_VALIDATE_STATUS, glAttachShader, glCreateProgram,
+    glDeleteProgram, glGetProgramInfoLog, glGetProgramiv, glLinkProgram, glUseProgram,
+    glValidateProgram, shader::Shader,
 };
 
 pub struct Program {
@@ -16,14 +17,19 @@ impl Program {
             unsafe { glAttachShader(id, shader.id()) };
         }
 
-        unsafe { glLinkProgram(id) };
-
         let mut link_status = 0;
         unsafe {
+            glLinkProgram(id);
             glGetProgramiv(id, GL_LINK_STATUS, &mut link_status);
         }
 
-        if link_status == 0 {
+        let mut validate_status = 0;
+        unsafe {
+            glValidateProgram(id);
+            glGetProgramiv(id, GL_VALIDATE_STATUS, &mut validate_status);
+        };
+
+        if link_status == 0 || validate_status == 0 {
             let mut log_length = 0;
             unsafe {
                 glGetProgramiv(id, GL_INFO_LOG_LENGTH, &mut log_length);
