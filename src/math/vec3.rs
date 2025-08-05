@@ -1,3 +1,7 @@
+use std::ops::{Add, Mul, Neg, Sub};
+
+use crate::math::Scalar;
+
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3<T: Copy> {
@@ -32,7 +36,22 @@ impl<T: Copy> Vec3<T> {
     }
 }
 
-impl<T: Copy + std::ops::Add<Output = T>> std::ops::Add for Vec3<T> {
+impl<T: Copy> Neg for Vec3<T>
+where
+    T: Neg<Output = T>,
+{
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
+impl<T: Copy + Add<Output = T>> Add for Vec3<T> {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
@@ -44,7 +63,7 @@ impl<T: Copy + std::ops::Add<Output = T>> std::ops::Add for Vec3<T> {
     }
 }
 
-impl<T: Copy + std::ops::Sub<Output = T>> std::ops::Sub for Vec3<T> {
+impl<T: Copy + Sub<Output = T>> Sub for Vec3<T> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
@@ -52,6 +71,32 @@ impl<T: Copy + std::ops::Sub<Output = T>> std::ops::Sub for Vec3<T> {
             x: self.x - other.x,
             y: self.y - other.y,
             z: self.z - other.z,
+        }
+    }
+}
+
+impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec3<T> {
+    type Output = Self;
+
+    fn mul(self, other: Scalar<T>) -> Self {
+        let Scalar(scalar) = other;
+        Self {
+            x: self.x * scalar,
+            y: self.y * scalar,
+            z: self.z * scalar,
+        }
+    }
+}
+
+impl<T: Copy + Mul<Output = T>> Mul<Vec3<T>> for Scalar<T> {
+    type Output = Vec3<T>;
+
+    fn mul(self, other: Self::Output) -> Self::Output {
+        let Self(scalar) = self;
+        Self::Output {
+            x: scalar * other.x,
+            y: scalar * other.y,
+            z: scalar * other.z,
         }
     }
 }

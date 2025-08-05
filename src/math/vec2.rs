@@ -1,3 +1,10 @@
+use std::{
+    ops::{Mul, Neg},
+    process::Output,
+};
+
+use crate::math::Scalar;
+
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct Vec2<T: Copy> {
@@ -27,6 +34,20 @@ impl<T: Copy> Vec2<T> {
     }
 }
 
+impl<T: Copy> Neg for Vec2<T>
+where
+    T: Neg<Output = T>,
+{
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self {
+            x: -self.x,
+            y: -self.y,
+        }
+    }
+}
+
 impl<T: Copy + std::ops::Add<Output = T>> std::ops::Add for Vec2<T> {
     type Output = Self;
 
@@ -45,6 +66,28 @@ impl<T: Copy + std::ops::Sub<Output = T>> std::ops::Sub for Vec2<T> {
         Self {
             x: self.x - other.x,
             y: self.y - other.y,
+        }
+    }
+}
+
+impl<T: Copy + std::ops::Mul<Output = T>> std::ops::Mul<Scalar<T>> for Vec2<T> {
+    type Output = Self;
+
+    fn mul(self, other: Scalar<T>) -> Self {
+        Self {
+            x: self.x * other.0,
+            y: self.y * other.0,
+        }
+    }
+}
+
+impl<T: Copy + std::ops::Mul<Output = T>> std::ops::Mul<Vec2<T>> for Scalar<T> {
+    type Output = Vec2<T>;
+
+    fn mul(self, other: Self::Output) -> Self::Output {
+        Self::Output {
+            x: self.0 * other.x,
+            y: self.0 * other.y,
         }
     }
 }
