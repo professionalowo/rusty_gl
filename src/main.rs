@@ -8,9 +8,8 @@ use gl::program::Program;
 use gl::shader::Shader;
 use gl::uniform::UniformLocation;
 use glfw::window::Window;
+use math::mat3::Mat3;
 use math::vec3::Vec3;
-
-use crate::math::mat3::Mat3;
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
