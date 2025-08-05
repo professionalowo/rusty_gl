@@ -26,6 +26,7 @@ fn main() {
     let vao = VertexArrayObject::gen_vertex_arrays();
     let vbo = VertexBufferObject::gen_buffers();
     let cbo = VertexBufferObject::gen_buffers();
+    let ibo = VertexBufferObject::gen_buffers();
 
     let vertices: [Vec3<f32>; 3] = [
         Vec3::new(-0.5, -0.5, 0.0), // bottom-left
@@ -38,6 +39,8 @@ fn main() {
         Vec3::new(0.0, 1.0, 0.0), // green
         Vec3::new(0.0, 0.0, 1.0), // blue
     ];
+
+    let indices: [u8; 3] = [0, 1, 2];
 
     VertexArrayObject::bind_vertex_array(vao);
 
@@ -68,6 +71,13 @@ fn main() {
     .expect("Failed to set color attribute pointer");
 
     VertexBufferObject::enable_vertex_attrib_array(1);
+
+    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, VertexBufferObject::zero());
+
+    VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+    VertexBufferObject::buffer_data(gl::GL_ELEMENT_ARRAY_BUFFER, &indices, gl::GL_STATIC_DRAW)
+        .expect("Failed to buffer index data");
 
     VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, VertexBufferObject::zero());
 
