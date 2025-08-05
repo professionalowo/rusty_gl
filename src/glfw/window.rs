@@ -7,7 +7,10 @@ pub struct Window {
 }
 
 impl Window {
-    pub fn try_new(width: u32, height: u32, title: impl AsRef<str>) -> Result<Self, NulError> {
+    pub fn try_new<S>(width: u32, height: u32, title: S) -> Result<Self, NulError>
+    where
+        S: AsRef<str>,
+    {
         let handle = create_window(width, height, title.as_ref(), None, None)?;
         Ok(Window { handle })
     }

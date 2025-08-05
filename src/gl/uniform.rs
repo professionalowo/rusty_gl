@@ -9,14 +9,17 @@ use crate::{
 pub struct UniformLocation(pub i32);
 
 impl UniformLocation {
-    pub fn try_for_program(
-        program: &Program,
-        name: impl AsRef<str>,
-    ) -> Result<Self, UniformLocationError> {
+    pub fn try_for_program<S>(program: &Program, name: S) -> Result<Self, UniformLocationError>
+    where
+        S: AsRef<str>,
+    {
         Self::try_get(program.id(), name)
     }
 
-    fn try_get(program: u32, name: impl AsRef<str>) -> Result<Self, UniformLocationError> {
+    fn try_get<S>(program: u32, name: S) -> Result<Self, UniformLocationError>
+    where
+        S: AsRef<str>,
+    {
         get_location(program, name).map(UniformLocation)
     }
 
