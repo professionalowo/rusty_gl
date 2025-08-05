@@ -1,21 +1,26 @@
 use crate::gl::{glBindVertexArray, glDeleteVertexArrays, glGenVertexArrays};
 
-pub fn gen_vertex_arrays() -> u32 {
-    let mut vao = 0;
-    unsafe {
-        glGenVertexArrays(1, &mut vao);
-    }
-    vao
-}
+#[derive(Debug, Clone, Copy)]
+pub struct VertexArrayObject(pub u32);
 
-pub fn bind_vertex_array(vao: u32) {
-    unsafe {
-        glBindVertexArray(vao);
+impl VertexArrayObject {
+    pub fn gen_vertex_arrays() -> Self {
+        let mut vao = 0;
+        unsafe {
+            glGenVertexArrays(1, &mut vao);
+        }
+        Self(vao)
     }
-}
 
-pub fn delete_vertex_array(vao: u32) {
-    unsafe {
-        glDeleteVertexArrays(1, &vao);
+    pub fn bind_vertex_array(vao: Self) {
+        unsafe {
+            glBindVertexArray(vao.0);
+        }
+    }
+
+    pub fn delete_vertex_array(vao: Self) {
+        unsafe {
+            glDeleteVertexArrays(1, &vao.0);
+        }
     }
 }

@@ -4,12 +4,14 @@ mod math;
 
 use std::path::PathBuf;
 
-use gl::program::Program;
-use gl::shader::Shader;
-use gl::uniform::UniformLocation;
-use glfw::window::Window;
-use math::mat3::Mat3;
-use math::vec3::Vec3;
+use crate::gl::program::Program;
+use crate::gl::shader::Shader;
+use crate::gl::uniform::UniformLocation;
+use crate::gl::vao::VertexArrayObject;
+use crate::gl::vbo::VertexBufferObject;
+use crate::glfw::window::Window;
+use crate::math::mat3::Mat3;
+use crate::math::vec3::Vec3;
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
@@ -21,9 +23,9 @@ fn main() {
 
     let window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
-    let vao = gl::vao::gen_vertex_arrays();
-    let vbo = gl::vbo::gen_buffers();
-    let cbo = gl::vbo::gen_buffers();
+    let vao = VertexArrayObject::gen_vertex_arrays();
+    let vbo = VertexBufferObject::gen_buffers();
+    let cbo = VertexBufferObject::gen_buffers();
 
     let vertices: [Vec3<f32>; 3] = [
         Vec3::new(-0.5, -0.5, 0.0), // bottom-left
@@ -37,25 +39,37 @@ fn main() {
         Vec3::new(0.0, 0.0, 1.0), // blue
     ];
 
-    gl::vao::bind_vertex_array(vao);
+    VertexArrayObject::bind_vertex_array(vao);
 
-    gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, vbo);
-    gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &vertices, gl::GL_STATIC_DRAW)
+    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, vbo);
+    VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &vertices, gl::GL_STATIC_DRAW)
         .expect("Failed to buffer vertex data");
 
-    gl::vbo::enable_vertex_attrib_array(0);
-    gl::vbo::vertex_attrib_pointer::<f32>(0, Vec3::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None)
-        .expect("Failed to set vertex attribute pointer");
+    VertexBufferObject::enable_vertex_attrib_array(0);
+    VertexBufferObject::vertex_attrib_pointer::<f32>(
+        0,
+        Vec3::<f32>::size(),
+        gl::GL_FLOAT,
+        gl::GL_FALSE,
+        None,
+    )
+    .expect("Failed to set vertex attribute pointer");
 
-    gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, cbo);
-    gl::vbo::buffer_data(gl::GL_ARRAY_BUFFER, &colors, gl::GL_STATIC_DRAW)
+    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, cbo);
+    VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &colors, gl::GL_STATIC_DRAW)
         .expect("Failed to buffer color data");
-    gl::vbo::vertex_attrib_pointer::<f32>(1, Vec3::<f32>::size(), gl::GL_FLOAT, gl::GL_FALSE, None)
-        .expect("Failed to set color attribute pointer");
+    VertexBufferObject::vertex_attrib_pointer::<f32>(
+        1,
+        Vec3::<f32>::size(),
+        gl::GL_FLOAT,
+        gl::GL_FALSE,
+        None,
+    )
+    .expect("Failed to set color attribute pointer");
 
-    gl::vbo::enable_vertex_attrib_array(1);
+    VertexBufferObject::enable_vertex_attrib_array(1);
 
-    gl::vbo::bind_buffer(gl::GL_ARRAY_BUFFER, 0);
+    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, VertexBufferObject::zero());
 
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
