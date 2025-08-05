@@ -7,10 +7,10 @@ use crate::gl::{
 pub struct Program(u32);
 
 impl Program {
-    pub fn from_shaders(shaders: Vec<Shader>) -> Result<Self, String> {
+    pub fn from_shaders(shaders: &[Shader]) -> Result<Self, String> {
         let id = unsafe { glCreateProgram() };
 
-        for shader in &shaders {
+        for shader in shaders {
             unsafe { glAttachShader(id, shader.id()) };
         }
 

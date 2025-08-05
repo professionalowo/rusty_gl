@@ -19,7 +19,7 @@ fn main() {
     glfw::window_hint(gl::GLFW_OPENGL_PROFILE, gl::GLFW_OPENGL_CORE_PROFILE);
     glfw::window_hint(gl::GLFW_OPENGL_FORWARD_COMPAT, gl::GLFW_TRUE);
 
-    let window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
+    let window = Window::try_new(640, 640, "Rust").expect("Failed to create GLFW window");
 
     let vao = gl::vao::gen_vertex_arrays();
     let vbo = gl::vbo::gen_buffers();
@@ -67,7 +67,7 @@ fn main() {
     )
     .expect("Failed to create fragment shader");
 
-    let program = Program::from_shaders(vec![vertex_shader, fragment_shader])
+    let program = Program::from_shaders(&[vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
 
     let model_matrix = Mat3::<f32>::new(
