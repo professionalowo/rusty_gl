@@ -47,24 +47,8 @@ fn get_location(program: u32, name: impl AsRef<str>) -> Result<i32, UniformLocat
     }
 }
 
+#[derive(Debug)]
 pub enum UniformLocationError {
     UnusedUniform { program: u32, name: String },
     FFIError,
-}
-
-impl Debug for UniformLocationError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            UniformLocationError::UnusedUniform { program, name } => {
-                write!(
-                    f,
-                    "UniformLocationError: program: {}, uniform: '{}'",
-                    program, name
-                )
-            }
-            UniformLocationError::FFIError => {
-                write!(f, "UniformLocationError: FFIError")
-            }
-        }
-    }
 }
