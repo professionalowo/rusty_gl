@@ -28,8 +28,6 @@ fn main() {
     let cbo = VertexBufferObject::gen_buffers();
     let ibo = VertexBufferObject::gen_buffers();
 
-    let v = Vec3::<u8>::new(1, 1, 1);
-
     let vertices: [Vec3<f32>; 3] = [
         Vec3::new(-0.5, -0.5, 0.0), // bottom-left
         Vec3::new(0.5, -0.5, 0.0),  // bottom-right
