@@ -8,7 +8,7 @@ use crate::gl::program::Program;
 use crate::gl::shader::Shader;
 use crate::gl::uniform::UniformLocation;
 use crate::gl::vao::VertexArrayObject;
-use crate::gl::vbo::VertexBufferObject;
+use crate::gl::vbo::{Location, VertexBufferObject};
 use crate::glfw::window::Window;
 use crate::math::mat3::Mat3;
 use crate::math::vec3::Vec3;
@@ -48,7 +48,7 @@ fn main() {
     VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &vertices, gl::GL_STATIC_DRAW)
         .expect("Failed to buffer vertex data");
 
-    VertexBufferObject::enable_vertex_attrib_array(0);
+    VertexBufferObject::enable_vertex_attrib_array(Location(0));
     VertexBufferObject::vertex_attrib_pointer::<f32>(
         0,
         Vec3::<f32>::size(),
@@ -70,7 +70,7 @@ fn main() {
     )
     .expect("Failed to set color attribute pointer");
 
-    VertexBufferObject::enable_vertex_attrib_array(1);
+    VertexBufferObject::enable_vertex_attrib_array(Location(1));
 
     VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, VertexBufferObject::zero());
 

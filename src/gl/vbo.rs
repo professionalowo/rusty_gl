@@ -1,7 +1,10 @@
 use crate::gl::{
-    GLboolean, GLint, GLsizeiptr, glBindBuffer, glBufferData, glDeleteBuffers,
+    GLboolean, GLint, GLsizeiptr, GLuint, glBindBuffer, glBufferData, glDeleteBuffers,
     glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer,
 };
+
+#[derive(Debug, Clone, Copy)]
+pub struct Location(pub GLuint);
 
 #[derive(Debug, Clone, Copy)]
 pub struct VertexBufferObject(pub u32);
@@ -20,18 +23,21 @@ impl VertexBufferObject {
     }
 
     pub fn bind_buffer(n: u32, buffer: Self) {
+        let Self(buffer) = buffer;
         unsafe {
-            glBindBuffer(n, buffer.0);
+            glBindBuffer(n, buffer);
         }
     }
 
     pub fn delete_buffer(buffer: Self) {
+        let Self(buffer) = buffer;
         unsafe {
-            glDeleteBuffers(1, &buffer.0);
+            glDeleteBuffers(1, &buffer);
         }
     }
 
-    pub fn enable_vertex_attrib_array(index: u32) {
+    pub fn enable_vertex_attrib_array(index: Location) {
+        let Location(index) = index;
         unsafe {
             glEnableVertexAttribArray(index);
         }
