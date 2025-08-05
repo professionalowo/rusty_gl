@@ -4,10 +4,7 @@ use crate::gl::{
     glValidateProgram, shader::Shader,
 };
 
-pub struct Program {
-    id: u32,
-    _shaders: Vec<Shader>,
-}
+pub struct Program(u32);
 
 impl Program {
     pub fn from_shaders(shaders: Vec<Shader>) -> Result<Self, String> {
@@ -50,15 +47,12 @@ impl Program {
             }
             return Err(error_msg);
         }
-        Ok(Program {
-            id,
-            _shaders: shaders,
-        })
+        Ok(Program(id))
     }
 
     pub fn bind(&self) {
         unsafe {
-            glUseProgram(self.id);
+            glUseProgram(self.id());
         }
     }
 
@@ -69,6 +63,6 @@ impl Program {
     }
 
     pub const fn id(&self) -> u32 {
-        self.id
+        self.0
     }
 }

@@ -6,8 +6,11 @@ use std::path::PathBuf;
 
 use gl::program::Program;
 use gl::shader::Shader;
+use gl::uniform::UniformLocation;
 use glfw::window::Window;
 use math::vec3::Vec3;
+
+use crate::math::mat3::Mat3;
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
@@ -68,10 +71,41 @@ fn main() {
     let program = Program::from_shaders(vec![vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
 
+    let model_matrix = Mat3::<f32>::new(
+        Vec3::new(1.0, 0.0, 0.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        Vec3::new(0.0, 0.0, 1.0),
+    );
+
+    let view_matrix = Mat3::<f32>::new(
+        Vec3::new(1.0, 0.0, 0.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        Vec3::new(0.0, 0.0, 1.0),
+    );
+
+    let projection_matrix = Mat3::<f32>::new(
+        Vec3::new(1.0, 0.0, 0.0),
+        Vec3::new(0.0, 1.0, 1.0),
+        Vec3::new(0.0, 0.0, 1.0),
+    );
+
+    let model_loc = UniformLocation::try_for_program(&program, "model")
+        .expect("Failed to get uniform location for model");
+
+    let view_loc = UniformLocation::try_for_program(&program, "view")
+        .expect("Failed to get uniform location for view");
+
+    let projection_loc = UniformLocation::try_for_program(&program, "projection")
+        .expect("Failed to get uniform location for projection");
+
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
         program.bind();
+
+        model_loc.mat3f(false, model_matrix);
+        view_loc.mat3f(false, view_matrix);
+        projection_loc.mat3f(false, projection_matrix);
 
         gl::draw_arrays(gl::GL_TRIANGLES, 0, 3);
 
