@@ -101,8 +101,6 @@ fn main() {
 
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
-    const PROJECTION_MATRIX: Mat4<f32> = Mat4::identity();
-
     //TODO: fix camera projection and or view
     let camera = Camera::new(
         Vec3::new(0.0, 0.0, 1.0),

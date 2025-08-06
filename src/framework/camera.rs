@@ -63,12 +63,12 @@ fn look_at(eye: &Vec3<f32>, center: &Vec3<f32>, up: &Vec3<f32>) -> Mat4<f32> {
 fn perspective(fov_deg: f32, aspect_ratio: f32, near_plane: f32, far_plane: f32) -> Mat4<f32> {
     let fov_rad = fov_deg.to_radians();
     let f = 1.0 / (fov_rad / 2.0).tan();
-    let range_inv = 1.0 / (near_plane - far_plane);
+    let range_inv = 1.0 / (far_plane - near_plane);
 
     Mat4::new(
         Vec4::new(f / aspect_ratio, 0.0, 0.0, 0.0),
         Vec4::new(0.0, f, 0.0, 0.0),
-        Vec4::new(0.0, 0.0, (far_plane + near_plane) * range_inv, -1.0),
-        Vec4::new(0.0, 0.0, far_plane * near_plane * range_inv * 2.0, 0.0),
+        Vec4::new(0.0, 0.0, -(far_plane + near_plane) * range_inv, -1.0),
+        Vec4::new(0.0, 0.0, -2.0 * far_plane * near_plane * range_inv, 0.0),
     )
 }
