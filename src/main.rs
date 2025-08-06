@@ -1,9 +1,11 @@
+mod framework;
 mod gl;
 mod glfw;
 mod math;
 
 use std::path::PathBuf;
 
+use crate::framework::camera::{self, Camera};
 use crate::gl::program::Program;
 use crate::gl::shader::Shader;
 use crate::gl::uniform::UniformLocation;
@@ -100,16 +102,16 @@ fn main() {
         Vec3::new(0.0, 0.0, 1.0),
     );
 
-    const VIEW_MATRIX: Mat3<f32> = Mat3::new(
-        Vec3::new(1.0, 0.0, 0.0),
-        Vec3::new(0.0, 1.0, 0.0),
-        Vec3::new(0.0, 0.0, 1.0),
-    );
-
     const PROJECTION_MATRIX: Mat3<f32> = Mat3::new(
         Vec3::new(1.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 1.0),
         Vec3::new(0.0, 0.0, 1.0),
+    );
+
+    let mut camera = Camera::new(
+        Vec3::new(0.0, 0.0, 3.0),
+        Vec3::new(-1.0, 0.0, 0.0),
+        Vec3::new(0.0, 1.0, 0.0),
     );
 
     let model_loc = UniformLocation::try_for_program(&program, "model")
@@ -125,11 +127,9 @@ fn main() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
         program.bind();
-
         model_loc.mat3f(false, MODEL_MATRIX);
-        view_loc.mat3f(false, VIEW_MATRIX);
+        view_loc.mat3f(false, camera.view());
         projection_loc.mat3f(false, PROJECTION_MATRIX);
-
         gl::draw_arrays(gl::GL_TRIANGLES, 0, 3);
 
         program.unbind();

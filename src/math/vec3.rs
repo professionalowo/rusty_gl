@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Mul, Neg, Sub, SubAssign};
 
 use crate::math::Scalar;
 
@@ -63,6 +63,28 @@ impl<T: Copy + Add<Output = T>> Add for Vec3<T> {
     }
 }
 
+impl<T> AddAssign for Vec3<T>
+where
+    T: Copy + AddAssign,
+{
+    fn add_assign(&mut self, other: Self) {
+        self.x += other.x;
+        self.y += other.y;
+        self.z += other.z;
+    }
+}
+
+impl<T> SubAssign for Vec3<T>
+where
+    T: Copy + SubAssign,
+{
+    fn sub_assign(&mut self, other: Self) {
+        self.x -= other.x;
+        self.y -= other.y;
+        self.z -= other.z;
+    }
+}
+
 impl<T: Copy + Sub<Output = T>> Sub for Vec3<T> {
     type Output = Self;
 
@@ -108,6 +130,23 @@ impl Vec3<f32> {
             RotationAxis::X => Self::new(self.x, self.y * c - self.z * s, self.y * s + self.z * c),
             RotationAxis::Y => Self::new(self.x * c + self.z * s, self.y, -self.x * s + self.z * c),
             RotationAxis::Z => Self::new(self.x * c - self.y * s, self.x * s + self.y * c, self.z),
+        }
+    }
+
+    pub const fn cross(&self, other: Self) -> Self {
+        Self::new(
+            self.y * other.z - self.z * other.y,
+            self.z * other.x - self.x * other.z,
+            self.x * other.y - self.y * other.x,
+        )
+    }
+
+    pub fn normalize(&self) -> Self {
+        let length = (self.x * self.x + self.y * self.y + self.z * self.z).sqrt();
+        if length == 0.0 {
+            Self::zero()
+        } else {
+            Self::new(self.x / length, self.y / length, self.z / length)
         }
     }
 }
