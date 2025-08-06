@@ -14,7 +14,6 @@ use crate::gl::vbo::{Location, VertexBufferObject};
 use crate::glfw::window::Window;
 use crate::math::mat4::Mat4;
 use crate::math::vec3::Vec3;
-use crate::math::vec4::Vec4;
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
@@ -124,7 +123,9 @@ fn main() {
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
 
         program.bind();
+
         camera.translate(&Vec3::new(0.0, 0.0, 0.0005));
+
         model_loc.mat4f(false, MODEL_MATRIX);
         view_loc.mat4f(false, camera.view());
         projection_loc.mat4f(false, camera.projection(window.aspect_ratio()));
