@@ -124,7 +124,7 @@ fn main() {
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
 
         program.bind();
-        
+        camera.translate(&Vec3::new(0.0, 0.0, 0.0005));
         model_loc.mat4f(false, MODEL_MATRIX);
         view_loc.mat4f(false, camera.view());
         projection_loc.mat4f(false, camera.projection(window.aspect_ratio()));
