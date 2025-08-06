@@ -31,19 +31,21 @@ fn main() {
     let cbo = VertexBufferObject::gen_buffers();
     let ibo = VertexBufferObject::gen_buffers();
 
-    const VERTICES: [Vec3<f32>; 3] = [
-        Vec3::new(-0.5, -0.5, 0.0), // bottom-left
-        Vec3::new(0.5, -0.5, 0.0),  // bottom-right
-        Vec3::new(0.0, 0.5, 0.0),   // top-center
+    const VERTICES: [Vec3<f32>; 4] = [
+        Vec3::new(-0.5, -0.5, 0.0),   // bottom-left
+        Vec3::new(0.5, -0.5, 0.0),    // bottom-right
+        Vec3::new(0.0, 0.5, 0.0),     // top-center
+        Vec3::new(-0.25, -0.25, 0.5), // back-center
     ];
 
-    const COLORS: [Vec3<f32>; 3] = [
+    const COLORS: [Vec3<f32>; 4] = [
         Vec3::new(1.0, 0.0, 0.0), // red
         Vec3::new(0.0, 1.0, 0.0), // green
         Vec3::new(0.0, 0.0, 1.0), // blue
+        Vec3::new(1.0, 1.0, 1.0), // white
     ];
 
-    const INDICES: [u8; 3] = [0, 1, 2];
+    const INDICES: [u8; 12] = [0, 1, 2, 0, 1, 3, 1, 2, 3, 0, 2, 3];
 
     VertexArrayObject::bind_vertex_array(vao);
 
@@ -101,10 +103,14 @@ fn main() {
 
     const PROJECTION_MATRIX: Mat4<f32> = Mat4::identity();
 
+    //TODO: fix camera projection and or view
     let camera = Camera::new(
-        Vec3::new(0.0, 0.0, 3.0),
         Vec3::new(0.0, 0.0, 1.0),
+        Vec3::new(0.0, 0.0, -1.0),
         Vec3::new(0.0, 1.0, 0.0),
+        70.0,
+        0.01,
+        1000.0,
     );
 
     let model_loc = UniformLocation::try_for_program(&program, "model")
@@ -116,13 +122,14 @@ fn main() {
     let projection_loc = UniformLocation::try_for_program(&program, "projection")
         .expect("Failed to get uniform location for projection");
 
+    dbg!(&camera, camera.view());
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
         program.bind();
         model_loc.mat4f(false, MODEL_MATRIX);
         view_loc.mat4f(false, camera.view());
-        projection_loc.mat4f(false, PROJECTION_MATRIX);
+        projection_loc.mat4f(false, camera.projection(window.aspect_ratio()));
         gl::draw_arrays(gl::GL_TRIANGLES, 0, 3);
 
         program.unbind();

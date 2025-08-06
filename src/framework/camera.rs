@@ -3,30 +3,39 @@ use crate::math::{mat4::Mat4, vec3::Vec3, vec4::Vec4};
 #[derive(Debug)]
 pub struct Camera {
     position: Vec3<f32>,
-    look_at: Vec3<f32>,
+    dir: Vec3<f32>,
     up: Vec3<f32>,
+    fov_deg: f32,
+    near_plane: f32,
+    far_plane: f32,
 }
 
 impl Camera {
-    pub const fn new(position: Vec3<f32>, look_at: Vec3<f32>, up: Vec3<f32>) -> Self {
+    pub fn new(
+        position: Vec3<f32>,
+        dir: Vec3<f32>,
+        up: Vec3<f32>,
+        fov_deg: f32,
+        near_plane: f32,
+        far_plane: f32,
+    ) -> Self {
         Self {
             position,
-            look_at,
-            up,
+            dir: dir.normalize(),
+            up: up.normalize(),
+            fov_deg,
+            near_plane,
+            far_plane,
         }
     }
 
     pub fn view(&self) -> Mat4<f32> {
-        let forward = (self.look_at - self.position).normalize();
-        let right = forward.cross(self.up).normalize();
-        let up = right.cross(forward).normalize();
+        let look = self.position + self.dir;
+        look_at(&self.position, &look, &self.up)
+    }
 
-        Mat4::new(
-            Vec4::new(right.x(), up.x(), -forward.x(), 0.0),
-            Vec4::new(right.y(), up.y(), -forward.y(), 0.0),
-            Vec4::new(right.z(), up.z(), -forward.z(), 0.0),
-            Vec4::new(0.0, 0.0, 0.0, 1.0),
-        )
+    pub fn projection(&self, aspect_ratio: f32) -> Mat4<f32> {
+        perspective(self.fov_deg, aspect_ratio, self.near_plane, self.far_plane)
     }
 
     pub const fn position(&self) -> Vec3<f32> {
@@ -36,4 +45,30 @@ impl Camera {
     pub fn translate(&mut self, translation: Vec3<f32>) {
         self.position += translation;
     }
+}
+
+fn look_at(eye: &Vec3<f32>, center: &Vec3<f32>, up: &Vec3<f32>) -> Mat4<f32> {
+    let f = (*center - *eye).normalize();
+    let s = f.cross(&up).normalize();
+    let u = s.cross(&f);
+
+    Mat4::new(
+        Vec4::new(s.x(), u.x(), -f.x(), 0.0),
+        Vec4::new(s.y(), u.y(), -f.y(), 0.0),
+        Vec4::new(s.z(), u.z(), -f.z(), 0.0),
+        Vec4::new(-s.dot(&eye), -u.dot(&eye), f.dot(&eye), 1.0),
+    )
+}
+
+fn perspective(fov_deg: f32, aspect_ratio: f32, near_plane: f32, far_plane: f32) -> Mat4<f32> {
+    let fov_rad = fov_deg.to_radians();
+    let f = 1.0 / (fov_rad / 2.0).tan();
+    let range_inv = 1.0 / (near_plane - far_plane);
+
+    Mat4::new(
+        Vec4::new(f / aspect_ratio, 0.0, 0.0, 0.0),
+        Vec4::new(0.0, f, 0.0, 0.0),
+        Vec4::new(0.0, 0.0, (far_plane + near_plane) * range_inv, -1.0),
+        Vec4::new(0.0, 0.0, far_plane * near_plane * range_inv * 2.0, 0.0),
+    )
 }

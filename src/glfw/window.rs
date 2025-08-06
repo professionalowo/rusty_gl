@@ -39,6 +39,19 @@ impl Window {
             gl::glfwSwapBuffers(self.handle);
         }
     }
+
+    pub fn aspect_ratio(&self) -> f32 {
+        let mut width = 0;
+        let mut height = 0;
+        unsafe {
+            gl::glfwGetWindowSize(self.handle, &mut width, &mut height);
+        }
+        if height == 0 {
+            1.0 // Avoid division by zero
+        } else {
+            width as f32 / height as f32
+        }
+    }
 }
 
 impl Drop for Window {
