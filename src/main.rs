@@ -101,8 +101,7 @@ fn main() {
 
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
-    //TODO: fix camera projection and or view
-    let camera = Camera::new(
+    let mut camera = Camera::new(
         Vec3::new(0.0, 0.0, 1.0),
         Vec3::new(0.0, 0.0, -1.0),
         Vec3::new(0.0, 1.0, 0.0),
@@ -120,14 +119,16 @@ fn main() {
     let projection_loc = UniformLocation::try_for_program(&program, "projection")
         .expect("Failed to get uniform location for projection");
 
-    dbg!(&camera, camera.view());
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
+
         program.bind();
+        
         model_loc.mat4f(false, MODEL_MATRIX);
         view_loc.mat4f(false, camera.view());
         projection_loc.mat4f(false, camera.projection(window.aspect_ratio()));
+
         gl::draw_arrays(gl::GL_TRIANGLES, 0, 3);
 
         program.unbind();

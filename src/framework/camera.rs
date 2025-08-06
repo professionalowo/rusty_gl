@@ -42,8 +42,8 @@ impl Camera {
         self.position
     }
 
-    pub fn translate(&mut self, translation: Vec3<f32>) {
-        self.position += translation;
+    pub fn translate(&mut self, translation: &Vec3<f32>) {
+        self.position += *translation;
     }
 }
 
