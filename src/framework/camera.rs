@@ -1,4 +1,4 @@
-use crate::math::{mat3::Mat3, vec3::Vec3};
+use crate::math::{mat4::Mat4, vec3::Vec3, vec4::Vec4};
 
 #[derive(Debug)]
 pub struct Camera {
@@ -16,15 +16,16 @@ impl Camera {
         }
     }
 
-    pub fn view(&self) -> Mat3<f32> {
+    pub fn view(&self) -> Mat4<f32> {
         let forward = (self.look_at - self.position).normalize();
         let right = forward.cross(self.up).normalize();
         let up = right.cross(forward).normalize();
 
-        Mat3::new(
-            Vec3::new(right.x(), up.x(), -forward.x()),
-            Vec3::new(right.y(), up.y(), -forward.y()),
-            Vec3::new(right.z(), up.z(), -forward.z()),
+        Mat4::new(
+            Vec4::new(right.x(), up.x(), -forward.x(), 0.0),
+            Vec4::new(right.y(), up.y(), -forward.y(), 0.0),
+            Vec4::new(right.z(), up.z(), -forward.z(), 0.0),
+            Vec4::new(0.0, 0.0, 0.0, 1.0),
         )
     }
 

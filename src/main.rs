@@ -5,15 +5,16 @@ mod math;
 
 use std::path::PathBuf;
 
-use crate::framework::camera::{self, Camera};
+use crate::framework::camera::Camera;
 use crate::gl::program::Program;
 use crate::gl::shader::Shader;
 use crate::gl::uniform::UniformLocation;
 use crate::gl::vao::VertexArrayObject;
 use crate::gl::vbo::{Location, VertexBufferObject};
 use crate::glfw::window::Window;
-use crate::math::mat3::Mat3;
+use crate::math::mat4::Mat4;
 use crate::math::vec3::Vec3;
+use crate::math::vec4::Vec4;
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
@@ -96,21 +97,13 @@ fn main() {
     let program = Program::from_shaders(&[vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
 
-    const MODEL_MATRIX: Mat3<f32> = Mat3::new(
-        Vec3::new(1.0, 0.0, 0.0),
-        Vec3::new(0.0, 1.0, 0.0),
-        Vec3::new(0.0, 0.0, 1.0),
-    );
+    const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
-    const PROJECTION_MATRIX: Mat3<f32> = Mat3::new(
-        Vec3::new(1.0, 0.0, 0.0),
-        Vec3::new(0.0, 1.0, 1.0),
-        Vec3::new(0.0, 0.0, 1.0),
-    );
+    const PROJECTION_MATRIX: Mat4<f32> = Mat4::identity();
 
-    let mut camera = Camera::new(
+    let camera = Camera::new(
         Vec3::new(0.0, 0.0, 3.0),
-        Vec3::new(-1.0, 0.0, 0.0),
+        Vec3::new(0.0, 0.0, 1.0),
         Vec3::new(0.0, 1.0, 0.0),
     );
 
@@ -127,9 +120,9 @@ fn main() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT);
         program.bind();
-        model_loc.mat3f(false, MODEL_MATRIX);
-        view_loc.mat3f(false, camera.view());
-        projection_loc.mat3f(false, PROJECTION_MATRIX);
+        model_loc.mat4f(false, MODEL_MATRIX);
+        view_loc.mat4f(false, camera.view());
+        projection_loc.mat4f(false, PROJECTION_MATRIX);
         gl::draw_arrays(gl::GL_TRIANGLES, 0, 3);
 
         program.unbind();

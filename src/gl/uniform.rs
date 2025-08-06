@@ -1,8 +1,8 @@
 use std::{ffi::CString, fmt::Debug};
 
 use crate::{
-    gl::{glGetUniformLocation, glUniformMatrix3fv, program::Program},
-    math::mat3::Mat3,
+    gl::{glGetUniformLocation, glUniformMatrix3fv, glUniformMatrix4fv, program::Program},
+    math::{mat3::Mat3, mat4::Mat4},
 };
 
 #[derive(Clone, Copy, Debug)]
@@ -28,6 +28,14 @@ impl UniformLocation {
         let value = cols.as_ptr() as *const f32;
         unsafe {
             glUniformMatrix3fv(self.0, 1, u8::from(transpose), value);
+        }
+    }
+
+    pub fn mat4f(&self, transpose: bool, matrix: Mat4<f32>) {
+        let cols = matrix.cols();
+        let value = cols.as_ptr() as *const f32;
+        unsafe {
+            glUniformMatrix4fv(self.0, 1, u8::from(transpose), value);
         }
     }
 }

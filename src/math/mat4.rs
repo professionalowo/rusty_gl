@@ -3,18 +3,20 @@ use std::{
     ops::{Add, Mul, Sub},
 };
 
-const RANK: usize = 3;
-use crate::math::vec3::Vec3;
+const RANK: usize = 4;
+use crate::math::vec4::Vec4;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
-pub struct Mat3<T: Copy> {
-    cols: [Vec3<T>; RANK],
+pub struct Mat4<T: Copy> {
+    cols: [Vec4<T>; RANK],
 }
 
-impl<T: Copy> Mat3<T> {
-    pub const fn new(c0: Vec3<T>, c1: Vec3<T>, c2: Vec3<T>) -> Self {
-        Self { cols: [c0, c1, c2] }
+impl<T: Copy> Mat4<T> {
+    pub const fn new(c0: Vec4<T>, c1: Vec4<T>, c2: Vec4<T>, c3: Vec4<T>) -> Self {
+        Self {
+            cols: [c0, c1, c2, c3],
+        }
     }
 
     pub const fn cols(&self) -> [T; RANK * RANK] {
@@ -22,17 +24,35 @@ impl<T: Copy> Mat3<T> {
             self.cols[0].x(),
             self.cols[0].y(),
             self.cols[0].z(),
+            self.cols[0].w(),
             self.cols[1].x(),
             self.cols[1].y(),
             self.cols[1].z(),
+            self.cols[1].w(),
             self.cols[2].x(),
             self.cols[2].y(),
             self.cols[2].z(),
+            self.cols[2].w(),
+            self.cols[3].x(),
+            self.cols[3].y(),
+            self.cols[3].z(),
+            self.cols[3].w(),
         ]
     }
 }
 
-impl<T: Copy + Add<Output = T>> Add for Mat3<T> {
+impl Mat4<f32> {
+    pub const fn identity() -> Self {
+        Self::new(
+            Vec4::new(1.0, 0.0, 0.0, 0.0),
+            Vec4::new(0.0, 1.0, 0.0, 0.0),
+            Vec4::new(0.0, 0.0, 1.0, 0.0),
+            Vec4::new(0.0, 0.0, 0.0, 1.0),
+        )
+    }
+}
+
+impl<T: Copy + Add<Output = T>> Add for Mat4<T> {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
@@ -41,12 +61,13 @@ impl<T: Copy + Add<Output = T>> Add for Mat3<T> {
                 self.cols[0] + other.cols[0],
                 self.cols[1] + other.cols[1],
                 self.cols[2] + other.cols[2],
+                self.cols[3] + other.cols[3],
             ],
         }
     }
 }
 
-impl<T: Copy + Sub<Output = T>> Sub for Mat3<T> {
+impl<T: Copy + Sub<Output = T>> Sub for Mat4<T> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
@@ -55,19 +76,21 @@ impl<T: Copy + Sub<Output = T>> Sub for Mat3<T> {
                 self.cols[0] - other.cols[0],
                 self.cols[1] - other.cols[1],
                 self.cols[2] - other.cols[2],
+                self.cols[3] - other.cols[3],
             ],
         }
     }
 }
 
-impl<T: Copy + Mul<Output = T> + Default + Add<Output = T> + Sum> Mul for Mat3<T> {
+impl<T: Copy + Mul<Output = T> + Default + Add<Output = T> + Sum> Mul for Mat4<T> {
     type Output = Self;
 
     fn mul(self, other: Self) -> Self {
-        let result = Mat3::new(
-            Vec3::new(T::default(), T::default(), T::default()),
-            Vec3::new(T::default(), T::default(), T::default()),
-            Vec3::new(T::default(), T::default(), T::default()),
+        let result = Mat4::new(
+            Vec4::new(T::default(), T::default(), T::default(), T::default()),
+            Vec4::new(T::default(), T::default(), T::default(), T::default()),
+            Vec4::new(T::default(), T::default(), T::default(), T::default()),
+            Vec4::new(T::default(), T::default(), T::default(), T::default()),
         );
 
         for i in 0..RANK {

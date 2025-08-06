@@ -1,8 +1,10 @@
 use std::ops::Mul;
 
 pub mod mat3;
+pub mod mat4;
 pub mod vec2;
 pub mod vec3;
+pub mod vec4;
 
 #[derive(Clone, Copy, Debug)]
 pub struct Scalar<T>(pub T)
