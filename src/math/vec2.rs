@@ -1,7 +1,4 @@
-use std::{
-    ops::{Mul, Neg},
-    process::Output,
-};
+use std::ops::Neg;
 
 use crate::math::Scalar;
 
@@ -13,7 +10,7 @@ pub struct Vec2<T: Copy> {
 }
 
 impl<T: Copy> Vec2<T> {
-    pub fn new(x: T, y: T) -> Self {
+    pub const fn new(x: T, y: T) -> Self {
         Self { x, y }
     }
 

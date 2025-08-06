@@ -13,11 +13,11 @@ pub struct Mat3<T: Copy> {
 }
 
 impl<T: Copy> Mat3<T> {
-    pub fn new(c0: Vec3<T>, c1: Vec3<T>, c2: Vec3<T>) -> Self {
+    pub const fn new(c0: Vec3<T>, c1: Vec3<T>, c2: Vec3<T>) -> Self {
         Self { cols: [c0, c1, c2] }
     }
 
-    pub fn cols(&self) -> [T; RANK * 3] {
+    pub const fn cols(&self) -> [T; RANK * 3] {
         [
             self.cols[0].x(),
             self.cols[0].y(),

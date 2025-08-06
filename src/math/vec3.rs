@@ -11,7 +11,7 @@ pub struct Vec3<T: Copy> {
 }
 
 impl<T: Copy> Vec3<T> {
-    pub fn new(x: T, y: T, z: T) -> Self {
+    pub const fn new(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
     }
 
@@ -84,6 +84,30 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec3<T> {
             x: self.x * scalar,
             y: self.y * scalar,
             z: self.z * scalar,
+        }
+    }
+}
+pub enum RotationAxis {
+    X,
+    Y,
+    Z,
+}
+impl Vec3<f32> {
+    pub const fn zero() -> Self {
+        Self::new(0.0, 0.0, 0.0)
+    }
+
+    pub const fn one() -> Self {
+        Self::new(1.0, 1.0, 1.0)
+    }
+
+    pub fn rotate(&self, angle: f32, axis: RotationAxis) -> Self {
+        let c = angle.cos();
+        let s = angle.sin();
+        match axis {
+            RotationAxis::X => Self::new(self.x, self.y * c - self.z * s, self.y * s + self.z * c),
+            RotationAxis::Y => Self::new(self.x * c + self.z * s, self.y, -self.x * s + self.z * c),
+            RotationAxis::Z => Self::new(self.x * c - self.y * s, self.x * s + self.y * c, self.z),
         }
     }
 }
