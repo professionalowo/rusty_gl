@@ -1,3 +1,5 @@
+mod f32;
+
 use std::ops::{Add, AddAssign, Mul, Neg, Sub, SubAssign};
 
 use crate::math::Scalar;
@@ -107,51 +109,6 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec3<T> {
             y: self.y * scalar,
             z: self.z * scalar,
         }
-    }
-}
-pub enum RotationAxis {
-    X,
-    Y,
-    Z,
-}
-impl Vec3<f32> {
-    pub const fn zero() -> Self {
-        Self::new(0.0, 0.0, 0.0)
-    }
-
-    pub const fn one() -> Self {
-        Self::new(1.0, 1.0, 1.0)
-    }
-
-    pub fn rotate(&self, angle: f32, axis: RotationAxis) -> Self {
-        let c = angle.cos();
-        let s = angle.sin();
-        match axis {
-            RotationAxis::X => Self::new(self.x, self.y * c - self.z * s, self.y * s + self.z * c),
-            RotationAxis::Y => Self::new(self.x * c + self.z * s, self.y, -self.x * s + self.z * c),
-            RotationAxis::Z => Self::new(self.x * c - self.y * s, self.x * s + self.y * c, self.z),
-        }
-    }
-
-    pub const fn cross(&self, other: &Self) -> Self {
-        Self::new(
-            self.y * other.z - self.z * other.y,
-            self.z * other.x - self.x * other.z,
-            self.x * other.y - self.y * other.x,
-        )
-    }
-
-    pub fn normalize(&self) -> Self {
-        let length = (self.x * self.x + self.y * self.y + self.z * self.z).sqrt();
-        if length == 0.0 {
-            Self::zero()
-        } else {
-            Self::new(self.x / length, self.y / length, self.z / length)
-        }
-    }
-
-    pub const fn dot(&self, other: &Self) -> f32 {
-        self.x * other.x + self.y * other.y + self.z * other.z
     }
 }
 
