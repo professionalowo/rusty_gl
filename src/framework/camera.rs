@@ -38,8 +38,8 @@ impl Camera {
         perspective(self.fov_deg, aspect_ratio, self.near_plane, self.far_plane)
     }
 
-    pub const fn position(&self) -> Vec3<f32> {
-        self.position
+    pub const fn position(&self) -> &Vec3<f32> {
+        &self.position
     }
 
     pub fn translate(&mut self, translation: &Vec3<f32>) {
