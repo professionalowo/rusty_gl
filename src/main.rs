@@ -109,6 +109,8 @@ fn main() {
         1000.0,
     );
 
+    const CENTER: Vec3<f32> = Vec3::new(0.0, 0.0, 0.0);
+
     let model_loc = UniformLocation::try_for_program(&program, "model")
         .expect("Failed to get uniform location for model");
 
@@ -124,15 +126,14 @@ fn main() {
 
         program.bind();
 
-        camera.translate(&Vec3::new(0.0, 0.0, 0.0005));
-
         model_loc.mat4f(false, MODEL_MATRIX);
         view_loc.mat4f(false, camera.view());
         projection_loc.mat4f(false, camera.projection(window.aspect_ratio()));
 
-        gl::draw_arrays(gl::GL_TRIANGLES, 0, 3);
-
+        gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
         program.unbind();
+
+        camera.look_at(&CENTER);
 
         window.swap_buffers();
         window.poll_events();

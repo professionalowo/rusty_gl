@@ -29,6 +29,10 @@ pub fn draw_arrays(mode: u32, first: i32, count: i32) {
     unsafe { glDrawArrays(mode, first, count) };
 }
 
+pub fn draw_elements(mode: u32, count: i32, element_type: u32) {
+    unsafe { glDrawElements(mode, count, element_type, std::ptr::null()) };
+}
+
 pub fn clear_color(red: f32, green: f32, blue: f32, alpha: f32) {
     unsafe { glClearColor(red, green, blue, alpha) };
 }

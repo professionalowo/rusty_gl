@@ -31,7 +31,7 @@ impl Camera {
 
     pub fn view(&self) -> Mat4<f32> {
         let look = self.position + self.dir;
-        look_at(&self.position, &look, &self.up)
+        build_view_matrix(&self.position, &look, &self.up)
     }
 
     pub fn projection(&self, aspect_ratio: f32) -> Mat4<f32> {
@@ -45,9 +45,13 @@ impl Camera {
     pub fn translate(&mut self, translation: &Vec3<f32>) {
         self.position += *translation;
     }
+
+    pub fn look_at(&mut self, target: &Vec3<f32>) {
+        self.dir = (*target - self.position).normalize();
+    }
 }
 
-fn look_at(eye: &Vec3<f32>, center: &Vec3<f32>, up: &Vec3<f32>) -> Mat4<f32> {
+fn build_view_matrix(eye: &Vec3<f32>, center: &Vec3<f32>, up: &Vec3<f32>) -> Mat4<f32> {
     let f = (*center - *eye).normalize();
     let s = f.cross(&up).normalize();
     let u = s.cross(&f);
