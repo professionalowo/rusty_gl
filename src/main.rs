@@ -13,7 +13,7 @@ use crate::gl::vao::VertexArrayObject;
 use crate::gl::vbo::{Location, VertexBufferObject};
 use crate::glfw::window::Window;
 use crate::math::mat4::Mat4;
-use crate::math::vec3::Vec3;
+use crate::math::vec3::{self, Vec3};
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
@@ -133,6 +133,9 @@ fn main() {
         gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
         program.unbind();
 
+        camera.transform_position(|pos| {
+            *pos = pos.rotate(0.001, vec3::f32::RotationAxis::Y);
+        });
         camera.look_at(&CENTER);
 
         window.swap_buffers();

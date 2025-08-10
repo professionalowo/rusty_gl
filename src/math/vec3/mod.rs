@@ -1,4 +1,4 @@
-mod f32;
+pub mod f32;
 
 use std::ops::{Add, AddAssign, Mul, Neg, Sub, SubAssign};
 

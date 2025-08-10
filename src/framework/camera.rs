@@ -49,6 +49,10 @@ impl Camera {
     pub fn look_at(&mut self, target: &Vec3<f32>) {
         self.dir = (*target - self.position).normalize();
     }
+
+    pub fn transform_position(&mut self, mut fun: impl FnMut(&mut Vec3<f32>)) {
+        fun(&mut self.position);
+    }
 }
 
 fn build_view_matrix(eye: &Vec3<f32>, center: &Vec3<f32>, up: &Vec3<f32>) -> Mat4<f32> {
