@@ -109,13 +109,10 @@ fn main() {
 
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
-    let mut camera = Camera::new(
+    let mut camera = Camera::with_defaults(
         Vec3::new(0.0, 0.0, 2.0),
         Vec3::new(0.0, 0.0, -1.0),
         Vec3::new(0.0, 1.0, 0.0),
-        70.0,
-        0.01,
-        1000.0,
     );
 
     const CENTER: Vec3<f32> = Vec3::new(0.0, 0.0, 0.0);

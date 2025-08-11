@@ -29,6 +29,10 @@ impl Camera {
         }
     }
 
+    pub fn with_defaults(position: Vec3<f32>, dir: Vec3<f32>, up: Vec3<f32>) -> Self {
+        Self::new(position, dir, up, 70.0, 0.01, 1000.0)
+    }
+
     pub fn view(&self) -> Mat4<f32> {
         let look = self.position + self.dir;
         build_view_matrix(&self.position, &look, &self.up)
