@@ -152,6 +152,9 @@ fn main() {
 
         rotate_camera(&mut camera, &CENTER, 0.004, vec3::f32::RotationAxis::Y);
 
+        window.swap_buffers();
+        window.poll_events();
+
         match last_key_event.borrow_mut().take() {
             Some(event) if event.is_press() && event.keycode == Keycode::Escape => {
                 window.set_should_close(true);
@@ -159,9 +162,6 @@ fn main() {
             Some(event) => println!("{:?}", event),
             _ => {}
         }
-
-        window.swap_buffers();
-        window.poll_events();
     }
     glfw::terminate();
 }
