@@ -37,9 +37,9 @@ impl VertexBufferObject {
     }
 
     pub fn enable_vertex_attrib_array(index: &Location) {
-        let Location(index) = index;
+        let Location(index) = *index;
         unsafe {
-            glEnableVertexAttribArray(*index);
+            glEnableVertexAttribArray(index);
         }
     }
 
@@ -59,10 +59,10 @@ impl VertexBufferObject {
             Ok(n) => n,
             Err(_) => return Err(VBOError::CastError),
         };
-        let Location(index) = index;
+        let Location(index) = *index;
         let pointer = pointer.unwrap_or(std::ptr::null());
         unsafe {
-            glVertexAttribPointer(*index, size, type_, normalized, stride, pointer);
+            glVertexAttribPointer(index, size, type_, normalized, stride, pointer);
         }
         Ok(())
     }
