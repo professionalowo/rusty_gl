@@ -86,14 +86,3 @@ fn create_window(
         window
     }
 }
-
-fn get_primary_monitor() -> Option<*mut gl::GLFWmonitor> {
-    unsafe {
-        let monitor = gl::glfwGetPrimaryMonitor();
-        if monitor.is_null() {
-            None
-        } else {
-            Some(monitor)
-        }
-    }
-}
