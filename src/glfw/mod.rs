@@ -1,4 +1,5 @@
 pub mod window;
+pub mod input;
 
 use crate::gl;
 
