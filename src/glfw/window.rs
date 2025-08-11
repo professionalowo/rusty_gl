@@ -1,4 +1,6 @@
+use std::cell::RefCell;
 use std::ffi::{CStr, CString, NulError, c_int, c_void};
+use std::rc::Rc;
 
 use crate::gl;
 use crate::glfw::GLFWError;
@@ -8,6 +10,7 @@ use crate::glfw::input::keycode::Keycode;
 use crate::glfw::input::modifier::Modifier;
 pub struct Window {
     handle: *mut gl::GLFWwindow,
+    last_event: Rc<RefCell<Option<KeyEvent>>>,
     _title: CString,
 }
 
@@ -20,8 +23,16 @@ impl Window {
     {
         let title_cstr = CString::new(title.as_ref())?;
         let handle = create_window(width, height, &title_cstr, None, None);
+        let last_event = Rc::new(RefCell::new(None));
+        set_key_callback(handle, {
+            let last_key_event = last_event.clone();
+            move |event| {
+                *last_key_event.borrow_mut() = Some(event);
+            }
+        });
         Ok(Self {
             handle,
+            last_event: last_event.clone(),
             _title: title_cstr,
         })
     }
@@ -70,17 +81,8 @@ impl Window {
         }
     }
 
-    pub fn set_key_callback<F>(&mut self, callback: F)
-    where
-        F: FnMut(KeyEvent) + 'static,
-    {
-        let closure: Box<KeyCallback> = Box::new(callback);
-        let raw = Box::into_raw(Box::new(closure));
-
-        unsafe {
-            gl::glfwSetWindowUserPointer(self.handle, raw as *mut c_void);
-            gl::glfwSetKeyCallback(self.handle, Some(key_callback_trampoline));
-        }
+    pub fn pump_event(&mut self) -> Option<KeyEvent> {
+        self.last_event.borrow_mut().take()
     }
 }
 
@@ -89,6 +91,19 @@ impl Drop for Window {
         unsafe {
             gl::glfwDestroyWindow(self.handle);
         }
+    }
+}
+
+fn set_key_callback<F>(window: *mut gl::GLFWwindow, callback: F)
+where
+    F: FnMut(KeyEvent) + 'static,
+{
+    let closure: Box<KeyCallback> = Box::new(callback);
+    let raw = Box::into_raw(Box::new(closure));
+
+    unsafe {
+        gl::glfwSetWindowUserPointer(window, raw as *mut c_void);
+        gl::glfwSetKeyCallback(window, Some(key_callback_trampoline));
     }
 }
 

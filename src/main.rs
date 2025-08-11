@@ -129,14 +129,6 @@ fn main() {
 
     gl::enable(gl::GL_DEPTH_TEST);
 
-    let last_key_event: Rc<RefCell<Option<KeyEvent>>> = Rc::new(RefCell::new(None));
-
-    window.set_key_callback({
-        let last_key_event = last_key_event.clone();
-        move |event| {
-            *last_key_event.borrow_mut() = Some(event);
-        }
-    });
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
@@ -155,7 +147,7 @@ fn main() {
         window.swap_buffers();
         window.poll_events();
 
-        match last_key_event.borrow_mut().take() {
+        match window.pump_event() {
             Some(event) if event.is_press() && event.keycode == Keycode::Escape => {
                 window.set_should_close(true);
             }
