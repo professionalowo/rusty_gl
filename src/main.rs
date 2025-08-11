@@ -1,6 +1,4 @@
-use std::cell::RefCell;
 use std::path::PathBuf;
-use std::rc::Rc;
 
 use open_gl::framework::camera::Camera;
 use open_gl::gl;
@@ -10,11 +8,11 @@ use open_gl::gl::uniform::UniformLocation;
 use open_gl::gl::vao::VertexArrayObject;
 use open_gl::gl::vbo::{Location, VertexBufferObject};
 use open_gl::glfw;
-use open_gl::glfw::input::KeyEvent;
 use open_gl::glfw::input::keycode::Keycode;
 use open_gl::glfw::window::Window;
 use open_gl::math::mat4::Mat4;
 use open_gl::math::vec3::{self, Vec3};
+
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
