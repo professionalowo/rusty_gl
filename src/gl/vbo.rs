@@ -3,10 +3,10 @@ use crate::gl::{
     glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer,
 };
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct Location(pub GLuint);
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct VertexBufferObject(pub u32);
 
 impl VertexBufferObject {
@@ -36,15 +36,15 @@ impl VertexBufferObject {
         }
     }
 
-    pub fn enable_vertex_attrib_array(index: Location) {
+    pub fn enable_vertex_attrib_array(index: &Location) {
         let Location(index) = index;
         unsafe {
-            glEnableVertexAttribArray(index);
+            glEnableVertexAttribArray(*index);
         }
     }
 
     pub fn vertex_attrib_pointer<T>(
-        index: u32,
+        index: &Location,
         size: impl TryInto<GLint>,
         type_: u32,
         normalized: impl TryInto<GLboolean>,
@@ -59,10 +59,10 @@ impl VertexBufferObject {
             Ok(n) => n,
             Err(_) => return Err(VBOError::CastError),
         };
-
+        let Location(index) = index;
         let pointer = pointer.unwrap_or(std::ptr::null());
         unsafe {
-            glVertexAttribPointer(index, size, type_, normalized, stride, pointer);
+            glVertexAttribPointer(*index, size, type_, normalized, stride, pointer);
         }
         Ok(())
     }

@@ -59,9 +59,10 @@ fn main() {
     VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &VERTICES, gl::GL_STATIC_DRAW)
         .expect("Failed to buffer vertex data");
 
-    VertexBufferObject::enable_vertex_attrib_array(Location(0));
+    let vertex_loc = Location(0);
+    VertexBufferObject::enable_vertex_attrib_array(&vertex_loc);
     VertexBufferObject::vertex_attrib_pointer::<f32>(
-        0,
+        &vertex_loc,
         Vec3::<f32>::size(),
         gl::GL_FLOAT,
         gl::GL_FALSE,
@@ -69,19 +70,20 @@ fn main() {
     )
     .expect("Failed to set vertex attribute pointer");
 
+    let color_loc = Location(1);
+    VertexBufferObject::enable_vertex_attrib_array(&color_loc);
+
     VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, cbo);
     VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &COLORS, gl::GL_STATIC_DRAW)
         .expect("Failed to buffer color data");
     VertexBufferObject::vertex_attrib_pointer::<f32>(
-        1,
+        &color_loc,
         Vec3::<f32>::size(),
         gl::GL_FLOAT,
         gl::GL_FALSE,
         None,
     )
     .expect("Failed to set color attribute pointer");
-
-    VertexBufferObject::enable_vertex_attrib_array(Location(1));
 
     VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, VertexBufferObject::zero());
 

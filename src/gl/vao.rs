@@ -1,6 +1,6 @@
 use crate::gl::{glBindVertexArray, glDeleteVertexArrays, glGenVertexArrays};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct VertexArrayObject(pub u32);
 
 impl VertexArrayObject {
