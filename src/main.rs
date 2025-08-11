@@ -1,19 +1,16 @@
-mod framework;
-mod gl;
-mod glfw;
-mod math;
-
 use std::path::PathBuf;
 
-use crate::framework::camera::Camera;
-use crate::gl::program::Program;
-use crate::gl::shader::Shader;
-use crate::gl::uniform::UniformLocation;
-use crate::gl::vao::VertexArrayObject;
-use crate::gl::vbo::{Location, VertexBufferObject};
-use crate::glfw::window::Window;
-use crate::math::mat4::Mat4;
-use crate::math::vec3::{self, Vec3};
+use open_gl::framework::camera::Camera;
+use open_gl::gl;
+use open_gl::gl::program::Program;
+use open_gl::gl::shader::Shader;
+use open_gl::gl::uniform::UniformLocation;
+use open_gl::gl::vao::VertexArrayObject;
+use open_gl::gl::vbo::{Location, VertexBufferObject};
+use open_gl::glfw;
+use open_gl::glfw::window::Window;
+use open_gl::math::mat4::Mat4;
+use open_gl::math::vec3::{self, Vec3};
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
