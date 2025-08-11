@@ -1,6 +1,6 @@
 # RustyGL
 
-## Instalaltion
+## Installation
 
 ### Linux
 
