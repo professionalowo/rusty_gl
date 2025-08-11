@@ -39,6 +39,12 @@ impl Window {
         }
     }
 
+    pub fn set_should_close(&self, value: bool) {
+        unsafe {
+            gl::glfwSetWindowShouldClose(self.handle, if value { 1 } else { 0 });
+        }
+    }
+
     pub fn poll_events(&self) {
         unsafe {
             gl::glfwPollEvents();

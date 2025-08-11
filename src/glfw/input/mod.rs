@@ -6,7 +6,7 @@ pub mod action;
 pub mod keycode;
 pub mod modifier;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct KeyEvent {
     pub keycode: Keycode,
     pub action: Action,
@@ -20,5 +20,9 @@ impl KeyEvent {
             action,
             modifier,
         }
+    }
+
+    pub fn is_press(&self) -> bool {
+        self.action == Action::Press
     }
 }

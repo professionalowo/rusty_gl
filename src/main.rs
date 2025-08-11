@@ -1,4 +1,6 @@
+use std::cell::RefCell;
 use std::path::PathBuf;
+use std::rc::Rc;
 
 use open_gl::framework::camera::Camera;
 use open_gl::gl;
@@ -8,6 +10,8 @@ use open_gl::gl::uniform::UniformLocation;
 use open_gl::gl::vao::VertexArrayObject;
 use open_gl::gl::vbo::{Location, VertexBufferObject};
 use open_gl::glfw;
+use open_gl::glfw::input::KeyEvent;
+use open_gl::glfw::input::keycode::Keycode;
 use open_gl::glfw::window::Window;
 use open_gl::math::mat4::Mat4;
 use open_gl::math::vec3::{self, Vec3};
@@ -125,8 +129,14 @@ fn main() {
 
     gl::enable(gl::GL_DEPTH_TEST);
 
-    window.set_key_callback(|event| println!("{:?}", event));
+    let last_key_event: Rc<RefCell<Option<KeyEvent>>> = Rc::new(RefCell::new(None));
 
+    window.set_key_callback({
+        let last_key_event = last_key_event.clone();
+        move |event| {
+            *last_key_event.borrow_mut() = Some(event);
+        }
+    });
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
@@ -141,6 +151,16 @@ fn main() {
         program.unbind();
 
         rotate_camera(&mut camera, &CENTER, 0.004, vec3::f32::RotationAxis::Y);
+
+        match last_key_event.borrow_mut().take() {
+            Some(event) if event.is_press() && event.keycode == Keycode::Escape => {
+                window.set_should_close(true);
+            }
+            Some(event) if event.is_press() => {
+                println!("Last key event: {:?}", event);
+            }
+            _ => {}
+        }
 
         window.swap_buffers();
         window.poll_events();

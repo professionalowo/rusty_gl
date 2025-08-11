@@ -1,6 +1,6 @@
 use crate::gl;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Modifier {
     None,
     Shift,
