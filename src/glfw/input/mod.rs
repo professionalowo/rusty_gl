@@ -15,7 +15,7 @@ pub struct KeyEvent {
 
 impl KeyEvent {
     pub fn new(keycode: Keycode, action: Action, modifier: Modifier) -> Self {
-        KeyEvent {
+        Self {
             keycode,
             action,
             modifier,
