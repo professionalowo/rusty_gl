@@ -1,11 +1,16 @@
-use std::ffi::{CStr, CString, NulError, c_int};
+use std::ffi::{CStr, CString, NulError, c_int, c_void};
 
 use crate::gl;
 use crate::glfw::GLFWError;
+use crate::glfw::input::action::Action;
+use crate::glfw::input::keycode::Keycode;
+use crate::glfw::input::modifier::Modifier;
 pub struct Window {
     handle: *mut gl::GLFWwindow,
     _title: CString,
 }
+
+type KeyCallback = dyn FnMut(Keycode, Action, Modifier);
 
 impl Window {
     pub fn try_new<S>(width: u32, height: u32, title: S) -> Result<Self, NulError>
@@ -57,6 +62,19 @@ impl Window {
             width as f32 / height as f32
         }
     }
+
+    pub fn set_key_callback<F>(&mut self, callback: F)
+    where
+        F: FnMut(Keycode, Action, Modifier) + 'static,
+    {
+        let closure: Box<KeyCallback> = Box::new(callback);
+        let raw = Box::into_raw(Box::new(closure));
+
+        unsafe {
+            gl::glfwSetWindowUserPointer(self.handle, raw as *mut c_void);
+            gl::glfwSetKeyCallback(self.handle, Some(key_callback_trampoline));
+        }
+    }
 }
 
 impl Drop for Window {
@@ -84,5 +102,26 @@ fn create_window(
         );
         gl::glfwMakeContextCurrent(window);
         window
+    }
+}
+
+// DO NOT PANIC HERE EVER
+extern "C" fn key_callback_trampoline(
+    window: *mut gl::GLFWwindow,
+    key: c_int,
+    _scancode: c_int,
+    action: c_int,
+    mods: c_int,
+) {
+    let keycode = Keycode::from(key as u32);
+    let action = Action::from(action as u32);
+    let modifier = Modifier::from(mods as u32);
+
+    unsafe {
+        let user_ptr = gl::glfwGetWindowUserPointer(window);
+        if !user_ptr.is_null() {
+            let closure: &mut Box<KeyCallback> = &mut *(user_ptr as *mut Box<KeyCallback>);
+            closure(keycode, action, modifier);
+        }
     }
 }

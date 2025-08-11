@@ -11,7 +11,6 @@ use open_gl::glfw;
 use open_gl::glfw::window::Window;
 use open_gl::math::mat4::Mat4;
 use open_gl::math::vec3::{self, Vec3};
-
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
@@ -20,8 +19,10 @@ fn main() {
     glfw::window_hint(gl::GLFW_OPENGL_PROFILE, gl::GLFW_OPENGL_CORE_PROFILE);
     glfw::window_hint(gl::GLFW_OPENGL_FORWARD_COMPAT, gl::GLFW_TRUE);
 
-    let window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
-
+    let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
+    window.set_key_callback(|key, action, mods| {
+        println!("Key: {:?}, Action: {:?}, Mods: {:?}", key, action, mods);
+    });
     let vao = VertexArrayObject::gen_vertex_arrays();
     let vbo = VertexBufferObject::gen_buffers();
     let cbo = VertexBufferObject::gen_buffers();
