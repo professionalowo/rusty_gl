@@ -156,9 +156,7 @@ fn main() {
             Some(event) if event.is_press() && event.keycode == Keycode::Escape => {
                 window.set_should_close(true);
             }
-            Some(event) if event.is_press() => {
-                println!("Last key event: {:?}", event);
-            }
+            Some(event) => println!("{:?}", event),
             _ => {}
         }
 
