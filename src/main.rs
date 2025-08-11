@@ -20,9 +20,6 @@ fn main() {
     glfw::window_hint(gl::GLFW_OPENGL_FORWARD_COMPAT, gl::GLFW_TRUE);
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
-    window.set_key_callback(|key, action, mods| {
-        println!("Key: {:?}, Action: {:?}, Mods: {:?}", key, action, mods);
-    });
     let vao = VertexArrayObject::gen_vertex_arrays();
     let vbo = VertexBufferObject::gen_buffers();
     let cbo = VertexBufferObject::gen_buffers();
@@ -127,6 +124,8 @@ fn main() {
         .expect("Failed to get uniform location for projection");
 
     gl::enable(gl::GL_DEPTH_TEST);
+
+    window.set_key_callback(|event| println!("{:?}", event));
 
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
