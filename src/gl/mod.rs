@@ -40,3 +40,7 @@ pub fn clear_color(red: f32, green: f32, blue: f32, alpha: f32) {
 pub fn clear(mask: u32) {
     unsafe { glClear(mask) };
 }
+
+pub fn enable(cap: GLenum) {
+    unsafe { glEnable(cap) };
+}

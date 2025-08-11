@@ -30,21 +30,30 @@ fn main() {
     let cbo = VertexBufferObject::gen_buffers();
     let ibo = VertexBufferObject::gen_buffers();
 
-    const VERTICES: [Vec3<f32>; 4] = [
-        Vec3::new(-0.5, -0.5, 0.0),   // bottom-left
-        Vec3::new(0.5, -0.5, 0.0),    // bottom-right
-        Vec3::new(0.0, 0.5, 0.0),     // top-center
-        Vec3::new(-0.25, -0.25, 0.5), // back-center
+    const VERTICES: [Vec3<f32>; 5] = [
+        Vec3::new(-0.5, -0.5, 0.5),  // 0
+        Vec3::new(0.5, -0.5, 0.5),   // 1
+        Vec3::new(0.5, -0.5, -0.5),  // 2
+        Vec3::new(-0.5, -0.5, -0.5), // 3
+        Vec3::new(0.0, 0.5, 0.0),    // 4
     ];
 
-    const COLORS: [Vec3<f32>; 4] = [
+    const COLORS: [Vec3<f32>; 5] = [
         Vec3::new(1.0, 0.0, 0.0), // red
         Vec3::new(0.0, 1.0, 0.0), // green
         Vec3::new(0.0, 0.0, 1.0), // blue
         Vec3::new(1.0, 1.0, 1.0), // white
+        Vec3::new(1.0, 1.0, 0.0), // yellow
     ];
 
-    const INDICES: [u8; 12] = [0, 1, 2, 0, 1, 3, 1, 2, 3, 0, 2, 3];
+    const INDICES: [u8; 18] = [
+        0, 1, 2, //
+        0, 2, 3, //
+        2, 3, 4, //
+        3, 0, 4, //
+        1, 2, 4, //
+        0, 1, 4,
+    ];
 
     VertexArrayObject::bind_vertex_array(vao);
 
@@ -101,7 +110,7 @@ fn main() {
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
     let mut camera = Camera::new(
-        Vec3::new(0.0, 0.0, 1.0),
+        Vec3::new(0.0, 0.0, 2.0),
         Vec3::new(0.0, 0.0, -1.0),
         Vec3::new(0.0, 1.0, 0.0),
         70.0,
@@ -120,9 +129,11 @@ fn main() {
     let projection_loc = UniformLocation::try_for_program(&program, "projection")
         .expect("Failed to get uniform location for projection");
 
+    gl::enable(gl::GL_DEPTH_TEST);
+
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
-        gl::clear(gl::GL_COLOR_BUFFER_BIT);
+        gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
         program.bind();
 
@@ -133,15 +144,24 @@ fn main() {
         gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
         program.unbind();
 
-        camera.transform_position(|pos| {
-            *pos = pos.rotate(0.001, vec3::f32::RotationAxis::Y);
-        });
-        camera.look_at(&CENTER);
+        rotate_camera(&mut camera, &CENTER, 0.004, vec3::f32::RotationAxis::Y);
 
         window.swap_buffers();
         window.poll_events();
     }
     glfw::terminate();
+}
+
+fn rotate_camera(
+    camera: &mut Camera,
+    center: &Vec3<f32>,
+    angle: f32,
+    axis: vec3::f32::RotationAxis,
+) {
+    camera.transform_position(|pos| {
+        *pos = pos.rotate(angle, axis);
+    });
+    camera.look_at(center);
 }
 
 fn get_shader_file_path(filename: &str) -> PathBuf {

@@ -1,5 +1,6 @@
 use super::Vec3;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RotationAxis {
     X,
     Y,
