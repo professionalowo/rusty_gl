@@ -128,6 +128,8 @@ fn main() {
 
     gl::enable(gl::GL_DEPTH_TEST);
 
+    let angle = PI;
+
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
         gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
@@ -141,8 +143,6 @@ fn main() {
         gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
         program.unbind();
 
-        rotate_camera(&mut camera, &CENTER, PI / 4.0, vec3::f32::RotationAxis::Y);
-
         window.swap_buffers();
         window.poll_events();
 
@@ -150,7 +150,15 @@ fn main() {
             Some(event) if event.is_press() && event.keycode == Keycode::Escape => {
                 window.set_should_close(true);
             }
-            Some(event) => println!("{:?}", event),
+            Some(event) => match event.keycode {
+                Keycode::A => {
+                    rotate_camera(&mut camera, &CENTER, angle, vec3::f32::RotationAxis::Y)
+                }
+                Keycode::D => {
+                    rotate_camera(&mut camera, &CENTER, -angle, vec3::f32::RotationAxis::Y)
+                }
+                _ => println!("{:?}", event),
+            },
             _ => {}
         }
     }
