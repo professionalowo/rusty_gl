@@ -16,8 +16,9 @@ impl Vec3<f32> {
     }
 
     pub fn rotate(&self, angle: f32, axis: RotationAxis) -> Self {
-        let c = angle.cos();
-        let s = angle.sin();
+        let theta = angle.to_radians();
+        let c = theta.cos();
+        let s = theta.sin();
         match axis {
             RotationAxis::X => Self::new(self.x, self.y * c - self.z * s, self.y * s + self.z * c),
             RotationAxis::Y => Self::new(self.x * c + self.z * s, self.y, -self.x * s + self.z * c),

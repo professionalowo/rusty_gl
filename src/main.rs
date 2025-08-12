@@ -1,3 +1,4 @@
+use std::f32::consts::PI;
 use std::path::PathBuf;
 
 use open_gl::framework::camera::Camera;
@@ -140,7 +141,7 @@ fn main() {
         gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
         program.unbind();
 
-        rotate_camera(&mut camera, &CENTER, 0.004, vec3::f32::RotationAxis::Y);
+        rotate_camera(&mut camera, &CENTER, PI / 4.0, vec3::f32::RotationAxis::Y);
 
         window.swap_buffers();
         window.poll_events();
