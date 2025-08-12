@@ -151,8 +151,14 @@ fn main() {
                 window.set_should_close(true);
             }
             Some(event) => match event.keycode {
+                Keycode::W => {
+                    rotate_camera(&mut camera, &CENTER, angle, vec3::f32::RotationAxis::X)
+                }
                 Keycode::A => {
                     rotate_camera(&mut camera, &CENTER, angle, vec3::f32::RotationAxis::Y)
+                }
+                Keycode::S => {
+                    rotate_camera(&mut camera, &CENTER, -angle, vec3::f32::RotationAxis::X)
                 }
                 Keycode::D => {
                     rotate_camera(&mut camera, &CENTER, -angle, vec3::f32::RotationAxis::Y)
@@ -171,8 +177,10 @@ fn rotate_camera(
     angle: f32,
     axis: vec3::f32::RotationAxis,
 ) {
-    camera.transform_position(|pos| {
-        *pos = pos.rotate(angle, axis);
+    let offset = *camera.position() - *center;
+    let rotated_offset = offset.rotate(angle, axis);
+    camera.transform_position(|pos, _| {
+        *pos = *center + rotated_offset;
     });
     camera.look_at(center);
 }

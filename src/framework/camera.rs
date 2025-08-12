@@ -58,8 +58,8 @@ impl Camera {
         self.dir = (*target - self.position).normalize();
     }
 
-    pub fn transform_position(&mut self, mut fun: impl FnMut(&mut Vec3<f32>)) {
-        fun(&mut self.position);
+    pub fn transform_position(&mut self, mut fun: impl FnMut(&mut Vec3<f32>, &Vec3<f32>)) {
+        fun(&mut self.position, &self.dir);
     }
 }
 
