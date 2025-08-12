@@ -37,12 +37,16 @@ impl Vec3<f32> {
     }
 
     pub fn normalize(&self) -> Self {
-        let length = (self.x * self.x + self.y * self.y + self.z * self.z).sqrt();
+        let length = self.length();
         if length == 0.0 {
             Self::zero()
         } else {
             *self / length
         }
+    }
+
+    pub fn length(&self) -> f32 {
+        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 
     pub const fn dot(&self, other: &Self) -> f32 {
