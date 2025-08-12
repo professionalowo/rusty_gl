@@ -5,31 +5,15 @@ use crate::math::Scalar;
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct Vec4<T: Copy> {
-    x: T,
-    y: T,
-    z: T,
-    w: T,
+    pub x: T,
+    pub y: T,
+    pub z: T,
+    pub w: T,
 }
 
 impl<T: Copy> Vec4<T> {
     pub const fn new(x: T, y: T, z: T, w: T) -> Self {
         Self { x, y, z, w }
-    }
-
-    pub const fn x(&self) -> T {
-        self.x
-    }
-
-    pub const fn y(&self) -> T {
-        self.y
-    }
-
-    pub const fn z(&self) -> T {
-        self.z
-    }
-
-    pub const fn w(&self) -> T {
-        self.w
     }
 
     pub const fn data(&self) -> [T; 4] {

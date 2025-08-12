@@ -21,22 +21,22 @@ impl<T: Copy> Mat4<T> {
 
     pub const fn cols(&self) -> [T; RANK * RANK] {
         [
-            self.cols[0].x(),
-            self.cols[0].y(),
-            self.cols[0].z(),
-            self.cols[0].w(),
-            self.cols[1].x(),
-            self.cols[1].y(),
-            self.cols[1].z(),
-            self.cols[1].w(),
-            self.cols[2].x(),
-            self.cols[2].y(),
-            self.cols[2].z(),
-            self.cols[2].w(),
-            self.cols[3].x(),
-            self.cols[3].y(),
-            self.cols[3].z(),
-            self.cols[3].w(),
+            self.cols[0].x,
+            self.cols[0].y,
+            self.cols[0].z,
+            self.cols[0].w,
+            self.cols[1].x,
+            self.cols[1].y,
+            self.cols[1].z,
+            self.cols[1].w,
+            self.cols[2].x,
+            self.cols[2].y,
+            self.cols[2].z,
+            self.cols[2].w,
+            self.cols[3].x,
+            self.cols[3].y,
+            self.cols[3].z,
+            self.cols[3].w,
         ]
     }
 }

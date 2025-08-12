@@ -7,26 +7,14 @@ use crate::math::Scalar;
 #[repr(C)]
 #[derive(Clone, Copy, Debug)]
 pub struct Vec3<T: Copy> {
-    x: T,
-    y: T,
-    z: T,
+    pub x: T,
+    pub y: T,
+    pub z: T,
 }
 
 impl<T: Copy> Vec3<T> {
     pub const fn new(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
-    }
-
-    pub const fn x(&self) -> T {
-        self.x
-    }
-
-    pub const fn y(&self) -> T {
-        self.y
-    }
-
-    pub const fn z(&self) -> T {
-        self.z
     }
 
     pub const fn data(&self) -> [T; 3] {

@@ -46,6 +46,10 @@ impl Camera {
         &self.position
     }
 
+    pub const fn dir(&self) -> &Vec3<f32> {
+        &self.dir
+    }
+
     pub fn translate(&mut self, translation: &Vec3<f32>) {
         self.position += *translation;
     }
@@ -65,9 +69,9 @@ fn build_view_matrix(eye: &Vec3<f32>, center: &Vec3<f32>, up: &Vec3<f32>) -> Mat
     let u = s.cross(&f);
 
     Mat4::new(
-        Vec4::new(s.x(), u.x(), -f.x(), 0.0),
-        Vec4::new(s.y(), u.y(), -f.y(), 0.0),
-        Vec4::new(s.z(), u.z(), -f.z(), 0.0),
+        Vec4::new(s.x, u.x, -f.x, 0.0),
+        Vec4::new(s.y, u.y, -f.y, 0.0),
+        Vec4::new(s.z, u.z, -f.z, 0.0),
         Vec4::new(-s.dot(&eye), -u.dot(&eye), f.dot(&eye), 1.0),
     )
 }
