@@ -1,3 +1,5 @@
+use std::ops::Div;
+
 use super::Vec3;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -39,11 +41,23 @@ impl Vec3<f32> {
         if length == 0.0 {
             Self::zero()
         } else {
-            Self::new(self.x / length, self.y / length, self.z / length)
+            *self / length
         }
     }
 
     pub const fn dot(&self, other: &Self) -> f32 {
         self.x * other.x + self.y * other.y + self.z * other.z
+    }
+}
+
+impl Div<f32> for Vec3<f32> {
+    type Output = Self;
+
+    fn div(self, scalar: f32) -> Self {
+        if scalar == 0.0 {
+            self
+        } else {
+            Self::new(self.x / scalar, self.y / scalar, self.z / scalar)
+        }
     }
 }
