@@ -89,6 +89,12 @@ impl Window {
 impl Drop for Window {
     fn drop(&mut self) {
         unsafe {
+            let user_ptr = gl::glfwGetWindowUserPointer(self.handle);
+            if !user_ptr.is_null() {
+                let closure: Box<KeyCallback> = Box::from_raw(user_ptr as *mut Box<KeyCallback>);
+                // Drop the closure to unregister the callback
+                drop(closure);
+            }
             gl::glfwDestroyWindow(self.handle);
         }
     }
