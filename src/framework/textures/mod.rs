@@ -1,12 +1,12 @@
 use crate::gl::{self, GLenum, GLint, GLsizei, GLuint};
 
 pub struct Texture2D {
-    pub id: GLuint,
-    pub width: u32,
-    pub height: u32,
-    pub internal_format: GLint,
-    pub format: GLenum,
-    pub type_: GLenum,
+    id: GLuint,
+    width: u32,
+    height: u32,
+    internal_format: GLint,
+    format: GLenum,
+    type_: GLenum,
 }
 
 impl Texture2D {
