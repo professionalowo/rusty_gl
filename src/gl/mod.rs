@@ -2,6 +2,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(dead_code)]
+
 include!(concat!(env!("OUT_DIR"), "/gl_bindings.rs"));
 
 pub mod program;
@@ -43,4 +44,34 @@ pub fn clear(mask: u32) {
 
 pub fn enable(cap: GLenum) {
     unsafe { glEnable(cap) };
+}
+
+pub fn get_error() -> Option<GLError> {
+    let err = unsafe { glGetError() };
+    if err == GL_NO_ERROR {
+        return None;
+    }
+    Some(GLError::from(err))
+}
+
+pub enum GLError {
+    NoError,
+    InvalidEnum,
+    InvalidValue,
+    InvalidOperation,
+    OutOfMemory,
+    Other(u32),
+}
+
+impl From<u32> for GLError {
+    fn from(code: u32) -> Self {
+        match code {
+            GL_NO_ERROR => GLError::NoError,
+            GL_INVALID_ENUM => GLError::InvalidEnum,
+            GL_INVALID_VALUE => GLError::InvalidValue,
+            GL_INVALID_OPERATION => GLError::InvalidOperation,
+            GL_OUT_OF_MEMORY => GLError::OutOfMemory,
+            _ => GLError::Other(code),
+        }
+    }
 }
