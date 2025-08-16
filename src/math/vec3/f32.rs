@@ -1,5 +1,7 @@
 use std::ops::Div;
 
+use crate::math::Scalar;
+
 use super::Vec3;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -17,15 +19,18 @@ impl Vec3<f32> {
         Self::new(1.0, 1.0, 1.0)
     }
 
-    pub fn rotate(&self, angle: f32, axis: RotationAxis) -> Self {
+    pub fn rotate(&self, angle: f32, axis: Vec3<f32>) -> Self {
         let theta = angle.to_radians();
         let c = theta.cos();
         let s = theta.sin();
-        match axis {
-            RotationAxis::X => Self::new(self.x, self.y * c - self.z * s, self.y * s + self.z * c),
-            RotationAxis::Y => Self::new(self.x * c + self.z * s, self.y, -self.x * s + self.z * c),
-            RotationAxis::Z => Self::new(self.x * c - self.y * s, self.x * s + self.y * c, self.z),
-        }
+
+        let axis = axis.normalize();
+        let temp = axis * Scalar(1.0 - c);
+        Self::new(
+            self.x * c + temp.x * self.dot(&axis),
+            self.y * c + temp.y * self.dot(&axis),
+            self.z * c + temp.z * self.dot(&axis),
+        ) + Self::cross(&axis, &self) * Scalar(s)
     }
 
     pub const fn cross(&self, other: &Self) -> Self {
