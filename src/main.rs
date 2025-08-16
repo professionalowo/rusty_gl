@@ -2,7 +2,6 @@ use std::f32::consts::PI;
 use std::path::PathBuf;
 
 use open_gl::framework::camera::Camera;
-use open_gl::framework::textures::Texture2D;
 use open_gl::gl;
 use open_gl::gl::program::Program;
 use open_gl::gl::shader::Shader;
@@ -178,11 +177,13 @@ fn main() {
     glfw::terminate();
 }
 
+#[allow(dead_code)]
 fn get_shader_file_path(filename: &str) -> PathBuf {
     let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
     PathBuf::from(manifest_dir).join("shaders").join(filename)
 }
 
+#[allow(dead_code)]
 fn get_texture_file_path(filename: &str) -> PathBuf {
     let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
     PathBuf::from(manifest_dir).join("textures").join(filename)
