@@ -1,4 +1,3 @@
-use std::f32::consts::PI;
 use std::path::PathBuf;
 
 use open_gl::framework::camera::Camera;
@@ -13,7 +12,7 @@ use open_gl::glfw::input::keycode::Keycode;
 use open_gl::glfw::input::modifier::Modifier;
 use open_gl::glfw::window::Window;
 use open_gl::math::mat4::Mat4;
-use open_gl::math::vec3::{self, Vec3};
+use open_gl::math::vec3::Vec3;
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
@@ -116,8 +115,6 @@ fn main() {
         Vec3::new(0.0, 1.0, 0.0),
     );
 
-    const CENTER: Vec3<f32> = Vec3::new(0.0, 0.0, 0.0);
-
     let model_loc = UniformLocation::try_for_program(&program, "model")
         .expect("Failed to get uniform location for model");
 
@@ -128,8 +125,6 @@ fn main() {
         .expect("Failed to get uniform location for projection");
 
     gl::enable(gl::GL_DEPTH_TEST);
-
-    let angle = PI;
 
     while let Ok(false) = window.should_close() {
         gl::clear_color(0.0, 0.0, 0.0, 1.0);
