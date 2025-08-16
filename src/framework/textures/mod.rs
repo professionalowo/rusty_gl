@@ -18,6 +18,7 @@ pub struct Texture2D {
 pub enum TextureError {
     LoadFailed,
     UnsupportedFormat,
+    GLError(gl::GLError),
 }
 
 impl Texture2D {
@@ -50,14 +51,20 @@ impl Texture2D {
             format,
             type_,
         };
-        texture.upload(&raw, mipmap);
+        texture
+            .upload(&raw, mipmap)
+            .map_err(TextureError::GLError)?;
         Ok(texture)
     }
 
-    fn upload(&mut self, data: &[u8], mipmap: bool) {
+    fn upload(&mut self, data: &[u8], mipmap: bool) -> Result<(), gl::GLError> {
         upload::gen_textures(&mut self.id);
+        gl::get_error()?;
+
         upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
+        gl::get_error()?;
         upload::pixel_storei(gl::GL_UNPACK_ALIGNMENT, 1);
+        gl::get_error()?;
         upload::tex_parameteri(
             gl::GL_TEXTURE_2D,
             gl::GL_TEXTURE_WRAP_S,
@@ -93,6 +100,7 @@ impl Texture2D {
                 gl::GL_LINEAR as GLint
             },
         );
+        gl::get_error()?;
 
         upload::tex_image_2d(
             gl::GL_TEXTURE_2D,
@@ -105,11 +113,15 @@ impl Texture2D {
             self.type_,
             data.as_ptr() as *const std::ffi::c_void,
         );
+        gl::get_error()?;
 
         if mipmap {
             upload::generate_mipmap(gl::GL_TEXTURE_2D);
+            gl::get_error()?;
         }
         upload::bind_texture(gl::GL_TEXTURE_2D, 0);
+        gl::get_error()?;
+        Ok(())
     }
 
     pub fn bind(&self, unit: u32) {
