@@ -50,6 +50,10 @@ impl Camera {
         &self.dir
     }
 
+	pub const fn up(&self) -> &Vec3<f32> {
+		&self.up
+	}
+
     pub fn translate(&mut self, translation: &Vec3<f32>) {
         self.position += *translation;
     }

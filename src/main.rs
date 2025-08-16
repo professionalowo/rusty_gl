@@ -160,9 +160,9 @@ fn main() {
                     keycode,
                     ..
                 } => match keycode {
-                    Keycode::W => camera.rotate(TURN_ANGLE, &X_AXIS),
+                    Keycode::W => camera.rotate(TURN_ANGLE, &get_rotation_axis(&camera)),
                     Keycode::A => camera.rotate(TURN_ANGLE, &Y_AXIS),
-                    Keycode::S => camera.rotate(-TURN_ANGLE, &X_AXIS),
+                    Keycode::S => camera.rotate(-TURN_ANGLE, &get_rotation_axis(&camera)),
                     Keycode::D => camera.rotate(-TURN_ANGLE, &Y_AXIS),
                     _ => (),
                 },
@@ -182,4 +182,8 @@ fn main() {
 fn get_shader_file_path(filename: &str) -> PathBuf {
     let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
     PathBuf::from(manifest_dir).join("shaders").join(filename)
+}
+
+fn get_rotation_axis(cam: &Camera) -> Vec3<f32> {
+    cam.up().cross(cam.dir()).normalize()
 }
