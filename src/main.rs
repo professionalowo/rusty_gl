@@ -1,3 +1,4 @@
+use std::f32::consts::PI;
 use std::path::PathBuf;
 
 use open_gl::framework::camera::Camera;
@@ -143,6 +144,11 @@ fn main() {
         window.swap_buffers();
         window.poll_events();
 
+        const X_AXIS: Vec3<f32> = Vec3::new(1.0, 0.0, 0.0);
+        const Y_AXIS: Vec3<f32> = Vec3::new(0.0, 1.0, 0.0);
+
+        const TURN_ANGLE: f32 = PI / 2.0;
+
         if let Some(event) = window.pump_event() {
             match event {
                 KeyEvent {
@@ -154,10 +160,10 @@ fn main() {
                     keycode,
                     ..
                 } => match keycode {
-                    Keycode::W => camera.rotate(1.0, &Vec3::new(1.0, 0.0, 0.0)),
-                    Keycode::A => camera.rotate(1.0, &Vec3::new(0.0, 1.0, 0.0)),
-                    Keycode::S => camera.rotate(-1.0, &Vec3::new(1.0, 0.0, 0.0)),
-                    Keycode::D => camera.rotate(-1.0, &Vec3::new(0.0, 1.0, 0.0)),
+                    Keycode::W => camera.rotate(TURN_ANGLE, &X_AXIS),
+                    Keycode::A => camera.rotate(TURN_ANGLE, &Y_AXIS),
+                    Keycode::S => camera.rotate(-TURN_ANGLE, &X_AXIS),
+                    Keycode::D => camera.rotate(-TURN_ANGLE, &Y_AXIS),
                     _ => (),
                 },
                 KeyEvent { keycode, .. } => match keycode {
