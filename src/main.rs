@@ -144,9 +144,6 @@ fn main() {
         window.swap_buffers();
         window.poll_events();
 
-        const X_AXIS: Vec3<f32> = Vec3::new(1.0, 0.0, 0.0);
-        const Y_AXIS: Vec3<f32> = Vec3::new(0.0, 1.0, 0.0);
-
         const TURN_ANGLE: f32 = PI / 2.0;
 
         if let Some(event) = window.pump_event() {
@@ -161,9 +158,9 @@ fn main() {
                     ..
                 } => match keycode {
                     Keycode::W => camera.rotate(TURN_ANGLE, &get_rotation_axis(&camera)),
-                    Keycode::A => camera.rotate(TURN_ANGLE, &Y_AXIS),
+                    Keycode::A => camera.rotate(TURN_ANGLE, &camera.up().clone()),
                     Keycode::S => camera.rotate(-TURN_ANGLE, &get_rotation_axis(&camera)),
-                    Keycode::D => camera.rotate(-TURN_ANGLE, &Y_AXIS),
+                    Keycode::D => camera.rotate(-TURN_ANGLE, &camera.up().clone()),
                     _ => (),
                 },
                 KeyEvent { keycode, .. } => match keycode {
