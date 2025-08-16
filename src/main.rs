@@ -181,3 +181,8 @@ fn get_shader_file_path(filename: &str) -> PathBuf {
     let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
     PathBuf::from(manifest_dir).join("shaders").join(filename)
 }
+
+fn get_texture_file_path(filename: &str) -> PathBuf {
+    let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
+    PathBuf::from(manifest_dir).join("textures").join(filename)
+}
