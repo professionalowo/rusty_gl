@@ -8,6 +8,7 @@ use open_gl::gl::uniform::UniformLocation;
 use open_gl::gl::vao::VertexArrayObject;
 use open_gl::gl::vbo::{Location, VertexBufferObject};
 use open_gl::glfw;
+use open_gl::glfw::input::KeyEvent;
 use open_gl::glfw::input::keycode::Keycode;
 use open_gl::glfw::input::modifier::Modifier;
 use open_gl::glfw::window::Window;
@@ -142,41 +143,47 @@ fn main() {
         window.swap_buffers();
         window.poll_events();
 
-        match window.pump_event() {
-            Some(event) if event.is_press() && event.keycode == Keycode::Escape => {
-                window.set_should_close(true);
+        if let Some(event) = window.pump_event() {
+            match event {
+                KeyEvent {
+                    keycode: Keycode::Escape,
+                    ..
+                } => window.set_should_close(true),
+                KeyEvent {
+                    modifier: Modifier::Shift,
+                    keycode,
+                    ..
+                } => match keycode {
+                    Keycode::W => {
+                        camera.rotate(1.0, &Vec3::new(1.0, 0.0, 0.0));
+                    }
+                    Keycode::A => {
+                        camera.rotate(1.0, &Vec3::new(0.0, 1.0, 0.0));
+                    }
+                    Keycode::S => {
+                        camera.rotate(-1.0, &Vec3::new(1.0, 0.0, 0.0));
+                    }
+                    Keycode::D => {
+                        camera.rotate(-1.0, &Vec3::new(0.0, 1.0, 0.0));
+                    }
+                    _ => (),
+                },
+                KeyEvent { keycode, .. } => match keycode {
+                    Keycode::W => {
+                        camera.move_forward(0.1);
+                    }
+                    Keycode::A => {
+                        camera.move_left(0.1);
+                    }
+                    Keycode::S => {
+                        camera.move_backward(0.1);
+                    }
+                    Keycode::D => {
+                        camera.move_right(0.1);
+                    }
+                    _ => (),
+                },
             }
-            Some(event) if event.modifier == Modifier::Shift => match event.keycode {
-                Keycode::W => {
-                    camera.rotate(1.0, &Vec3::new(1.0, 0.0, 0.0));
-                }
-                Keycode::A => {
-                    camera.rotate(1.0, &Vec3::new(0.0, 1.0, 0.0));
-                }
-                Keycode::S => {
-                    camera.rotate(-1.0, &Vec3::new(1.0, 0.0, 0.0));
-                }
-                Keycode::D => {
-                    camera.rotate(-1.0, &Vec3::new(0.0, 1.0, 0.0));
-                }
-                _ => (),
-            },
-            Some(event) => match event.keycode {
-                Keycode::W => {
-                    camera.move_forward(0.1);
-                }
-                Keycode::A => {
-                    camera.move_left(0.1);
-                }
-                Keycode::S => {
-                    camera.move_backward(0.1);
-                }
-                Keycode::D => {
-                    camera.move_right(0.1);
-                }
-                _ => (),
-            },
-            _ => (),
         }
     }
     glfw::terminate();
