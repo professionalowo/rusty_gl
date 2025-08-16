@@ -46,7 +46,7 @@ pub fn enable(cap: GLenum) {
     unsafe { glEnable(cap) };
 }
 
-pub fn get_error() -> Result<(),GLError> {
+pub fn get_error() -> Result<(), GLError> {
     let err = unsafe { glGetError() };
     if err == GL_NO_ERROR {
         return Ok(());
@@ -54,6 +54,7 @@ pub fn get_error() -> Result<(),GLError> {
     Err(GLError::from(err))
 }
 
+#[derive(Debug)]
 pub enum GLError {
     NoError,
     InvalidEnum,

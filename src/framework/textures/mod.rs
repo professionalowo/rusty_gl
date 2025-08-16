@@ -15,6 +15,7 @@ pub struct Texture2D {
     type_: GLenum,
 }
 
+#[derive(Debug)]
 pub enum TextureError {
     LoadFailed,
     UnsupportedFormat,

@@ -1,7 +1,10 @@
 use std::{ffi::CString, fmt::Debug};
 
 use crate::{
-    gl::{glGetUniformLocation, glUniformMatrix3fv, glUniformMatrix4fv, program::Program},
+    framework::textures::Texture2D,
+    gl::{
+        glGetUniformLocation, glUniform1i, glUniformMatrix3fv, glUniformMatrix4fv, program::Program,
+    },
     math::{mat3::Mat3, mat4::Mat4},
 };
 
@@ -36,6 +39,13 @@ impl UniformLocation {
         let value = cols.as_ptr() as *const f32;
         unsafe {
             glUniformMatrix4fv(self.0, 1, u8::from(transpose), value);
+        }
+    }
+
+    pub fn tex2d(&self, texture: &Texture2D, unit: u32) {
+        texture.bind(unit);
+        unsafe {
+            glUniform1i(self.0, unit as i32);
         }
     }
 }
