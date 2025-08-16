@@ -71,7 +71,7 @@ impl Camera {
     }
 
     pub fn move_backward(&mut self, distance: f32) {
-        self.position -= self.dir * Scalar(distance);
+        self.move_forward(-distance);
     }
 
     pub fn move_left(&mut self, distance: f32) {
@@ -80,8 +80,7 @@ impl Camera {
     }
 
     pub fn move_right(&mut self, distance: f32) {
-        let right = self.dir.cross(&self.up).normalize();
-        self.position += right * Scalar(distance);
+        self.move_left(-distance);
     }
 
     pub fn rotate(&mut self, angle: f32, axis: &Vec3<f32>) {
