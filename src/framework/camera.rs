@@ -50,9 +50,9 @@ impl Camera {
         &self.dir
     }
 
-	pub const fn up(&self) -> &Vec3<f32> {
-		&self.up
-	}
+    pub const fn up(&self) -> &Vec3<f32> {
+        &self.up
+    }
 
     pub fn translate(&mut self, translation: &Vec3<f32>) {
         self.position += *translation;
@@ -87,6 +87,10 @@ impl Camera {
     pub fn rotate(&mut self, angle: f32, axis: &Vec3<f32>) {
         self.dir = self.dir.rotate(angle, axis);
         self.up = self.up.rotate(angle, axis);
+    }
+
+    pub fn horizontal_rotation_axis(&self) -> Vec3<f32> {
+        self.up().cross(self.dir()).normalize()
     }
 }
 
