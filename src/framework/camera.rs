@@ -86,7 +86,6 @@ impl Camera {
 
     pub fn rotate(&mut self, angle: f32, axis: &Vec3<f32>) {
         self.dir = self.dir.rotate(angle, axis);
-        self.up = self.up.rotate(angle, axis);
     }
 
     pub fn horizontal_rotation_axis(&self) -> Vec3<f32> {
