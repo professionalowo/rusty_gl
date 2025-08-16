@@ -13,8 +13,6 @@ pub struct Texture2D {
     internal_format: GLint,
     format: GLenum,
     type_: GLenum,
-    mipmap: bool,
-    data: Box<[u8]>,
 }
 
 pub enum TextureError {
@@ -44,22 +42,74 @@ impl Texture2D {
             ),
             _ => return Err(TextureError::UnsupportedFormat),
         };
-        Ok(Self {
+        let mut texture = Self {
             id: 0,
             width,
             height,
             internal_format,
             format,
             type_,
-            mipmap,
-            data: raw.into_boxed_slice(),
-        })
+        };
+        texture.upload(&raw, mipmap);
+        Ok(texture)
     }
 
-    pub fn upload(&mut self) {
+    fn upload(&mut self, data: &[u8], mipmap: bool) {
         upload::gen_textures(&mut self.id);
         upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
         upload::pixel_storei(gl::GL_UNPACK_ALIGNMENT, 1);
+        upload::tex_parameteri(
+            gl::GL_TEXTURE_2D,
+            gl::GL_TEXTURE_WRAP_S,
+            gl::GL_REPEAT as GLint,
+        );
+        upload::tex_parameteri(
+            gl::GL_TEXTURE_2D,
+            gl::GL_TEXTURE_WRAP_R,
+            gl::GL_REPEAT as GLint,
+        );
+        let depth = self.internal_format == gl::GL_DEPTH_COMPONENT as i32
+            || self.internal_format == gl::GL_DEPTH_COMPONENT16 as i32
+            || self.internal_format == gl::GL_DEPTH_COMPONENT24 as i32
+            || self.internal_format == gl::GL_DEPTH_COMPONENT32 as i32;
+        upload::tex_parameteri(
+            gl::GL_TEXTURE_2D,
+            gl::GL_TEXTURE_MAG_FILTER,
+            if depth {
+                gl::GL_NEAREST as GLint
+            } else {
+                gl::GL_LINEAR as GLint
+            },
+        );
+
+        upload::tex_parameteri(
+            gl::GL_TEXTURE_2D,
+            gl::GL_TEXTURE_MIN_FILTER,
+            if mipmap {
+                gl::GL_LINEAR_MIPMAP_LINEAR as GLint
+            } else if depth {
+                gl::GL_NEAREST as GLint
+            } else {
+                gl::GL_LINEAR as GLint
+            },
+        );
+
+        upload::tex_image_2d(
+            gl::GL_TEXTURE_2D,
+            0,
+            self.internal_format,
+            self.width as GLsizei,
+            self.height as GLsizei,
+            0,
+            self.format,
+            self.type_,
+            data.as_ptr() as *const std::ffi::c_void,
+        );
+
+        if mipmap {
+            upload::generate_mipmap(gl::GL_TEXTURE_2D);
+        }
+        upload::bind_texture(gl::GL_TEXTURE_2D, 0);
     }
 
     pub fn bind(&self, unit: u32) {

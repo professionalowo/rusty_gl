@@ -18,9 +18,21 @@ pub(super) fn pixel_storei(pname: GLenum, param: GLint) {
     }
 }
 
+pub(super) fn tex_parameteri(target: GLenum, pname: GLenum, param: GLint) {
+    unsafe {
+        gl::glTexParameteri(target, pname, param);
+    }
+}
+
 pub(super) fn active_texture(unit: u32) {
     unsafe {
         gl::glActiveTexture(gl::GL_TEXTURE0 + unit);
+    }
+}
+
+pub(super) fn generate_mipmap(target: GLenum) {
+    unsafe {
+        gl::glGenerateMipmap(target);
     }
 }
 
