@@ -154,33 +154,17 @@ fn main() {
                     keycode,
                     ..
                 } => match keycode {
-                    Keycode::W => {
-                        camera.rotate(1.0, &Vec3::new(1.0, 0.0, 0.0));
-                    }
-                    Keycode::A => {
-                        camera.rotate(1.0, &Vec3::new(0.0, 1.0, 0.0));
-                    }
-                    Keycode::S => {
-                        camera.rotate(-1.0, &Vec3::new(1.0, 0.0, 0.0));
-                    }
-                    Keycode::D => {
-                        camera.rotate(-1.0, &Vec3::new(0.0, 1.0, 0.0));
-                    }
+                    Keycode::W => camera.rotate(1.0, &Vec3::new(1.0, 0.0, 0.0)),
+                    Keycode::A => camera.rotate(1.0, &Vec3::new(0.0, 1.0, 0.0)),
+                    Keycode::S => camera.rotate(-1.0, &Vec3::new(1.0, 0.0, 0.0)),
+                    Keycode::D => camera.rotate(-1.0, &Vec3::new(0.0, 1.0, 0.0)),
                     _ => (),
                 },
                 KeyEvent { keycode, .. } => match keycode {
-                    Keycode::W => {
-                        camera.move_forward(0.1);
-                    }
-                    Keycode::A => {
-                        camera.move_left(0.1);
-                    }
-                    Keycode::S => {
-                        camera.move_backward(0.1);
-                    }
-                    Keycode::D => {
-                        camera.move_right(0.1);
-                    }
+                    Keycode::W => camera.move_forward(0.1),
+                    Keycode::A => camera.move_left(0.1),
+                    Keycode::S => camera.move_backward(0.1),
+                    Keycode::D => camera.move_right(0.1),
                     _ => (),
                 },
             }
