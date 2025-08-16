@@ -87,6 +87,14 @@ impl Camera {
         self.dir = self.dir.rotate(angle, axis);
     }
 
+    pub fn rotate_horizontal(&mut self, angle: f32) {
+        self.dir = self.dir.rotate(angle, &self.horizontal_rotation_axis());
+    }
+
+    pub fn rotate_vertical(&mut self, angle: f32) {
+        self.dir = self.dir.rotate(angle, &self.up);
+    }
+
     pub fn horizontal_rotation_axis(&self) -> Vec3<f32> {
         self.up().cross(self.dir()).normalize()
     }

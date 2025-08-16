@@ -157,10 +157,10 @@ fn main() {
                     keycode,
                     ..
                 } => match keycode {
-                    Keycode::W => camera.rotate(TURN_ANGLE, &camera.horizontal_rotation_axis()),
-                    Keycode::A => camera.rotate(TURN_ANGLE, &camera.up().clone()),
-                    Keycode::S => camera.rotate(-TURN_ANGLE, &camera.horizontal_rotation_axis()),
-                    Keycode::D => camera.rotate(-TURN_ANGLE, &camera.up().clone()),
+                    Keycode::W => camera.rotate_horizontal(TURN_ANGLE),
+                    Keycode::A => camera.rotate_vertical(TURN_ANGLE),
+                    Keycode::S => camera.rotate_horizontal(-TURN_ANGLE),
+                    Keycode::D => camera.rotate_vertical(-TURN_ANGLE),
                     _ => (),
                 },
                 KeyEvent { keycode, .. } => match keycode {
