@@ -145,6 +145,7 @@ fn main() {
         window.poll_events();
 
         const TURN_ANGLE: f32 = PI / 2.0;
+        const MOVE_DISTANCE: f32 = 0.1;
 
         if let Some(event) = window.pump_event() {
             match event {
@@ -164,10 +165,10 @@ fn main() {
                     _ => (),
                 },
                 KeyEvent { keycode, .. } => match keycode {
-                    Keycode::W => camera.move_forward(0.1),
-                    Keycode::A => camera.move_left(0.1),
-                    Keycode::S => camera.move_backward(0.1),
-                    Keycode::D => camera.move_right(0.1),
+                    Keycode::W => camera.move_forward(MOVE_DISTANCE),
+                    Keycode::A => camera.move_left(MOVE_DISTANCE),
+                    Keycode::S => camera.move_backward(MOVE_DISTANCE),
+                    Keycode::D => camera.move_right(MOVE_DISTANCE),
                     _ => (),
                 },
             }
