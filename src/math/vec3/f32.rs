@@ -19,7 +19,7 @@ impl Vec3<f32> {
         Self::new(1.0, 1.0, 1.0)
     }
 
-    pub fn rotate(&self, angle: f32, axis: Vec3<f32>) -> Self {
+    pub fn rotate(&self, angle: f32, axis: &Vec3<f32>) -> Self {
         let theta = angle.to_radians();
         let c = theta.cos();
         let s = theta.sin();

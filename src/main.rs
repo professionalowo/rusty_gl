@@ -153,16 +153,16 @@ fn main() {
             }
             Some(event) if event.modifier == Modifier::Shift => match event.keycode {
                 Keycode::W => {
-                    camera.rotate(1.0, Vec3::new(1.0, 0.0, 0.0));
+                    camera.rotate(1.0, &Vec3::new(1.0, 0.0, 0.0));
                 }
                 Keycode::A => {
-                    camera.rotate(1.0, Vec3::new(0.0, 1.0, 0.0));
+                    camera.rotate(1.0, &Vec3::new(0.0, 1.0, 0.0));
                 }
                 Keycode::S => {
-                    camera.rotate(-1.0, Vec3::new(1.0, 0.0, 0.0));
+                    camera.rotate(-1.0, &Vec3::new(1.0, 0.0, 0.0));
                 }
                 Keycode::D => {
-                    camera.rotate(-1.0, Vec3::new(0.0, 1.0, 0.0));
+                    camera.rotate(-1.0, &Vec3::new(0.0, 1.0, 0.0));
                 }
                 _ => (),
             },

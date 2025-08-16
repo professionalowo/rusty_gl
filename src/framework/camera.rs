@@ -85,7 +85,7 @@ impl Camera {
         self.position += right * Scalar(distance);
     }
 
-    pub fn rotate(&mut self, angle: f32, axis: Vec3<f32>) {
+    pub fn rotate(&mut self, angle: f32, axis: &Vec3<f32>) {
         self.dir = self.dir.rotate(angle, axis);
         self.up = self.up.rotate(angle, axis);
     }
