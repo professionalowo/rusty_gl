@@ -1,4 +1,9 @@
-use crate::math::{mat4::Mat4, vec3::Vec3, vec4::Vec4};
+use crate::math::{
+    Scalar,
+    mat4::Mat4,
+    vec3::{self, Vec3},
+    vec4::Vec4,
+};
 
 #[derive(Debug)]
 pub struct Camera {
@@ -60,6 +65,29 @@ impl Camera {
 
     pub fn transform_position(&mut self, mut fun: impl FnMut(&mut Vec3<f32>, &Vec3<f32>)) {
         fun(&mut self.position, &self.dir);
+    }
+
+    pub fn move_forward(&mut self, distance: f32) {
+        self.position += self.dir * Scalar(distance);
+    }
+
+    pub fn move_backward(&mut self, distance: f32) {
+        self.position -= self.dir * Scalar(distance);
+    }
+
+    pub fn move_left(&mut self, distance: f32) {
+        let left = self.dir.cross(&self.up).normalize();
+        self.position -= left * Scalar(distance);
+    }
+
+    pub fn move_right(&mut self, distance: f32) {
+        let right = self.dir.cross(&self.up).normalize();
+        self.position += right * Scalar(distance);
+    }
+
+    pub fn rotate(&mut self, angle: f32, axis: vec3::f32::RotationAxis) {
+        self.dir = self.dir.rotate(angle, axis);
+        self.up = self.up.rotate(angle, axis);
     }
 }
 

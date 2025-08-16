@@ -10,6 +10,7 @@ use open_gl::gl::vao::VertexArrayObject;
 use open_gl::gl::vbo::{Location, VertexBufferObject};
 use open_gl::glfw;
 use open_gl::glfw::input::keycode::Keycode;
+use open_gl::glfw::input::modifier::Modifier;
 use open_gl::glfw::window::Window;
 use open_gl::math::mat4::Mat4;
 use open_gl::math::vec3::{self, Vec3};
@@ -150,39 +151,40 @@ fn main() {
             Some(event) if event.is_press() && event.keycode == Keycode::Escape => {
                 window.set_should_close(true);
             }
-            Some(event) => match event.keycode {
+            Some(event) if event.modifier == Modifier::Shift => match event.keycode {
                 Keycode::W => {
-                    rotate_camera(&mut camera, &CENTER, angle, vec3::f32::RotationAxis::X)
+                    camera.rotate(1.0, vec3::f32::RotationAxis::X);
                 }
                 Keycode::A => {
-                    rotate_camera(&mut camera, &CENTER, angle, vec3::f32::RotationAxis::Y)
+                    camera.rotate(1.0, vec3::f32::RotationAxis::Y);
                 }
                 Keycode::S => {
-                    rotate_camera(&mut camera, &CENTER, -angle, vec3::f32::RotationAxis::X)
+                    camera.rotate(-1.0, vec3::f32::RotationAxis::X);
                 }
                 Keycode::D => {
-                    rotate_camera(&mut camera, &CENTER, -angle, vec3::f32::RotationAxis::Y)
+                    camera.rotate(-1.0, vec3::f32::RotationAxis::Y);
                 }
-                _ => println!("{:?}", event),
+                _ => (),
             },
-            _ => {}
+            Some(event) => match event.keycode {
+                Keycode::W => {
+                    camera.move_forward(0.1);
+                }
+                Keycode::A => {
+                    camera.move_left(0.1);
+                }
+                Keycode::S => {
+                    camera.move_backward(0.1);
+                }
+                Keycode::D => {
+                    camera.move_right(0.1);
+                }
+                _ => (),
+            },
+            _ => (),
         }
     }
     glfw::terminate();
-}
-
-fn rotate_camera(
-    camera: &mut Camera,
-    center: &Vec3<f32>,
-    angle: f32,
-    axis: vec3::f32::RotationAxis,
-) {
-    let offset = *camera.position() - *center;
-    let rotated_offset = offset.rotate(angle, axis);
-    camera.transform_position(|pos, _| {
-        *pos = *center + rotated_offset;
-    });
-    camera.look_at(center);
 }
 
 fn get_shader_file_path(filename: &str) -> PathBuf {
