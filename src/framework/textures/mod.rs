@@ -17,7 +17,7 @@ pub struct Texture2D {
 
 #[derive(Debug)]
 pub enum TextureError {
-    LoadFailed,
+    LoadFailed(String),
     UnsupportedFormat,
     GLError(gl::GLError),
 }
@@ -25,9 +25,9 @@ pub enum TextureError {
 impl Texture2D {
     pub fn try_from_file(path: PathBuf, mipmap: bool) -> Result<Self, TextureError> {
         let img = ImageReader::open(path)
-            .map_err(|_| TextureError::LoadFailed)?
+            .map_err(|e| TextureError::LoadFailed(e.to_string()))?
             .decode()
-            .map_err(|_| TextureError::LoadFailed)?;
+            .map_err(|e| TextureError::LoadFailed(e.to_string()))?;
         let (width, height) = img.dimensions();
         let (internal_format, format, type_, raw) = match img {
             DynamicImage::ImageRgb8(buffer) => (
