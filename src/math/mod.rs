@@ -9,6 +9,12 @@ pub mod vec4;
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Scalar<T>(pub T);
 
+impl<T> From<T> for Scalar<T> {
+    fn from(value: T) -> Self {
+        Self(value)
+    }
+}
+
 impl<T> Default for Scalar<T>
 where
     T: Default,
@@ -194,6 +200,18 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_scalar_from() {
+        let a = Scalar::from(5);
+        assert_eq!(a, Scalar(5));
+    }
+
+    #[test]
+    fn test_scalar_into() {
+        let a: Scalar<i32> = 5.into();
+        assert_eq!(a, Scalar(5));
+    }
 
     #[test]
     fn test_scalar_ord() {
