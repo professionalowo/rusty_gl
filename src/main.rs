@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 use std::path::PathBuf;
 
-use open_gl::framework::camera::Camera;
+use open_gl::framework::camera::{self, Camera};
 use open_gl::framework::textures::Texture2D;
 use open_gl::gl;
 use open_gl::gl::program::Program;
@@ -120,6 +120,10 @@ fn main() {
         Vec3::new(0.0, 1.0, 0.0),
     );
 
+    const POINTLIGHT_POS: Vec3<f32> = Vec3::new(1.0, 2.0, 1.0);
+    const POINTLIGHT_COLOR: Vec3<f32> = Vec3::new(1.0, 1.0, 1.0);
+    const POINTLIGHT_INTENSITY: f32 = 1.0;
+
     let model_loc = UniformLocation::try_for_program(&program, "model")
         .expect("Failed to get uniform location for model");
 
@@ -132,6 +136,19 @@ fn main() {
     let texture_loc = UniformLocation::try_for_program(&program, "col_tex")
         .expect("Failed to get uniform location for texture");
 
+    let pointlight_pos_loc = UniformLocation::try_for_program(&program, "pointlight_pos")
+        .expect("Failed to get uniform location for pointlight position");
+
+    let pointlight_color_loc = UniformLocation::try_for_program(&program, "pointlight_color")
+        .expect("Failed to get uniform location for pointlight color");
+
+    let pointlight_intensity_loc =
+        UniformLocation::try_for_program(&program, "pointlight_intensity")
+            .expect("Failed to get uniform location for pointlight intensity");
+
+    let camera_pos_loc = UniformLocation::try_for_program(&program, "camera_pos")
+        .expect("Failed to get uniform location for camera position");
+
     gl::enable(gl::GL_DEPTH_TEST);
 
     while let Ok(false) = window.should_close() {
@@ -143,7 +160,11 @@ fn main() {
         model_loc.mat4f(false, MODEL_MATRIX);
         view_loc.mat4f(false, camera.view());
         projection_loc.mat4f(false, camera.projection(window.aspect_ratio()));
+        camera_pos_loc.vec3f(&camera.position());
         texture_loc.tex2d(&texture, 0);
+        pointlight_pos_loc.vec3f(&POINTLIGHT_POS);
+        pointlight_color_loc.vec3f(&POINTLIGHT_COLOR);
+        pointlight_intensity_loc.float32(POINTLIGHT_INTENSITY);
 
         gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
         program.unbind();

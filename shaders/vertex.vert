@@ -8,10 +8,12 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform sampler2D col_tex;
 
+out vec3 pos_ws;
 out vec3 v_color;
 
 void main()
 {
     gl_Position = projection * view * model * vec4(in_pos, 1.0);
+    pos_ws = vec3(model * vec4(in_pos, 1.0));
     v_color = texture(col_tex, vec2(0,0)).rgb;
 }

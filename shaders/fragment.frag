@@ -1,9 +1,37 @@
 #version 330 core
 
 in vec3 v_color;
+in vec3 pos_ws;
+
+
+
+uniform float pointlight_intensity;
+uniform vec3 pointlight_color;
+uniform vec3 pointlight_pos;
+uniform vec3 camera_pos;
+
 out vec4 out_col;
+
+vec3 phong(vec3 n, vec3 l, vec3 v, vec3 I, float ns) {
+
+	vec3 diff = v_color * max(0, dot(n, l));
+
+	vec3 r = 2*n*dot(n,l)-l;
+	vec3 spec = v_color * pow(max(0, dot(r, v)), ns);
+
+	return (diff + spec) * I;
+}
 
 void main()
 {
-    out_col = vec4(v_color, 1.0); // Red color
+    vec3 v = normalize(camera_pos - pos_ws);
+    vec3 n = vec3(1,0,0);
+    vec3 to_light = pointlight_pos - pos_ws;
+	float dist = length(to_light);
+	to_light = normalize(to_light);
+
+    float attenuation = 1.0 / (dist/100);
+	vec3 pointlight_illum = phong(n, to_light, v, pointlight_color*pointlight_intensity, 140) * attenuation;
+
+	out_col = vec4(pointlight_illum, 1);
 }
