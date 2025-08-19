@@ -30,6 +30,9 @@ impl Window {
                 *last_key_event.borrow_mut() = Some(event);
             }
         });
+        unsafe {
+            gl::glfwSetFramebufferSizeCallback(handle, Some(framebuffer_size_callback));
+        }
         Ok(Self {
             handle,
             last_event: last_event.clone(),
@@ -72,7 +75,7 @@ impl Window {
         let mut width = 0;
         let mut height = 0;
         unsafe {
-            gl::glfwGetWindowSize(self.handle, &mut width, &mut height);
+            gl::glfwGetFramebufferSize(self.handle, &mut width, &mut height);
         }
         if height == 0 {
             1.0 // Avoid division by zero
@@ -130,6 +133,12 @@ fn create_window(
         );
         gl::glfwMakeContextCurrent(window);
         window
+    }
+}
+
+extern "C" fn framebuffer_size_callback(window: *mut gl::GLFWwindow, width: c_int, height: c_int) {
+    unsafe {
+        gl::glViewport(0, 0, width, height);
     }
 }
 
