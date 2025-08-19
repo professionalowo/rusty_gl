@@ -36,11 +36,7 @@ impl From<stbi::ImageError> for TextureError {
 impl Texture2D {
     pub fn try_from_file(path: impl AsRef<str>, mipmap: bool) -> Result<Self, TextureError> {
         let p = path.as_ref();
-        let data = if stbi::is_hdr(p) {
-            stbi::loadf(p)
-        } else {
-            stbi::load(p)
-        }?;
+        let data = ImageData::load(p)?;
         let texture = upload_image_data(data, mipmap)?;
         Ok(texture)
     }

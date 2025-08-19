@@ -31,7 +31,17 @@ impl From<TryFromIntError> for ImageError {
     }
 }
 
-pub fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
+impl ImageData {
+    pub fn load(path: impl AsRef<str>) -> Result<Self, ImageError> {
+        if is_hdr(path.as_ref()) {
+            loadf(path)
+        } else {
+            load(path)
+        }
+    }
+}
+
+fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     unsafe {
         stbi_set_flip_vertically_on_load(1);
     }
@@ -85,7 +95,7 @@ fn format_from_channels(channels: i32) -> gl::GLenum {
     }
 }
 
-pub fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
+fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     unsafe {
         stbi_set_flip_vertically_on_load(1);
     }
