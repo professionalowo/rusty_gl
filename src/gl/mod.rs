@@ -11,21 +11,6 @@ pub mod uniform;
 pub mod vao;
 pub mod vbo;
 
-#[cfg(target_os = "macos")]
-#[link(name = "OpenGL", kind = "framework")]
-#[allow(missing_abi)]
-unsafe extern "C" {}
-
-#[cfg(target_os = "linux")]
-#[link(name = "GL")]
-#[allow(missing_abi)]
-unsafe extern "C" {}
-
-#[cfg(target_os = "windows")]
-#[link(name = "opengl32")]
-#[allow(missing_abi)]
-unsafe extern "C" {}
-
 pub fn draw_arrays(mode: u32, first: i32, count: i32) {
     unsafe { glDrawArrays(mode, first, count) };
 }

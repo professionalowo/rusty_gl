@@ -22,7 +22,6 @@ where
 {
     opengl_builder()
         .header("glwrapper.h")
-        .clang_arg("-DGL_GLEXT_PROTOTYPES")
         .generate()
         .expect("Unable to generate bindings")
         .write_to_file(out_path.join(bindings_file))
@@ -64,7 +63,7 @@ where
 }
 
 fn opengl_builder() -> bindgen::Builder {
-    let builder = bindgen::Builder::default();
+    let builder = bindgen::Builder::default().clang_arg("-DGL_GLEXT_PROTOTYPES");
     if cfg!(target_os = "macos") {
         let sdk_path_output = Command::new("xcrun")
             .arg("--sdk")
