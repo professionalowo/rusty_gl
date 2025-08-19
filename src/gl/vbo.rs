@@ -30,9 +30,9 @@ impl VertexBufferObject {
     }
 
     pub fn delete_buffer(buffer: Self) {
-        let Self(buffer) = buffer;
+        let Self(buffer) = &buffer;
         unsafe {
-            glDeleteBuffers(1, &buffer);
+            glDeleteBuffers(1, buffer);
         }
     }
 
