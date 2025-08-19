@@ -4,7 +4,7 @@ use std::env;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-fn main() -> std::io::Result<()> {
+fn main() {
     if cfg!(target_os = "macos") {
         println!("cargo:rustc-link-lib=framework=OpenGL");
         println!("cargo:rustc-link-search=native=/opt/homebrew/lib");
@@ -14,7 +14,6 @@ fn main() -> std::io::Result<()> {
     build_gl(&out_path, "gl_bindings.rs").expect("Failed to build OpenGL bindings");
     build_glfw(&out_path, "glfw_bindings.rs").expect("Failed to build GLFW bindings");
     build_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
-    Ok(())
 }
 
 fn build_gl(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::Result<()> {
