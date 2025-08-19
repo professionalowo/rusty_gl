@@ -37,8 +37,34 @@ impl Texture2D {
     pub fn try_from_file(path: impl AsRef<str>, mipmap: bool) -> Result<Self, TextureError> {
         let p = path.as_ref();
         let data = ImageData::load(p)?;
-        let texture = upload_image_data(data, mipmap)?;
+        let texture = Self::upload_image_data(data, mipmap)?;
         Ok(texture)
+    }
+    pub fn bind(&self, unit: u32) {
+        upload::active_texture(gl::GL_TEXTURE0 + unit);
+        upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
+    }
+
+    pub fn unbind(&self) {
+        upload::bind_texture(gl::GL_TEXTURE_2D, 0);
+    }
+
+    pub fn resize(&mut self, w: u32, h: u32) {
+        self.width = w;
+        self.height = h;
+        upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
+        upload::tex_image_2d(
+            gl::GL_TEXTURE_2D,
+            0,
+            self.internal_format,
+            self.width as GLsizei,
+            self.height as GLsizei,
+            0,
+            self.format,
+            self.type_,
+            std::ptr::null(),
+        );
+        upload::bind_texture(gl::GL_TEXTURE_2D, 0);
     }
 
     fn upload(&mut self, data: &[u8], mipmap: bool) -> Result<(), gl::GLError> {
@@ -108,53 +134,26 @@ impl Texture2D {
         Ok(())
     }
 
-    pub fn bind(&self, unit: u32) {
-        upload::active_texture(gl::GL_TEXTURE0 + unit);
-        upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
+    fn upload_image_data(data: ImageData, mipmap: bool) -> Result<Self, gl::GLError> {
+        let ImageData {
+            width,
+            height,
+            format,
+            internal_format,
+            type_,
+            ref data,
+        } = data;
+        let mut texture = Self {
+            id: 0,
+            width,
+            height,
+            internal_format,
+            format,
+            type_,
+        };
+        texture.upload(data, mipmap)?;
+        Ok(texture)
     }
-
-    pub fn unbind(&self) {
-        upload::bind_texture(gl::GL_TEXTURE_2D, 0);
-    }
-
-    pub fn resize(&mut self, w: u32, h: u32) {
-        self.width = w;
-        self.height = h;
-        upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
-        upload::tex_image_2d(
-            gl::GL_TEXTURE_2D,
-            0,
-            self.internal_format,
-            self.width as GLsizei,
-            self.height as GLsizei,
-            0,
-            self.format,
-            self.type_,
-            std::ptr::null(),
-        );
-        upload::bind_texture(gl::GL_TEXTURE_2D, 0);
-    }
-}
-
-fn upload_image_data(data: ImageData, mipmap: bool) -> Result<Texture2D, gl::GLError> {
-    let ImageData {
-        width,
-        height,
-        format,
-        internal_format,
-        type_,
-        ref data,
-    } = data;
-    let mut texture = Texture2D {
-        id: 0,
-        width,
-        height,
-        internal_format,
-        format,
-        type_,
-    };
-    texture.upload(data, mipmap)?;
-    Ok(texture)
 }
 
 impl Drop for Texture2D {
