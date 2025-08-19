@@ -17,14 +17,16 @@ impl VertexArrayObject {
     }
 
     pub fn bind_vertex_array(vao: Self) {
+        let Self(index) = vao;
         unsafe {
-            glBindVertexArray(vao.0);
+            glBindVertexArray(index);
         }
     }
 
     pub fn delete_vertex_array(vao: Self) {
+        let Self(index) = &vao;
         unsafe {
-            glDeleteVertexArrays(1, &vao.0);
+            glDeleteVertexArrays(1, index);
         }
     }
 }
