@@ -14,6 +14,7 @@ fn main() {
         println!("cargo:rustc-link-lib=GL");
     }
     let out_path = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR not set"));
+    println!("{:?}", out_path);
     build_gl(&out_path, "gl_bindings.rs").expect("Failed to build OpenGL bindings");
     build_glfw(&out_path, "glfw_bindings.rs").expect("Failed to build GLFW bindings");
     build_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
@@ -24,7 +25,7 @@ where
     P: AsRef<Path>,
 {
     opengl_builder()
-        .header("glwrapper.h")
+        .header("c/glwrapper.h")
         .generate()
         .expect("Unable to generate bindings")
         .write_to_file(out_path.join(bindings_file))
@@ -35,7 +36,7 @@ where
     P: AsRef<Path>,
 {
     opengl_builder()
-        .header("glfwwrapper.h")
+        .header("c/glfwwrapper.h")
         .generate()
         .expect("Unable to generate GLFW bindings")
         .write_to_file(out_path.join(bindings_file))
@@ -46,13 +47,13 @@ where
     P: AsRef<Path>,
 {
     cc::Build::new()
-        .file("stb_image_impl.c")
+        .file("c/stb_image_impl.c")
         .flag_if_supported("-Wno-unused-parameter")
         .flag_if_supported("-Wno-unused-function")
         .compile("stb_image");
 
     bindgen::Builder::default()
-        .header("stb_image.h")
+        .header("c/stb_image.h")
         .allowlist_function("stbi_loadf_from_memory")
         .allowlist_function("stbi_load_from_memory")
         .allowlist_function("stbi_set_flip_vertically_on_load")
