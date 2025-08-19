@@ -9,6 +9,9 @@ fn main() {
         println!("cargo:rustc-link-lib=framework=OpenGL");
         println!("cargo:rustc-link-search=native=/opt/homebrew/lib");
         println!("cargo:rustc-link-lib=dylib=glfw");
+    } else {
+        println!("cargo:rustc-link-lib=glfw");
+        println!("cargo:rustc-link-lib=GL");
     }
     let out_path = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR not set"));
     build_gl(&out_path, "gl_bindings.rs").expect("Failed to build OpenGL bindings");
