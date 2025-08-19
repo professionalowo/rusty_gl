@@ -36,8 +36,7 @@ impl From<stbi::ImageError> for TextureError {
 impl Texture2D {
     pub fn try_from_file(path: impl AsRef<str>, mipmap: bool) -> Result<Self, TextureError> {
         let p = path.as_ref();
-        let data = ImageData::load(p)?;
-        let texture = Self::upload_image_data(data, mipmap)?;
+        let texture = Self::upload_image_data(ImageData::load(p)?, mipmap)?;
         Ok(texture)
     }
     pub fn bind(&self, unit: u32) {
