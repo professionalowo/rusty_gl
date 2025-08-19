@@ -72,11 +72,7 @@ impl Window {
     }
 
     pub fn aspect_ratio(&self) -> f32 {
-        let mut width = 0;
-        let mut height = 0;
-        unsafe {
-            gl::glfwGetFramebufferSize(self.handle, &mut width, &mut height);
-        }
+        let (width, height) = self.framebuffer_size();
         if height == 0 {
             1.0 // Avoid division by zero
         } else {
@@ -88,12 +84,14 @@ impl Window {
         self.last_event.borrow_mut().take()
     }
 
-	pub fn framebuffer_size(&self) -> (i32, i32) {
-    let mut w = 0;
-    let mut h = 0;
-    unsafe { gl::glfwGetFramebufferSize(self.handle, &mut w, &mut h); }
-    (w, h)
-}
+    pub fn framebuffer_size(&self) -> (i32, i32) {
+        let mut w = 0;
+        let mut h = 0;
+        unsafe {
+            gl::glfwGetFramebufferSize(self.handle, &mut w, &mut h);
+        }
+        (w, h)
+    }
 }
 
 impl Drop for Window {
