@@ -17,9 +17,20 @@ pub struct Texture2D {
 
 #[derive(Debug)]
 pub enum TextureError {
-    LoadFailed,
-    UnsupportedFormat,
+    LoadFailed(stbi::ImageError),
     GLError(gl::GLError),
+}
+
+impl From<gl::GLError> for TextureError {
+    fn from(err: gl::GLError) -> Self {
+        TextureError::GLError(err)
+    }
+}
+
+impl From<stbi::ImageError> for TextureError {
+    fn from(err: stbi::ImageError) -> Self {
+        TextureError::LoadFailed(err)
+    }
 }
 
 impl Texture2D {
@@ -36,8 +47,7 @@ impl Texture2D {
             stbi::loadf(p)
         } else {
             stbi::load(p)
-        }
-        .map_err(|_| TextureError::LoadFailed)?;
+        }?;
         let mut texture = Self {
             id: 0,
             width,
@@ -46,9 +56,7 @@ impl Texture2D {
             format,
             type_,
         };
-        texture
-            .upload(&data, mipmap)
-            .map_err(TextureError::GLError)?;
+        texture.upload(&data, mipmap)?;
         Ok(texture)
     }
 

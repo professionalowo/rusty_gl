@@ -5,6 +5,8 @@
 
 include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
+use std::num::TryFromIntError;
+
 use crate::gl;
 
 #[derive(Debug)]
@@ -18,7 +20,15 @@ pub struct ImageData {
 }
 
 #[derive(Debug)]
-pub struct ImageError;
+pub enum ImageError {
+    Cast(TryFromIntError),
+}
+
+impl From<TryFromIntError> for ImageError {
+    fn from(err: TryFromIntError) -> Self {
+        ImageError::Cast(err)
+    }
+}
 
 pub fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     unsafe {
@@ -50,12 +60,12 @@ pub fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     };
     let format = format_from_channels(channels);
     Ok(ImageData {
-        width: width.try_into().map_err(|_| ImageError)?,
-        height: height.try_into().map_err(|_| ImageError)?,
+        width: width.try_into()?,
+        height: height.try_into()?,
         format,
         data,
         type_: gl::GL_FLOAT,
-        internal_format: internal_format.try_into().map_err(|_| ImageError)?,
+        internal_format: internal_format.try_into()?,
     })
 }
 
@@ -98,12 +108,12 @@ pub fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     };
     let format = format_from_channels(channels);
     Ok(ImageData {
-        width: width.try_into().map_err(|_| ImageError)?,
-        height: height.try_into().map_err(|_| ImageError)?,
+        width: width.try_into()?,
+        height: height.try_into()?,
         format,
         data,
         type_: gl::GL_UNSIGNED_BYTE,
-        internal_format: internal_format.try_into().map_err(|_| ImageError)?,
+        internal_format: internal_format.try_into()?,
     })
 }
 
