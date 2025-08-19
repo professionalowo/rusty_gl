@@ -196,6 +196,20 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_scalar_ord() {
+        let a = Scalar(5);
+        let b = Scalar(10);
+        assert!(a < b);
+    }
+
+    #[test]
+    fn test_scalar_eq() {
+        let a = Scalar(5);
+        let b = Scalar(5);
+        assert!(a == b);
+    }
+
+    #[test]
     fn test_scalar_t_add() {
         let a = Scalar(5);
         let b = 10;
