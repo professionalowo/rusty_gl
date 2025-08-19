@@ -31,9 +31,9 @@ pub enum ImageError {
 impl std::fmt::Display for ImageError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ImageError::IoError(err) => write!(f, "IO Error: {}", err),
-            ImageError::StbiError(err) => write!(f, "STBI Error: {}", err),
-            ImageError::CastError(err) => write!(f, "Cast Error: {}", err),
+            Self::IoError(err) => write!(f, "IO Error: {}", err),
+            Self::StbiError(err) => write!(f, "STBI Error: {}", err),
+            Self::CastError(err) => write!(f, "Cast Error: {}", err),
         }
     }
 }
