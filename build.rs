@@ -5,11 +5,12 @@ use std::path::PathBuf;
 use std::process::Command;
 
 fn main() {
-    cc::Build::new()
-        .file("stb_image_impl.c")
-        .flag_if_supported("-Wno-unused-parameter")
-        .compile("stb_image");
+    let out_path = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR not set"));
+    build_gl(&out_path);
+    build_stbi(&out_path);
+}
 
+fn build_gl(out_path: &PathBuf) {
     let mut gl_builder = bindgen::Builder::default()
         .header("glwrapper.h")
         .clang_arg("-DGL_GLEXT_PROTOTYPES");
@@ -43,10 +44,15 @@ fn main() {
 
     let gl_bindings = gl_builder.generate().expect("Unable to generate bindings");
 
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     gl_bindings
         .write_to_file(out_path.join("gl_bindings.rs"))
         .expect("Couldn't write bindings!");
+}
+fn build_stbi(out_path: &PathBuf) {
+    cc::Build::new()
+        .file("stb_image_impl.c")
+        .flag_if_supported("-Wno-unused-parameter")
+        .compile("stb_image");
 
     let stbi_builder = bindgen::Builder::default()
         .header("stb_image.h")
@@ -55,6 +61,7 @@ fn main() {
         .allowlist_function("stbi_set_flip_vertically_on_load")
         .allowlist_function("stbi_is_hdr")
         .clang_arg("-DSTB_IMAGE_IMPLEMENTATION");
+
     let stbi_bindings = stbi_builder
         .generate()
         .expect("Unable to generate bindings");
