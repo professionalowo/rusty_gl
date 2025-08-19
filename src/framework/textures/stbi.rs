@@ -103,9 +103,3 @@ pub fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
 pub fn is_hdr(path: impl AsRef<str>) -> bool {
     unsafe { gl::stbi_is_hdr(path.as_ref().as_ptr() as *const i8) != 0 }
 }
-
-fn image_free(data: *mut std::ffi::c_void) {
-    unsafe {
-        gl::stbi_image_free(data);
-    }
-}
