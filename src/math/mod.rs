@@ -196,30 +196,37 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_scalar_add() {
+    fn test_scalar_t_add() {
         let a = Scalar(5);
         let b = 10;
         assert_eq!(a + b, Scalar(15));
     }
 
     #[test]
-    fn test_scalar_sub() {
+    fn test_scalar_scalar_add() {
         let a = Scalar(5);
-        let b = 10;
+        let b = Scalar(10);
+        assert_eq!(a + b, Scalar(15));
+    }
+
+    #[test]
+    fn test_scalar_t_sub() {
+        let a = Scalar(5);
+        let b = Scalar(10);
         assert_eq!(a - b, Scalar(-5));
     }
 
     #[test]
-    fn test_scalar_mul() {
+    fn test_scalar_t_mul() {
         let a = Scalar(5);
-        let b = 10;
+        let b = Scalar(10);
         assert_eq!(a * b, Scalar(50));
     }
 
     #[test]
-    fn test_scalar_div() {
+    fn test_scalar_t_div() {
         let a = Scalar(10);
-        let b = 5;
+        let b = Scalar(5);
         assert_eq!(a / b, Scalar(2));
     }
 
