@@ -9,6 +9,15 @@ pub mod vec4;
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Scalar<T>(pub T);
 
+impl<T> Default for Scalar<T>
+where
+    T: Default,
+{
+    fn default() -> Self {
+        Self(T::default())
+    }
+}
+
 impl<T> Copy for Scalar<T> where T: Copy {}
 
 impl<T> Add<T> for Scalar<T>
