@@ -3,9 +3,10 @@ use std::{ffi::CString, fmt::Debug};
 use crate::{
     framework::textures::Texture2D,
     gl::{
-        glGetUniformLocation, glUniform1i, glUniformMatrix3fv, glUniformMatrix4fv, program::Program,
+        glGetUniformLocation, glUniform1i, glUniform3f, glUniformMatrix3fv, glUniformMatrix4fv,
+        program::Program,
     },
-    math::{mat3::Mat3, mat4::Mat4},
+    math::{mat3::Mat3, mat4::Mat4, vec3::Vec3},
 };
 
 #[derive(Clone, Copy, Debug)]
@@ -46,6 +47,13 @@ impl UniformLocation {
         texture.bind(unit);
         unsafe {
             glUniform1i(self.0, unit as i32);
+        }
+    }
+
+    pub fn vec3f(&self, vector: &Vec3<f32>) {
+        let Vec3 { x, y, z } = *vector;
+        unsafe {
+            glUniform3f(self.0, x, y, z);
         }
     }
 }
