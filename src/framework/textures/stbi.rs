@@ -54,7 +54,7 @@ pub fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
         let data = ptr.cast::<u8>();
         Box::from_raw(std::slice::from_raw_parts_mut(
             data,
-            (width * height) as usize,
+            (width * height).try_into()?,
         ))
     };
     let internal_format = match channels {
@@ -107,7 +107,7 @@ pub fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
         }
         Box::from_raw(std::slice::from_raw_parts_mut(
             ptr,
-            (width * height) as usize,
+            (width * height).try_into()?,
         ))
     };
     let internal_format = match channels {
