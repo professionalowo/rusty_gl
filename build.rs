@@ -7,6 +7,7 @@ use std::process::Command;
 fn main() {
     cc::Build::new()
         .file("stb_image_impl.c")
+        .flag_if_supported("-Wno-unused-parameter")
         .compile("stb_image");
 
     let mut gl_builder = bindgen::Builder::default()
