@@ -1,13 +1,13 @@
 use crate::gl::{
-    GLboolean, GLint, GLsizeiptr, GLuint, glBindBuffer, glBufferData, glDeleteBuffers,
+    self, GLboolean, GLint, GLsizeiptr, glBindBuffer, glBufferData, glDeleteBuffers,
     glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer,
 };
 
 #[derive(Debug, Clone)]
-pub struct Location(pub GLuint);
+pub struct Location(pub gl::GLuint);
 
 #[derive(Debug, Clone)]
-pub struct VertexBufferObject(pub u32);
+pub struct VertexBufferObject(pub gl::GLuint);
 
 impl VertexBufferObject {
     pub const fn zero() -> Self {

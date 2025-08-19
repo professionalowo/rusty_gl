@@ -1,7 +1,7 @@
-use crate::gl::{glBindVertexArray, glDeleteVertexArrays, glGenVertexArrays};
+use crate::gl::{self, glBindVertexArray, glDeleteVertexArrays, glGenVertexArrays};
 
 #[derive(Debug, Clone)]
-pub struct VertexArrayObject(pub u32);
+pub struct VertexArrayObject(pub gl::GLuint);
 
 impl VertexArrayObject {
     pub const fn zero() -> Self {
