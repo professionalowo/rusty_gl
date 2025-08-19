@@ -87,6 +87,13 @@ impl Window {
     pub fn pump_event(&mut self) -> Option<KeyEvent> {
         self.last_event.borrow_mut().take()
     }
+
+	pub fn framebuffer_size(&self) -> (i32, i32) {
+    let mut w = 0;
+    let mut h = 0;
+    unsafe { gl::glfwGetFramebufferSize(self.handle, &mut w, &mut h); }
+    (w, h)
+}
 }
 
 impl Drop for Window {
