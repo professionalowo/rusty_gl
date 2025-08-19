@@ -5,6 +5,10 @@ use std::path::PathBuf;
 use std::process::Command;
 
 fn main() {
+    cc::Build::new()
+        .file("stb_image_impl.c")
+        .compile("stb_image");
+
     let mut builder = bindgen::Builder::default()
         .header("glwrapper.h")
         .clang_arg("-DGL_GLEXT_PROTOTYPES");

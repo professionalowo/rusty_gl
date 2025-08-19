@@ -2,6 +2,7 @@ use std::f32::consts::PI;
 use std::path::PathBuf;
 
 use open_gl::framework::camera::Camera;
+use open_gl::framework::textures::Texture2D;
 use open_gl::gl;
 use open_gl::gl::program::Program;
 use open_gl::gl::shader::Shader;
@@ -109,6 +110,13 @@ fn main() {
     let program = Program::from_shaders(&[vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
 
+    let texture = Texture2D::try_from_file(
+        get_texture_file_path("solid_red.png")
+            .to_str()
+            .expect("Invalid texture path"),
+        false,
+    )
+    .expect("Failed to load texture");
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
     let mut camera = Camera::with_defaults(
@@ -126,6 +134,9 @@ fn main() {
     let projection_loc = UniformLocation::try_for_program(&program, "projection")
         .expect("Failed to get uniform location for projection");
 
+    let texture_loc = UniformLocation::try_for_program(&program, "col_tex")
+        .expect("Failed to get uniform location for texture");
+
     gl::enable(gl::GL_DEPTH_TEST);
 
     while let Ok(false) = window.should_close() {
@@ -137,6 +148,7 @@ fn main() {
         model_loc.mat4f(false, MODEL_MATRIX);
         view_loc.mat4f(false, camera.view());
         projection_loc.mat4f(false, camera.projection(window.aspect_ratio()));
+        texture_loc.tex2d(&texture, 0);
 
         gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
         program.unbind();

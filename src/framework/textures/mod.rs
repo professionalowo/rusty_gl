@@ -1,9 +1,9 @@
-use std::path::PathBuf;
+use crate::{
+    framework::textures::stbi::ImageData,
+    gl::{self, GLenum, GLint, GLsizei, GLuint},
+};
 
-use image::{DynamicImage, GenericImageView, ImageReader};
-
-use crate::gl::{self, GLenum, GLint, GLsizei, GLuint};
-
+mod stbi;
 mod upload;
 
 pub struct Texture2D {
@@ -17,33 +17,27 @@ pub struct Texture2D {
 
 #[derive(Debug)]
 pub enum TextureError {
-    LoadFailed(String),
+    LoadFailed,
     UnsupportedFormat,
     GLError(gl::GLError),
 }
 
 impl Texture2D {
-    pub fn try_from_file(path: PathBuf, mipmap: bool) -> Result<Self, TextureError> {
-        let img = ImageReader::open(path)
-            .map_err(|e| TextureError::LoadFailed(e.to_string()))?
-            .decode()
-            .map_err(|e| TextureError::LoadFailed(e.to_string()))?;
-        let (width, height) = img.dimensions();
-        let (internal_format, format, type_, raw) = match img {
-            DynamicImage::ImageRgb8(buffer) => (
-                GLint::try_from(gl::GL_RGB8).map_err(|_| TextureError::UnsupportedFormat)?,
-                gl::GL_RGB,
-                gl::GL_UNSIGNED_BYTE,
-                buffer.into_raw(),
-            ),
-            DynamicImage::ImageRgba8(buffer) => (
-                GLint::try_from(gl::GL_RGBA8).map_err(|_| TextureError::UnsupportedFormat)?,
-                gl::GL_RGBA,
-                gl::GL_UNSIGNED_BYTE,
-                buffer.into_raw(),
-            ),
-            _ => return Err(TextureError::UnsupportedFormat),
-        };
+    pub fn try_from_file(path: impl AsRef<str>, mipmap: bool) -> Result<Self, TextureError> {
+        let p = path.as_ref();
+        let ImageData {
+            width,
+            height,
+            format,
+            ref data,
+            type_,
+            internal_format,
+        } = if stbi::is_hdr(p) {
+            stbi::loadf(p)
+        } else {
+            stbi::load(p)
+        }
+        .map_err(|_| TextureError::LoadFailed)?;
         let mut texture = Self {
             id: 0,
             width,
@@ -53,7 +47,7 @@ impl Texture2D {
             type_,
         };
         texture
-            .upload(&raw, mipmap)
+            .upload(&data, mipmap)
             .map_err(TextureError::GLError)?;
         Ok(texture)
     }
