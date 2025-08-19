@@ -14,7 +14,6 @@ fn main() {
         println!("cargo:rustc-link-lib=GL");
     }
     let out_path = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR not set"));
-    println!("{:?}", out_path);
     build_gl(&out_path, "gl_bindings.rs").expect("Failed to build OpenGL bindings");
     build_glfw(&out_path, "glfw_bindings.rs").expect("Failed to build GLFW bindings");
     build_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
