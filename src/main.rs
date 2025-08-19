@@ -110,13 +110,8 @@ fn main() {
     let program = Program::from_shaders(&[vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
 
-    let texture = Texture2D::try_from_file(
-        get_texture_file_path("solid_red.png")
-            .to_str()
-            .expect("Invalid texture path"),
-        false,
-    )
-    .expect("Failed to load texture");
+    let texture = Texture2D::try_from_file(get_texture_file_path("solid_red.png"), false)
+        .expect("Failed to load texture");
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
     let mut camera = Camera::with_defaults(

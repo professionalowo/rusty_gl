@@ -57,10 +57,10 @@ fn build_stbi(out_path: &PathBuf) {
 
     let stbi_builder = bindgen::Builder::default()
         .header("stb_image.h")
-        .allowlist_function("stbi_loadf")
-        .allowlist_function("stbi_load")
+        .allowlist_function("stbi_loadf_from_memory")
+        .allowlist_function("stbi_load_from_memory")
         .allowlist_function("stbi_set_flip_vertically_on_load")
-        .allowlist_function("stbi_is_hdr")
+        .allowlist_function("stbi_is_hdr_from_memory")
         .allowlist_function("stbi_failure_reason")
         .clang_arg("-DSTB_IMAGE_IMPLEMENTATION")
         .clang_arg("-DSTBI_ONLY_PNG");

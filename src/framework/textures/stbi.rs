@@ -5,7 +5,7 @@
 
 include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
-use std::num::TryFromIntError;
+use std::{num::TryFromIntError, path::PathBuf};
 
 use crate::gl;
 
@@ -21,6 +21,7 @@ pub struct ImageData {
 
 #[derive(Debug)]
 pub enum ImageError {
+    IoError(std::io::Error),
     StbiError(String),
     CastError(TryFromIntError),
 }
@@ -31,17 +32,24 @@ impl From<TryFromIntError> for ImageError {
     }
 }
 
+impl From<std::io::Error> for ImageError {
+    fn from(err: std::io::Error) -> Self {
+        Self::IoError(err)
+    }
+}
+
 impl ImageData {
-    pub fn load(path: impl AsRef<str>) -> Result<Self, ImageError> {
-        if is_hdr(path.as_ref()) {
-            loadf(path)
+    pub fn load(path: PathBuf) -> Result<Self, ImageError> {
+        let data = &std::fs::read(&path)?;
+        if is_hdr(data) {
+            loadf(data)
         } else {
-            load(path)
+            load(data)
         }
     }
 }
 
-fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
+fn loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
     unsafe {
         stbi_set_flip_vertically_on_load(1);
     }
@@ -49,8 +57,9 @@ fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     let mut height = 0;
     let mut channels = 0;
     let data = unsafe {
-        let ptr = stbi_loadf(
-            path.as_ref().as_ptr() as *const i8,
+        let ptr = stbi_loadf_from_memory(
+            bytes.as_ptr(),
+            bytes.len() as i32,
             &mut width,
             &mut height,
             &mut channels,
@@ -95,7 +104,7 @@ fn format_from_channels(channels: i32) -> gl::GLenum {
     }
 }
 
-fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
+fn load(bytes: &[u8]) -> Result<ImageData, ImageError> {
     unsafe {
         stbi_set_flip_vertically_on_load(1);
     }
@@ -103,8 +112,9 @@ fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     let mut height = 0;
     let mut channels = 0;
     let data = unsafe {
-        let ptr = stbi_load(
-            path.as_ref().as_ptr() as *const i8,
+        let ptr = stbi_load_from_memory(
+            bytes.as_ptr(),
+            bytes.len() as i32,
             &mut width,
             &mut height,
             &mut channels,
@@ -138,8 +148,8 @@ fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     })
 }
 
-pub fn is_hdr(path: impl AsRef<str>) -> bool {
-    unsafe { stbi_is_hdr(path.as_ref().as_ptr() as *const i8) != 0 }
+pub fn is_hdr(data: &[u8]) -> bool {
+    unsafe { stbi_is_hdr_from_memory(data.as_ptr(), data.len() as i32) != 0 }
 }
 
 pub fn failure_reason() -> Option<String> {

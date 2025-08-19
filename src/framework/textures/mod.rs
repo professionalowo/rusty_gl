@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use crate::{
     framework::textures::stbi::ImageData,
     gl::{self, GLenum, GLint, GLsizei, GLuint},
@@ -34,9 +36,8 @@ impl From<stbi::ImageError> for TextureError {
 }
 
 impl Texture2D {
-    pub fn try_from_file(path: impl AsRef<str>, mipmap: bool) -> Result<Self, TextureError> {
-        let p = path.as_ref();
-        let texture = Self::upload_image_data(ImageData::load(p)?, mipmap)?;
+    pub fn try_from_file(path: PathBuf, mipmap: bool) -> Result<Self, TextureError> {
+        let texture = Self::upload_image_data(ImageData::load(path)?, mipmap)?;
         Ok(texture)
     }
     pub fn bind(&self, unit: u32) {
