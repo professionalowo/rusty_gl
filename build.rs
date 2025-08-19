@@ -52,6 +52,7 @@ fn build_stbi(out_path: &PathBuf) {
     cc::Build::new()
         .file("stb_image_impl.c")
         .flag_if_supported("-Wno-unused-parameter")
+        .flag_if_supported("-Wno-unused-function")
         .compile("stb_image");
 
     let stbi_builder = bindgen::Builder::default()
@@ -61,7 +62,8 @@ fn build_stbi(out_path: &PathBuf) {
         .allowlist_function("stbi_set_flip_vertically_on_load")
         .allowlist_function("stbi_is_hdr")
         .allowlist_function("stbi_failure_reason")
-        .clang_arg("-DSTB_IMAGE_IMPLEMENTATION");
+        .clang_arg("-DSTB_IMAGE_IMPLEMENTATION")
+        .clang_arg("-DSTBI_ONLY_PNG");
 
     let stbi_bindings = stbi_builder
         .generate()
