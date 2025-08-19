@@ -40,11 +40,11 @@ fn main() {
     ];
 
     const COLORS: [Vec3<f32>; 5] = [
-        Vec3::new(1.0, 0.0, 0.0), // red
-        Vec3::new(0.0, 1.0, 0.0), // green
-        Vec3::new(0.0, 0.0, 1.0), // blue
-        Vec3::new(1.0, 1.0, 1.0), // white
-        Vec3::new(1.0, 1.0, 0.0), // yellow
+        Vec3::rgb(1.0, 0.0, 0.0), // red
+        Vec3::rgb(0.0, 1.0, 0.0), // green
+        Vec3::rgb(0.0, 0.0, 1.0), // blue
+        Vec3::rgb(1.0, 1.0, 1.0), // white
+        Vec3::rgb(1.0, 1.0, 0.0), // yellow
     ];
 
     const INDICES: [u8; 18] = [
