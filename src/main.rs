@@ -1,21 +1,21 @@
 use std::f32::consts::PI;
 use std::path::PathBuf;
 
-use open_gl::framework::camera::Camera;
-use open_gl::framework::textures::Texture2D;
-use open_gl::gl;
-use open_gl::gl::program::Program;
-use open_gl::gl::shader::Shader;
-use open_gl::gl::uniform::UniformLocation;
-use open_gl::gl::vao::VertexArrayObject;
-use open_gl::gl::vbo::{Location, VertexBufferObject};
-use open_gl::glfw;
-use open_gl::glfw::input::KeyEvent;
-use open_gl::glfw::input::keycode::Keycode;
-use open_gl::glfw::input::modifier::Modifier;
-use open_gl::glfw::window::Window;
-use open_gl::math::mat4::Mat4;
-use open_gl::math::vec3::Vec3;
+use rusty_gl::framework::camera::Camera;
+use rusty_gl::framework::textures::Texture2D;
+use rusty_gl::gl;
+use rusty_gl::gl::program::Program;
+use rusty_gl::gl::shader::Shader;
+use rusty_gl::gl::uniform::UniformLocation;
+use rusty_gl::gl::vao::VertexArrayObject;
+use rusty_gl::gl::vbo::{Location, VertexBufferObject};
+use rusty_gl::glfw;
+use rusty_gl::glfw::input::KeyEvent;
+use rusty_gl::glfw::input::keycode::Keycode;
+use rusty_gl::glfw::input::modifier::Modifier;
+use rusty_gl::glfw::window::Window;
+use rusty_gl::math::mat4::Mat4;
+use rusty_gl::math::vec3::Vec3;
 
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
