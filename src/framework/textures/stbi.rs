@@ -26,7 +26,7 @@ pub enum ImageError {
 
 impl From<TryFromIntError> for ImageError {
     fn from(err: TryFromIntError) -> Self {
-        ImageError::Cast(err)
+        Self::Cast(err)
     }
 }
 

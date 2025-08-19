@@ -23,13 +23,13 @@ pub enum TextureError {
 
 impl From<gl::GLError> for TextureError {
     fn from(err: gl::GLError) -> Self {
-        TextureError::GLError(err)
+        Self::GLError(err)
     }
 }
 
 impl From<stbi::ImageError> for TextureError {
     fn from(err: stbi::ImageError) -> Self {
-        TextureError::LoadFailed(err)
+        Self::LoadFailed(err)
     }
 }
 
