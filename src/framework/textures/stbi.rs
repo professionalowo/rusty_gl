@@ -133,12 +133,14 @@ pub fn is_hdr(path: impl AsRef<str>) -> bool {
 }
 
 pub fn failure_reason() -> Option<String> {
+    use std::ffi::CStr;
+
     unsafe {
         let ptr = stbi_failure_reason();
         if ptr.is_null() {
             None
         } else {
-            Some(std::ffi::CStr::from_ptr(ptr).to_string_lossy().into_owned())
+            Some(CStr::from_ptr(ptr).to_string_lossy().into_owned())
         }
     }
 }
