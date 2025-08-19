@@ -9,7 +9,7 @@ fn main() {
         .file("stb_image_impl.c")
         .compile("stb_image");
 
-    let mut builder = bindgen::Builder::default()
+    let mut gl_builder = bindgen::Builder::default()
         .header("glwrapper.h")
         .clang_arg("-DGL_GLEXT_PROTOTYPES");
 
@@ -30,7 +30,7 @@ fn main() {
             .to_string();
 
         // Add the SDK include path
-        builder = builder
+        gl_builder = gl_builder
             .clang_arg(format!(
                 "-I{}/System/Library/Frameworks/OpenGL.framework/Headers",
                 sdk_path
@@ -40,10 +40,25 @@ fn main() {
             .clang_arg("-I/opt/homebrew/opt/glfw/include");
     }
 
-    let bindings = builder.generate().expect("Unable to generate bindings");
+    let gl_bindings = gl_builder.generate().expect("Unable to generate bindings");
 
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-    bindings
+    gl_bindings
         .write_to_file(out_path.join("gl_bindings.rs"))
         .expect("Couldn't write bindings!");
+
+    let stbi_builder = bindgen::Builder::default()
+        .header("stb_image.h")
+        .allowlist_function("stbi_loadf")
+        .allowlist_function("stbi_load")
+        .allowlist_function("stbi_set_flip_vertically_on_load")
+        .allowlist_function("stbi_is_hdr")
+        .clang_arg("-DSTB_IMAGE_IMPLEMENTATION");
+    let stbi_bindings = stbi_builder
+        .generate()
+        .expect("Unable to generate bindings");
+
+    stbi_bindings
+        .write_to_file(out_path.join("stbi_bindings.rs"))
+        .expect("Couldn't write STBI bindings!");
 }

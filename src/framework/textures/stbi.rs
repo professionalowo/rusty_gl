@@ -1,3 +1,10 @@
+#![allow(non_upper_case_globals)]
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+#![allow(dead_code)]
+
+include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
+
 use crate::gl;
 
 #[derive(Debug)]
@@ -15,13 +22,13 @@ pub struct ImageError;
 
 pub fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     unsafe {
-        gl::stbi_set_flip_vertically_on_load(1);
+        stbi_set_flip_vertically_on_load(1);
     }
     let mut width = 0;
     let mut height = 0;
     let mut channels = 0;
     let data = unsafe {
-        let ptr = gl::stbi_loadf(
+        let ptr = stbi_loadf(
             path.as_ref().as_ptr() as *const i8,
             &mut width,
             &mut height,
@@ -64,13 +71,13 @@ fn format_from_channels(channels: i32) -> gl::GLenum {
 
 pub fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
     unsafe {
-        gl::stbi_set_flip_vertically_on_load(1);
+        stbi_set_flip_vertically_on_load(1);
     }
     let mut width = 0;
     let mut height = 0;
     let mut channels = 0;
     let data = unsafe {
-        let ptr = gl::stbi_load(
+        let ptr = stbi_load(
             path.as_ref().as_ptr() as *const i8,
             &mut width,
             &mut height,
@@ -101,5 +108,5 @@ pub fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
 }
 
 pub fn is_hdr(path: impl AsRef<str>) -> bool {
-    unsafe { gl::stbi_is_hdr(path.as_ref().as_ptr() as *const i8) != 0 }
+    unsafe { stbi_is_hdr(path.as_ref().as_ptr() as *const i8) != 0 }
 }
