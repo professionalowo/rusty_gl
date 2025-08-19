@@ -1,4 +1,4 @@
-use std::ops::Mul;
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 pub mod mat3;
 pub mod mat4;
@@ -6,7 +6,62 @@ pub mod vec2;
 pub mod vec3;
 pub mod vec4;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Scalar<T>(pub T)
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Scalar<T>(pub T);
+
+impl<T> Copy for Scalar<T> where T: Copy {}
+
+impl<T> Add<T> for Scalar<T>
 where
-    T: Copy + Mul<Output = T>;
+    T: Copy + Add<Output = T>,
+{
+    type Output = Self;
+
+    fn add(self, other: T) -> Self {
+        Self(self.0 + other)
+    }
+}
+
+impl<T> Sub<T> for Scalar<T>
+where
+    T: Copy + Sub<Output = T>,
+{
+    type Output = Self;
+
+    fn sub(self, other: T) -> Self {
+        Self(self.0 - other)
+    }
+}
+
+impl<T> Mul<T> for Scalar<T>
+where
+    T: Copy + Mul<Output = T>,
+{
+    type Output = Self;
+
+    fn mul(self, other: T) -> Self {
+        Self(self.0 * other)
+    }
+}
+
+impl<T> Div<T> for Scalar<T>
+where
+    T: Copy + Div<Output = T>,
+{
+    type Output = Self;
+
+    fn div(self, other: T) -> Self {
+        Self(self.0 / other)
+    }
+}
+
+impl<T> Neg for Scalar<T>
+where
+    T: Copy + Neg<Output = T>,
+{
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Self(-self.0)
+    }
+}
