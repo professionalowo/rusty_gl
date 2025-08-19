@@ -10,8 +10,8 @@ mod upload;
 
 pub struct Texture2D {
     id: GLuint,
-    width: u32,
-    height: u32,
+    width: GLsizei,
+    height: GLsizei,
     internal_format: GLint,
     format: GLenum,
     type_: GLenum,
@@ -49,7 +49,7 @@ impl Texture2D {
         upload::bind_texture(gl::GL_TEXTURE_2D, 0);
     }
 
-    pub fn resize(&mut self, w: u32, h: u32) {
+    pub fn resize(&mut self, w: GLsizei, h: GLsizei) {
         self.width = w;
         self.height = h;
         upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
@@ -57,8 +57,8 @@ impl Texture2D {
             gl::GL_TEXTURE_2D,
             0,
             self.internal_format,
-            self.width as GLsizei,
-            self.height as GLsizei,
+            self.width,
+            self.height,
             0,
             self.format,
             self.type_,

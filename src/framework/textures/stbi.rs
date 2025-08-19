@@ -13,8 +13,8 @@ use crate::gl;
 
 #[derive(Debug)]
 pub struct ImageData {
-    pub width: u32,
-    pub height: u32,
+    pub width: gl::GLsizei,
+    pub height: gl::GLsizei,
     pub format: gl::GLenum,
     pub internal_format: gl::GLint,
     pub type_: gl::GLenum,
@@ -88,8 +88,8 @@ fn try_loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
     };
     let format = format_from_channels(channels);
     Ok(ImageData {
-        width: width.try_into()?,
-        height: height.try_into()?,
+        width,
+        height,
         format,
         data,
         type_: gl::GL_FLOAT,
@@ -132,8 +132,8 @@ fn try_load(bytes: &[u8]) -> Result<ImageData, ImageError> {
     };
     let format = format_from_channels(channels);
     Ok(ImageData {
-        width: width.try_into()?,
-        height: height.try_into()?,
+        width,
+        height,
         format,
         data,
         type_: gl::GL_UNSIGNED_BYTE,
