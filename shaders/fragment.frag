@@ -3,8 +3,6 @@
 in vec3 v_color;
 in vec3 pos_ws;
 
-
-
 uniform float pointlight_intensity;
 uniform vec3 pointlight_color;
 uniform vec3 pointlight_pos;

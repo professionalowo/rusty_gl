@@ -11,6 +11,10 @@ pub enum RotationAxis {
     Z,
 }
 impl Vec3<f32> {
+    pub const fn rgb(r: f32, g: f32, b: f32) -> Self {
+        Self::new(r, g, b)
+    }
+
     pub const fn zero() -> Self {
         Self::new(0.0, 0.0, 0.0)
     }

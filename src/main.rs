@@ -120,9 +120,9 @@ fn main() {
         Vec3::new(0.0, 1.0, 0.0),
     );
 
-    const POINTLIGHT_POS: Vec3<f32> = Vec3::new(1.0, 2.0, 1.0);
-    const POINTLIGHT_COLOR: Vec3<f32> = Vec3::new(1.0, 1.0, 1.0);
-    const POINTLIGHT_INTENSITY: f32 = 1.0;
+    const POINTLIGHT_POS: Vec3<f32> = Vec3::new(1.0, 5.0, 1.0);
+    const POINTLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 1.0, 1.0);
+    const POINTLIGHT_INTENSITY: f32 = 0.2;
 
     let model_loc = UniformLocation::try_for_program(&program, "model")
         .expect("Failed to get uniform location for model");
