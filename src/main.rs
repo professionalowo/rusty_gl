@@ -111,7 +111,7 @@ fn main() {
         .expect("Failed to create shader program");
 
     let texture = Texture2D::try_from_file(
-        get_texture_file_path("solid_red.png")
+        get_texture_file_path("solid_reddd.png")
             .to_str()
             .expect("Invalid texture path"),
         false,

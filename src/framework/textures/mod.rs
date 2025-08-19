@@ -36,27 +36,12 @@ impl From<stbi::ImageError> for TextureError {
 impl Texture2D {
     pub fn try_from_file(path: impl AsRef<str>, mipmap: bool) -> Result<Self, TextureError> {
         let p = path.as_ref();
-        let ImageData {
-            width,
-            height,
-            format,
-            ref data,
-            type_,
-            internal_format,
-        } = if stbi::is_hdr(p) {
+        let data = if stbi::is_hdr(p) {
             stbi::loadf(p)
         } else {
             stbi::load(p)
         }?;
-        let mut texture = Self {
-            id: 0,
-            width,
-            height,
-            internal_format,
-            format,
-            type_,
-        };
-        texture.upload(&data, mipmap)?;
+        let texture = upload_image_data(data, mipmap)?;
         Ok(texture)
     }
 
@@ -153,6 +138,27 @@ impl Texture2D {
         );
         upload::bind_texture(gl::GL_TEXTURE_2D, 0);
     }
+}
+
+fn upload_image_data(data: ImageData, mipmap: bool) -> Result<Texture2D, gl::GLError> {
+    let ImageData {
+        width,
+        height,
+        format,
+        internal_format,
+        type_,
+        ref data,
+    } = data;
+    let mut texture = Texture2D {
+        id: 0,
+        width,
+        height,
+        internal_format,
+        format,
+        type_,
+    };
+    texture.upload(data, mipmap)?;
+    Ok(texture)
 }
 
 impl Drop for Texture2D {

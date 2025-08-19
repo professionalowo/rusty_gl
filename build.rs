@@ -60,6 +60,7 @@ fn build_stbi(out_path: &PathBuf) {
         .allowlist_function("stbi_load")
         .allowlist_function("stbi_set_flip_vertically_on_load")
         .allowlist_function("stbi_is_hdr")
+        .allowlist_function("stbi_failure_reason")
         .clang_arg("-DSTB_IMAGE_IMPLEMENTATION");
 
     let stbi_bindings = stbi_builder

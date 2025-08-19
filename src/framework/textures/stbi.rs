@@ -21,12 +21,13 @@ pub struct ImageData {
 
 #[derive(Debug)]
 pub enum ImageError {
-    Cast(TryFromIntError),
+    StbiError(String),
+    CastError(TryFromIntError),
 }
 
 impl From<TryFromIntError> for ImageError {
     fn from(err: TryFromIntError) -> Self {
-        Self::Cast(err)
+        Self::CastError(err)
     }
 }
 
@@ -45,6 +46,11 @@ pub fn loadf(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
             &mut channels,
             0,
         );
+        if ptr.is_null() {
+            return Err(ImageError::StbiError(
+                failure_reason().unwrap_or_else(|| "Unknown error".to_string()),
+            ));
+        }
         let data = ptr.cast::<u8>();
         Box::from_raw(std::slice::from_raw_parts_mut(
             data,
@@ -94,6 +100,11 @@ pub fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
             &mut channels,
             0,
         );
+        if ptr.is_null() {
+            return Err(ImageError::StbiError(
+                failure_reason().unwrap_or_else(|| "Unknown error".to_string()),
+            ));
+        }
         Box::from_raw(std::slice::from_raw_parts_mut(
             ptr,
             (width * height) as usize,
@@ -119,4 +130,15 @@ pub fn load(path: impl AsRef<str>) -> Result<ImageData, ImageError> {
 
 pub fn is_hdr(path: impl AsRef<str>) -> bool {
     unsafe { stbi_is_hdr(path.as_ref().as_ptr() as *const i8) != 0 }
+}
+
+pub fn failure_reason() -> Option<String> {
+    unsafe {
+        let ptr = stbi_failure_reason();
+        if ptr.is_null() {
+            None
+        } else {
+            Some(std::ffi::CStr::from_ptr(ptr).to_string_lossy().into_owned())
+        }
+    }
 }
