@@ -141,7 +141,7 @@ fn create_window(
     }
 }
 
-extern "C" fn framebuffer_size_callback(window: *mut gl::GLFWwindow, width: c_int, height: c_int) {
+extern "C" fn framebuffer_size_callback(_window: *mut gl::GLFWwindow, width: c_int, height: c_int) {
     unsafe {
         gl::glViewport(0, 0, width, height);
     }
