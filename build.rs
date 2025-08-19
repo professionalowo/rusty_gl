@@ -16,7 +16,10 @@ fn main() {
     build_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
 }
 
-fn build_gl(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::Result<()> {
+fn build_gl<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
+where
+    P: AsRef<Path>,
+{
     opengl_builder()
         .header("glwrapper.h")
         .clang_arg("-DGL_GLEXT_PROTOTYPES")
@@ -25,7 +28,10 @@ fn build_gl(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::Res
         .write_to_file(out_path.join(bindings_file))
 }
 
-fn build_glfw(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::Result<()> {
+fn build_glfw<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
+where
+    P: AsRef<Path>,
+{
     opengl_builder()
         .header("glfwwrapper.h")
         .generate()
@@ -33,7 +39,10 @@ fn build_glfw(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::R
         .write_to_file(out_path.join(bindings_file))
 }
 
-fn build_stbi(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::Result<()> {
+fn build_stbi<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
+where
+    P: AsRef<Path>,
+{
     cc::Build::new()
         .file("stb_image_impl.c")
         .flag_if_supported("-Wno-unused-parameter")
