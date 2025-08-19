@@ -1,7 +1,7 @@
 use std::f32::consts::PI;
 use std::path::PathBuf;
 
-use open_gl::framework::camera::{self, Camera};
+use open_gl::framework::camera::Camera;
 use open_gl::framework::textures::Texture2D;
 use open_gl::gl;
 use open_gl::gl::program::Program;
