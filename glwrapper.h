@@ -4,4 +4,3 @@
 #include <GL/gl.h>
 #include <GL/glcorearb.h>
 #endif
-#include <GLFW/glfw3.h>

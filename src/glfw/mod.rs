@@ -1,16 +1,19 @@
+#![allow(non_upper_case_globals)]
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+#![allow(dead_code)]
+
+include!(concat!(env!("OUT_DIR"), "/glfw_bindings.rs"));
+
 pub mod input;
 pub mod window;
 
-use crate::gl;
-
-#[link(name = "glfw")]
-#[allow(missing_abi)]
-unsafe extern "C" {}
+use crate::glfw;
 
 pub fn init() -> Result<(), GLFWError> {
     unsafe {
-        let code = gl::glfwInit();
-        if code != gl::GLFW_TRUE as i32 {
+        let code = glfw::glfwInit();
+        if code != glfw::GLFW_TRUE as i32 {
             return Err(GLFWError::from(code));
         }
     }
@@ -19,13 +22,13 @@ pub fn init() -> Result<(), GLFWError> {
 
 pub fn terminate() {
     unsafe {
-        gl::glfwTerminate();
+        glfw::glfwTerminate();
     }
 }
 
 pub fn window_hint(target: u32, hint: u32) {
     unsafe {
-        gl::glfwWindowHint(target.try_into().unwrap(), hint.try_into().unwrap());
+        glfw::glfwWindowHint(target.try_into().unwrap(), hint.try_into().unwrap());
     }
 }
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

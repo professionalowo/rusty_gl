@@ -1,24 +1,63 @@
 extern crate bindgen;
 
 use std::env;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
-fn main() {
-    let out_path = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR not set"));
-    build_gl(&out_path);
-    build_stbi(&out_path);
-}
-
-fn build_gl(out_path: &PathBuf) {
-    let mut gl_builder = bindgen::Builder::default()
-        .header("glwrapper.h")
-        .clang_arg("-DGL_GLEXT_PROTOTYPES");
-
+fn main() -> std::io::Result<()> {
     if cfg!(target_os = "macos") {
+        println!("cargo:rustc-link-lib=framework=OpenGL");
         println!("cargo:rustc-link-search=native=/opt/homebrew/lib");
         println!("cargo:rustc-link-lib=dylib=glfw");
+    }
+    let out_path = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR not set"));
+    build_gl(&out_path, "gl_bindings.rs").expect("Failed to build OpenGL bindings");
+    build_glfw(&out_path, "glfw_bindings.rs").expect("Failed to build GLFW bindings");
+    build_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
+    Ok(())
+}
 
+fn build_gl(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::Result<()> {
+    opengl_builder()
+        .header("glwrapper.h")
+        .clang_arg("-DGL_GLEXT_PROTOTYPES")
+        .generate()
+        .expect("Unable to generate bindings")
+        .write_to_file(out_path.join(bindings_file))
+}
+
+fn build_glfw(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::Result<()> {
+    opengl_builder()
+        .header("glfwwrapper.h")
+        .generate()
+        .expect("Unable to generate GLFW bindings")
+        .write_to_file(out_path.join(bindings_file))
+}
+
+fn build_stbi(out_path: &PathBuf, bindings_file: impl AsRef<Path>) -> std::io::Result<()> {
+    cc::Build::new()
+        .file("stb_image_impl.c")
+        .flag_if_supported("-Wno-unused-parameter")
+        .flag_if_supported("-Wno-unused-function")
+        .compile("stb_image");
+
+    bindgen::Builder::default()
+        .header("stb_image.h")
+        .allowlist_function("stbi_loadf_from_memory")
+        .allowlist_function("stbi_load_from_memory")
+        .allowlist_function("stbi_set_flip_vertically_on_load")
+        .allowlist_function("stbi_is_hdr_from_memory")
+        .allowlist_function("stbi_failure_reason")
+        .clang_arg("-DSTB_IMAGE_IMPLEMENTATION")
+        .clang_arg("-DSTBI_ONLY_PNG")
+        .generate()
+        .expect("Unable to generate bindings")
+        .write_to_file(out_path.join(bindings_file))
+}
+
+fn opengl_builder() -> bindgen::Builder {
+    let builder = bindgen::Builder::default();
+    if cfg!(target_os = "macos") {
         let sdk_path_output = Command::new("xcrun")
             .arg("--sdk")
             .arg("macosx")
@@ -32,44 +71,15 @@ fn build_gl(out_path: &PathBuf) {
             .to_string();
 
         // Add the SDK include path
-        gl_builder = gl_builder
+        builder
+            .clang_arg("-I/opt/homebrew/include")
+            .clang_arg("-I/opt/homebrew/opt/glfw/include")
             .clang_arg(format!(
                 "-I{}/System/Library/Frameworks/OpenGL.framework/Headers",
                 sdk_path
             ))
             .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path)) // For frameworks themselves
-            .clang_arg("-I/opt/homebrew/include") // Still useful for other Homebrew headers
-            .clang_arg("-I/opt/homebrew/opt/glfw/include");
+    } else {
+        builder
     }
-
-    let gl_bindings = gl_builder.generate().expect("Unable to generate bindings");
-
-    gl_bindings
-        .write_to_file(out_path.join("gl_bindings.rs"))
-        .expect("Couldn't write bindings!");
-}
-fn build_stbi(out_path: &PathBuf) {
-    cc::Build::new()
-        .file("stb_image_impl.c")
-        .flag_if_supported("-Wno-unused-parameter")
-        .flag_if_supported("-Wno-unused-function")
-        .compile("stb_image");
-
-    let stbi_builder = bindgen::Builder::default()
-        .header("stb_image.h")
-        .allowlist_function("stbi_loadf_from_memory")
-        .allowlist_function("stbi_load_from_memory")
-        .allowlist_function("stbi_set_flip_vertically_on_load")
-        .allowlist_function("stbi_is_hdr_from_memory")
-        .allowlist_function("stbi_failure_reason")
-        .clang_arg("-DSTB_IMAGE_IMPLEMENTATION")
-        .clang_arg("-DSTBI_ONLY_PNG");
-
-    let stbi_bindings = stbi_builder
-        .generate()
-        .expect("Unable to generate bindings");
-
-    stbi_bindings
-        .write_to_file(out_path.join("stbi_bindings.rs"))
-        .expect("Couldn't write STBI bindings!");
 }

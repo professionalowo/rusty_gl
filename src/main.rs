@@ -20,10 +20,10 @@ use open_gl::math::vec3::Vec3;
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
-    glfw::window_hint(gl::GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfw::window_hint(gl::GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfw::window_hint(gl::GLFW_OPENGL_PROFILE, gl::GLFW_OPENGL_CORE_PROFILE);
-    glfw::window_hint(gl::GLFW_OPENGL_FORWARD_COMPAT, gl::GLFW_TRUE);
+    glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfw::window_hint(glfw::GLFW_OPENGL_PROFILE, glfw::GLFW_OPENGL_CORE_PROFILE);
+    glfw::window_hint(glfw::GLFW_OPENGL_FORWARD_COMPAT, glfw::GLFW_TRUE);
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
     let vao = VertexArrayObject::gen_vertex_arrays();

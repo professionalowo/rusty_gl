@@ -1,4 +1,4 @@
-use crate::gl;
+use crate::glfw;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Action {
@@ -11,9 +11,9 @@ pub enum Action {
 impl From<u32> for Action {
     fn from(code: u32) -> Self {
         match code {
-            gl::GLFW_PRESS => Self::Press,
-            gl::GLFW_RELEASE => Self::Release,
-            gl::GLFW_REPEAT => Self::Repeat,
+            glfw::GLFW_PRESS => Self::Press,
+            glfw::GLFW_RELEASE => Self::Release,
+            glfw::GLFW_REPEAT => Self::Repeat,
             _ => Self::Unknown(code),
         }
     }
