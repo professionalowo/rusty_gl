@@ -1,4 +1,4 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 pub mod mat3;
 pub mod mat4;
@@ -13,7 +13,7 @@ impl<T> Copy for Scalar<T> where T: Copy {}
 
 impl<T> Add<T> for Scalar<T>
 where
-    T: Copy + Add<Output = T>,
+    T: Add<Output = T>,
 {
     type Output = Self;
 
@@ -22,9 +22,18 @@ where
     }
 }
 
+impl<T> AddAssign<T> for Scalar<T>
+where
+    T: AddAssign<T>,
+{
+    fn add_assign(&mut self, other: T) {
+        self.0 += other;
+    }
+}
+
 impl<T> Sub<T> for Scalar<T>
 where
-    T: Copy + Sub<Output = T>,
+    T: Sub<Output = T>,
 {
     type Output = Self;
 
@@ -33,9 +42,18 @@ where
     }
 }
 
+impl<T> SubAssign<T> for Scalar<T>
+where
+    T: SubAssign<T>,
+{
+    fn sub_assign(&mut self, other: T) {
+        self.0 -= other;
+    }
+}
+
 impl<T> Mul<T> for Scalar<T>
 where
-    T: Copy + Mul<Output = T>,
+    T: Mul<Output = T>,
 {
     type Output = Self;
 
@@ -44,9 +62,18 @@ where
     }
 }
 
+impl<T> MulAssign<T> for Scalar<T>
+where
+    T: MulAssign<T>,
+{
+    fn mul_assign(&mut self, other: T) {
+        self.0 *= other;
+    }
+}
+
 impl<T> Div<T> for Scalar<T>
 where
-    T: Copy + Div<Output = T>,
+    T: Div<Output = T>,
 {
     type Output = Self;
 
@@ -55,9 +82,18 @@ where
     }
 }
 
+impl<T> DivAssign<T> for Scalar<T>
+where
+    T: DivAssign<T>,
+{
+    fn div_assign(&mut self, other: T) {
+        self.0 /= other;
+    }
+}
+
 impl<T> Neg for Scalar<T>
 where
-    T: Copy + Neg<Output = T>,
+    T: Neg<Output = T>,
 {
     type Output = Self;
 
