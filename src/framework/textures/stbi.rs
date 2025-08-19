@@ -39,17 +39,17 @@ impl From<std::io::Error> for ImageError {
 }
 
 impl ImageData {
-    pub fn load(path: PathBuf) -> Result<Self, ImageError> {
+    pub fn try_load(path: PathBuf) -> Result<Self, ImageError> {
         let data = &std::fs::read(&path)?;
         if is_hdr(data) {
-            loadf(data)
+            try_loadf(data)
         } else {
-            load(data)
+            try_load(data)
         }
     }
 }
 
-fn loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
+fn try_loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
     unsafe {
         stbi_set_flip_vertically_on_load(1);
     }
@@ -94,7 +94,7 @@ fn loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
     })
 }
 
-fn load(bytes: &[u8]) -> Result<ImageData, ImageError> {
+fn try_load(bytes: &[u8]) -> Result<ImageData, ImageError> {
     unsafe {
         stbi_set_flip_vertically_on_load(1);
     }
