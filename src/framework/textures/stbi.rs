@@ -28,6 +28,16 @@ pub enum ImageError {
     CastError(std::num::TryFromIntError),
 }
 
+impl std::fmt::Display for ImageError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ImageError::IoError(err) => write!(f, "IO Error: {}", err),
+            ImageError::StbiError(err) => write!(f, "STBI Error: {}", err),
+            ImageError::CastError(err) => write!(f, "Cast Error: {}", err),
+        }
+    }
+}
+
 impl From<std::num::TryFromIntError> for ImageError {
     fn from(err: std::num::TryFromIntError) -> Self {
         Self::CastError(err)

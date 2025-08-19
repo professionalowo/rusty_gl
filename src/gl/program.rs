@@ -4,7 +4,7 @@ use crate::gl::{
     glValidateProgram, shader::Shader,
 };
 
-pub struct Program(u32);
+pub struct Program(pub u32);
 
 impl Program {
     pub fn from_shaders(shaders: &[Shader]) -> Result<Self, String> {
