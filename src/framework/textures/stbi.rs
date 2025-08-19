@@ -5,7 +5,7 @@
 
 include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
-use std::{num::TryFromIntError, path::PathBuf};
+use std::path::PathBuf;
 
 use crate::gl;
 
@@ -23,11 +23,11 @@ pub struct ImageData {
 pub enum ImageError {
     IoError(std::io::Error),
     StbiError(String),
-    CastError(TryFromIntError),
+    CastError(std::num::TryFromIntError),
 }
 
-impl From<TryFromIntError> for ImageError {
-    fn from(err: TryFromIntError) -> Self {
+impl From<std::num::TryFromIntError> for ImageError {
+    fn from(err: std::num::TryFromIntError) -> Self {
         Self::CastError(err)
     }
 }
@@ -94,16 +94,6 @@ fn loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
     })
 }
 
-fn format_from_channels(channels: i32) -> gl::GLenum {
-    match channels {
-        4 => gl::GL_RGBA,
-        3 => gl::GL_RGB,
-        2 => gl::GL_RG,
-        1 => gl::GL_RED,
-        _ => gl::GL_RED,
-    }
-}
-
 fn load(bytes: &[u8]) -> Result<ImageData, ImageError> {
     unsafe {
         stbi_set_flip_vertically_on_load(1);
@@ -146,6 +136,16 @@ fn load(bytes: &[u8]) -> Result<ImageData, ImageError> {
         type_: gl::GL_UNSIGNED_BYTE,
         internal_format: internal_format.try_into()?,
     })
+}
+
+fn format_from_channels(channels: i32) -> gl::GLenum {
+    match channels {
+        4 => gl::GL_RGBA,
+        3 => gl::GL_RGB,
+        2 => gl::GL_RG,
+        1 => gl::GL_RED,
+        _ => gl::GL_RED,
+    }
 }
 
 pub fn is_hdr(data: &[u8]) -> bool {
