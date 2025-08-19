@@ -7,6 +7,8 @@ include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
 use std::path::PathBuf;
 
+use memmap2::Mmap;
+
 use crate::gl;
 
 #[derive(Debug)]
@@ -40,7 +42,8 @@ impl From<std::io::Error> for ImageError {
 
 impl ImageData {
     pub fn try_load(path: PathBuf) -> Result<Self, ImageError> {
-        let data = &std::fs::read(&path)?;
+        let file = std::fs::File::open(&path)?;
+        let data = &(unsafe { Mmap::map(&file) }?);
         if is_hdr(data) {
             try_loadf(data)
         } else {

@@ -8,3 +8,6 @@ edition = "2024"
 bindgen = "0.72.0"
 cc = "1.2.33"
 
+[dependencies]
+memmap2 = "0.9.7"
+
