@@ -22,11 +22,17 @@ impl UniformLocation {
         get_location(program, name).map(UniformLocation)
     }
 
-    pub fn provide<U: Uniform>(location: &Self, value: U) {
+    pub fn provide<U>(location: &Self, value: U)
+    where
+        U: Uniform,
+    {
         value.set(None, location);
     }
 
-    pub fn provide_opt<U: Uniform>(location: &Self, value: U, options: U::Options) {
+    pub fn provide_opt<U>(location: &Self, value: U, options: U::Options)
+    where
+        U: Uniform,
+    {
         value.set(Some(options), location);
     }
 }
