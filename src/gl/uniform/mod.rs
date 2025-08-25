@@ -27,6 +27,7 @@ impl UniformLocation {
         get_location(program, name).map(UniformLocation)
     }
 
+    #[deprecated]
     pub fn mat3f(&self, transpose: bool, matrix: Mat3<f32>) {
         let cols = matrix.cols();
         let value = cols.as_ptr() as *const f32;
