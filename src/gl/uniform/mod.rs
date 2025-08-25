@@ -29,12 +29,12 @@ impl UniformLocation {
         get_location(program, name).map(UniformLocation)
     }
 
-    pub fn uniform<U: Uniform>(&self, uniform: U) {
-        uniform.set(None, self);
+    pub fn provide<U: Uniform>(location: &Self, uniform: U) {
+        uniform.set(None, location);
     }
 
-    pub fn uniform_opt<U: Uniform>(&self, uniform: U, options: U::Options) {
-        uniform.set(Some(options), self);
+    pub fn provide_opt<U: Uniform>(location: &Self, uniform: U, options: U::Options) {
+        uniform.set(Some(options), location);
     }
 
     #[deprecated(note = "Use `uniform` or `uniform_opt` instead")]
