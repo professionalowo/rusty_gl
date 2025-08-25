@@ -2,7 +2,10 @@ use std::path::PathBuf;
 
 use crate::{
     framework::textures::stbi::ImageData,
-    gl::{self, GLenum, GLint, GLsizei, GLuint},
+    gl::{
+        self, GLenum, GLint, GLsizei, GLuint, glUniform1i,
+        uniform::{UniformLocation, uniform_trait::Uniform},
+    },
 };
 
 mod stbi;
@@ -162,6 +165,19 @@ impl Drop for Texture2D {
             unsafe {
                 gl::glDeleteTextures(1, &self.id);
             }
+        }
+    }
+}
+
+impl Uniform for &Texture2D {
+    type Options = u32; // texture unit
+
+    fn set(&self, options: Option<Self::Options>, location: &UniformLocation) {
+        let unit = options.unwrap_or(0);
+        let UniformLocation(location) = *location;
+        self.bind(unit);
+        unsafe {
+            glUniform1i(location, unit as i32);
         }
     }
 }

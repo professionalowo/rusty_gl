@@ -4,7 +4,7 @@ use std::{
 };
 
 const RANK: usize = 4;
-use crate::math::vec4::Vec4;
+use crate::{gl::{glUniformMatrix4fv, uniform::{uniform_trait::Uniform, UniformLocation}}, math::vec4::Vec4};
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
@@ -49,6 +49,20 @@ impl Mat4<f32> {
             Vec4::new(0.0, 0.0, 1.0, 0.0),
             Vec4::new(0.0, 0.0, 0.0, 1.0),
         )
+    }
+}
+
+impl Uniform for &Mat4<f32> {
+    type Options = bool; // transpose
+
+    fn set(&self, options: Option<Self::Options>, location: &UniformLocation) {
+        let transpose = options.unwrap_or(false);
+        let cols = self.cols();
+        let value = cols.as_ptr() as *const f32;
+        let UniformLocation(location) = *location;
+        unsafe {
+            glUniformMatrix4fv(location, 1, u8::from(transpose), value);
+        }
     }
 }
 

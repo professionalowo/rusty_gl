@@ -157,14 +157,14 @@ fn main() {
 
         program.bind();
 
-        model_loc.mat4f(false, MODEL_MATRIX);
-        view_loc.mat4f(false, camera.view());
-        projection_loc.mat4f(false, camera.projection(window.aspect_ratio()));
-        camera_pos_loc.vec3f(&camera.position());
-        texture_loc.tex2d(&texture, 0);
-        pointlight_pos_loc.vec3f(&POINTLIGHT_POS);
-        pointlight_color_loc.vec3f(&POINTLIGHT_COLOR);
-        pointlight_intensity_loc.float32(POINTLIGHT_INTENSITY);
+        model_loc.uniform(&MODEL_MATRIX);
+        view_loc.uniform(&camera.view());
+        projection_loc.uniform(&camera.projection(window.aspect_ratio()));
+        camera_pos_loc.uniform(camera.position());
+        texture_loc.uniform(&texture);
+        pointlight_pos_loc.uniform(&POINTLIGHT_POS);
+        pointlight_color_loc.uniform(&POINTLIGHT_COLOR);
+        pointlight_intensity_loc.uniform(POINTLIGHT_INTENSITY);
 
         gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
         program.unbind();

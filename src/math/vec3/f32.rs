@@ -1,6 +1,12 @@
 use std::ops::Div;
 
-use crate::math::Scalar;
+use crate::{
+    gl::{
+        glUniform3f,
+        uniform::{UniformLocation, uniform_trait::Uniform},
+    },
+    math::Scalar,
+};
 
 use super::Vec3;
 
@@ -71,6 +77,18 @@ impl Div<f32> for Vec3<f32> {
             self
         } else {
             Self::new(self.x / scalar, self.y / scalar, self.z / scalar)
+        }
+    }
+}
+
+impl Uniform for &Vec3<f32> {
+    type Options = ();
+
+    fn set(&self, _options: Option<Self::Options>, location: &UniformLocation) {
+        let Vec3 { x, y, z } = self;
+        let UniformLocation(location) = *location;
+        unsafe {
+            glUniform3f(location, *x, *y, *z);
         }
     }
 }

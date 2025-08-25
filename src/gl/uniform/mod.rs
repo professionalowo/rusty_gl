@@ -1,10 +1,12 @@
 use std::{ffi::CString, fmt::Debug};
 
+pub mod uniform_trait;
+
 use crate::{
     framework::textures::Texture2D,
     gl::{
         GLfloat, glGetUniformLocation, glUniform1f, glUniform1i, glUniform3f, glUniformMatrix3fv,
-        glUniformMatrix4fv, program::Program,
+        glUniformMatrix4fv, program::Program, uniform::uniform_trait::Uniform,
     },
     math::{mat3::Mat3, mat4::Mat4, vec3::Vec3},
 };
@@ -27,7 +29,15 @@ impl UniformLocation {
         get_location(program, name).map(UniformLocation)
     }
 
-    #[deprecated]
+    pub fn uniform<U: Uniform>(&self, uniform: U) {
+        uniform.set(None, self);
+    }
+
+    pub fn uniform_opt<U: Uniform>(&self, uniform: U, options: U::Options) {
+        uniform.set(Some(options), self);
+    }
+
+    #[deprecated(note = "Use `uniform` or `uniform_opt` instead")]
     pub fn mat3f(&self, transpose: bool, matrix: Mat3<f32>) {
         let cols = matrix.cols();
         let value = cols.as_ptr() as *const f32;
@@ -36,7 +46,7 @@ impl UniformLocation {
         }
     }
 
-    #[deprecated]
+    #[deprecated(note = "Use `uniform` or `uniform_opt` instead")]
     pub fn mat4f(&self, transpose: bool, matrix: Mat4<f32>) {
         let cols = matrix.cols();
         let value = cols.as_ptr() as *const f32;
@@ -45,7 +55,7 @@ impl UniformLocation {
         }
     }
 
-    #[deprecated]
+    #[deprecated(note = "Use `uniform` or `uniform_opt` instead")]
     pub fn tex2d(&self, texture: &Texture2D, unit: u32) {
         texture.bind(unit);
         unsafe {
@@ -53,7 +63,7 @@ impl UniformLocation {
         }
     }
 
-    #[deprecated]
+    #[deprecated(note = "Use `uniform` or `uniform_opt` instead")]
     pub fn vec3f(&self, vector: &Vec3<f32>) {
         let Vec3 { x, y, z } = *vector;
         unsafe {
@@ -61,7 +71,7 @@ impl UniformLocation {
         }
     }
 
-    #[deprecated]
+    #[deprecated(note = "Use `uniform` or `uniform_opt` instead")]
     pub fn float32(&self, value: GLfloat) {
         unsafe {
             glUniform1f(self.0, value);
