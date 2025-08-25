@@ -36,6 +36,7 @@ impl UniformLocation {
         }
     }
 
+    #[deprecated]
     pub fn mat4f(&self, transpose: bool, matrix: Mat4<f32>) {
         let cols = matrix.cols();
         let value = cols.as_ptr() as *const f32;
@@ -44,6 +45,7 @@ impl UniformLocation {
         }
     }
 
+    #[deprecated]
     pub fn tex2d(&self, texture: &Texture2D, unit: u32) {
         texture.bind(unit);
         unsafe {
@@ -51,6 +53,7 @@ impl UniformLocation {
         }
     }
 
+    #[deprecated]
     pub fn vec3f(&self, vector: &Vec3<f32>) {
         let Vec3 { x, y, z } = *vector;
         unsafe {
@@ -58,6 +61,7 @@ impl UniformLocation {
         }
     }
 
+    #[deprecated]
     pub fn float32(&self, value: GLfloat) {
         unsafe {
             glUniform1f(self.0, value);
