@@ -4,7 +4,7 @@ pub mod uniform_trait;
 
 use crate::gl::{glGetUniformLocation, program::Program, uniform::uniform_trait::Uniform};
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct UniformLocation(pub i32);
 
 impl UniformLocation {
