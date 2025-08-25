@@ -10,8 +10,9 @@ impl Uniform for GLfloat {
     type Options = ();
 
     fn set(&self, _options: Option<Self::Options>, location: &UniformLocation) {
+        let UniformLocation(location) = *location;
         unsafe {
-            glUniform1f(location.0, *self);
+            glUniform1f(location, *self);
         }
     }
 }
