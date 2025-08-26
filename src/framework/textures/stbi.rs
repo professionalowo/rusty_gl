@@ -87,7 +87,7 @@ fn try_loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
         let data = ptr.cast::<u8>();
         Box::from_raw(std::slice::from_raw_parts_mut(
             data,
-            (width * height).try_into()?,
+            (width * height * channels).try_into()?,
         ))
     };
     let internal_format = match channels {
@@ -131,7 +131,7 @@ fn try_load(bytes: &[u8]) -> Result<ImageData, ImageError> {
         }
         Box::from_raw(std::slice::from_raw_parts_mut(
             ptr,
-            (width * height).try_into()?,
+            (width * height * channels).try_into()?,
         ))
     };
     let internal_format = match channels {
