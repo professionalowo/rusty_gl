@@ -5,6 +5,8 @@
 
 use std::fmt;
 
+use crate::math::vec3::Vec3;
+
 include!(concat!(env!("OUT_DIR"), "/gl_bindings.rs"));
 
 pub mod program;
@@ -23,6 +25,15 @@ pub fn draw_elements(mode: u32, count: i32, element_type: u32) {
 
 pub fn clear_color(red: f32, green: f32, blue: f32, alpha: f32) {
     unsafe { glClearColor(red, green, blue, alpha) };
+}
+
+pub fn clear_color_vec(color: &Vec3<f32>) {
+    let Vec3 {
+        x: red,
+        y: green,
+        z: blue,
+    } = *color;
+    clear_color(red, green, blue, 1.0);
 }
 
 pub fn clear(mask: u32) {

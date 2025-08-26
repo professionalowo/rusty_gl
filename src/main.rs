@@ -18,6 +18,8 @@ use rusty_gl::glfw::window::Window;
 use rusty_gl::math::mat4::Mat4;
 use rusty_gl::math::vec3::Vec3;
 
+const BACKGROUND: Vec3<f32> = Vec3::rgb(0.12, 0.12, 0.12);
+
 fn main() {
     glfw::init().expect("Failed to initialize GLFW");
 
@@ -189,7 +191,7 @@ fn main() {
             }
         }
         if timer.should_render() {
-            gl::clear_color(0.0, 0.0, 0.0, 1.0);
+            gl::clear_color_vec(&BACKGROUND);
             gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
             program.bind();
