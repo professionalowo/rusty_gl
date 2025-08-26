@@ -25,11 +25,22 @@ pub fn terminate() {
         glfw::glfwTerminate();
     }
 }
+#[derive(Debug)]
+pub struct WindowHintError<E>(E);
 
-pub fn window_hint(target: u32, hint: u32) {
-    unsafe {
-        glfw::glfwWindowHint(target.try_into().unwrap(), hint.try_into().unwrap());
+impl<E> From<E> for WindowHintError<E> {
+    fn from(err: E) -> Self {
+        WindowHintError(err)
     }
+}
+
+pub fn window_hint<U: TryInto<i32>>(target: U, hint: U) -> Result<(), WindowHintError<U::Error>> {
+    let target = target.try_into()?;
+    let hint = hint.try_into()?;
+    unsafe {
+        glfw::glfwWindowHint(target, hint);
+    }
+    Ok(())
 }
 
 pub fn get_time() -> f64 {
