@@ -31,6 +31,10 @@ pub fn window_hint(target: u32, hint: u32) {
         glfw::glfwWindowHint(target.try_into().unwrap(), hint.try_into().unwrap());
     }
 }
+
+pub fn get_time() -> f64 {
+    unsafe { glfw::glfwGetTime() }
+}
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum GLFWError {
     NoError,

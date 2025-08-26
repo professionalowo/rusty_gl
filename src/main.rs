@@ -151,25 +151,12 @@ fn main() {
 
     gl::enable(gl::GL_DEPTH_TEST);
 
+    const FPS_LIMIT: f64 = 1.0 / 60.0;
+    let mut last_frame: f64 = 0.0;
+
     while let Ok(false) = window.should_close() {
-        gl::clear_color(0.0, 0.0, 0.0, 1.0);
-        gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+        let now = glfw::get_time();
 
-        program.bind();
-
-        UniformLocation::provide(&model_loc, &MODEL_MATRIX);
-        UniformLocation::provide(&view_loc, &camera.view());
-        UniformLocation::provide(&projection_loc, &camera.projection(window.aspect_ratio()));
-        UniformLocation::provide(&camera_pos_loc, camera.position());
-        UniformLocation::provide(&texture_loc, &texture);
-        UniformLocation::provide(&pointlight_pos_loc, &POINTLIGHT_POS);
-        UniformLocation::provide(&pointlight_color_loc, &POINTLIGHT_COLOR);
-        UniformLocation::provide(&pointlight_intensity_loc, POINTLIGHT_INTENSITY);
-
-        gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
-        program.unbind();
-
-        window.swap_buffers();
         window.poll_events();
 
         const TURN_ANGLE: f32 = PI / 2.0;
@@ -200,6 +187,27 @@ fn main() {
                     _ => (),
                 },
             }
+        }
+        if now - last_frame >= FPS_LIMIT {
+            gl::clear_color(0.0, 0.0, 0.0, 1.0);
+            gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+
+            program.bind();
+
+            UniformLocation::provide(&model_loc, &MODEL_MATRIX);
+            UniformLocation::provide(&view_loc, &camera.view());
+            UniformLocation::provide(&projection_loc, &camera.projection(window.aspect_ratio()));
+            UniformLocation::provide(&camera_pos_loc, camera.position());
+            UniformLocation::provide(&texture_loc, &texture);
+            UniformLocation::provide(&pointlight_pos_loc, &POINTLIGHT_POS);
+            UniformLocation::provide(&pointlight_color_loc, &POINTLIGHT_COLOR);
+            UniformLocation::provide(&pointlight_intensity_loc, POINTLIGHT_INTENSITY);
+
+            gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
+            program.unbind();
+
+            window.swap_buffers();
+            last_frame = now;
         }
     }
     glfw::terminate();
