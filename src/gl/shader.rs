@@ -24,6 +24,16 @@ impl From<std::ffi::NulError> for ShaderError {
     }
 }
 
+impl fmt::Display for ShaderError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::FileSystemError(e) => fmt::Display::fmt(e, f),
+            Self::FFIError(e) => fmt::Display::fmt(e, f),
+            Self::CompilationError(m) => write!(f, "{}", m),
+        }
+    }
+}
+
 impl Shader {
     pub fn try_from_path(shader_type: u32, path: PathBuf) -> Result<Self, ShaderError> {
         let source = std::fs::read_to_string(path)?;
@@ -44,27 +54,7 @@ impl Shader {
             glGetShaderiv(shader_id, GL_COMPILE_STATUS, &mut status);
         }
         if status == 0 {
-            let mut log_length = 0;
-            unsafe {
-                glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &mut log_length);
-            }
-            let mut info_log: Vec<u8> = vec![0; log_length as usize];
-            unsafe {
-                glGetShaderInfoLog(
-                    shader_id,
-                    log_length,
-                    std::ptr::null_mut(),
-                    info_log.as_mut_ptr() as *mut i8,
-                );
-            }
-
-            let end_idx = info_log
-                .iter()
-                .position(|&c| c == 0)
-                .unwrap_or(info_log.len());
-
-            let error_message = String::from_utf8_lossy(&info_log[..end_idx]).to_string();
-            return Err(ShaderError::CompilationError(error_message));
+            return Err(ShaderError::CompilationError(get_info_log(shader_id)));
         }
 
         Ok(Shader { id: shader_id })
@@ -72,6 +62,28 @@ impl Shader {
 
     pub const fn id(&self) -> u32 {
         self.id
+    }
+}
+
+fn get_info_log(shader_id: u32) -> String {
+    let mut log_length = 0;
+    unsafe {
+        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &mut log_length);
+    }
+    let mut info_log: Vec<u8> = vec![0; log_length as usize];
+    unsafe {
+        glGetShaderInfoLog(
+            shader_id,
+            log_length,
+            std::ptr::null_mut(),
+            info_log.as_mut_ptr() as *mut i8,
+        );
+    }
+
+    unsafe {
+        std::ffi::CStr::from_ptr(info_log.as_ptr() as *const i8)
+            .to_string_lossy()
+            .into_owned()
     }
 }
 
