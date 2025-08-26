@@ -9,5 +9,6 @@ bindgen = "0.72.0"
 cc = "1.2.33"
 
 [dependencies]
+assimp = "0.3.1"
 memmap2 = "0.9.7"
 
