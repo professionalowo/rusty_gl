@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{fmt, path::PathBuf};
 
 use crate::{
     framework::textures::stbi::ImageData,
@@ -36,6 +36,15 @@ impl From<gl::GLError> for TextureError {
 impl From<stbi::ImageError> for TextureError {
     fn from(err: stbi::ImageError) -> Self {
         Self::LoadFailed(err)
+    }
+}
+
+impl fmt::Display for TextureError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::LoadFailed(err) => fmt::Display::fmt(err, f),
+            Self::GLError(err) => fmt::Display::fmt(err, f),
+        }
     }
 }
 
