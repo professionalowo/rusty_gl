@@ -13,7 +13,7 @@ impl UniformLocation {
         S: AsRef<str>,
     {
         let Program(id) = *program;
-        get_location(id, name).map(UniformLocation)
+        get_location(id, name.as_ref()).map(UniformLocation)
     }
 
     pub fn provide<U>(location: &Self, value: U)
@@ -31,8 +31,7 @@ impl UniformLocation {
     }
 }
 
-fn get_location(program: u32, name: impl AsRef<str>) -> Result<i32, UniformLocationError> {
-    let name = name.as_ref();
+fn get_location(program: u32, name: &str) -> Result<i32, UniformLocationError> {
     let name_cstr = CString::new(name).map_err(|_| UniformLocationError::FFIError)?;
     let loc = unsafe { glGetUniformLocation(program, name_cstr.as_ptr() as *const i8) };
     if loc == -1 {
