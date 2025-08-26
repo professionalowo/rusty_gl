@@ -208,7 +208,7 @@ fn main() {
             program.unbind();
 
             window.swap_buffers();
-            timer.end();
+            timer.rendered();
         }
     }
     glfw::terminate();

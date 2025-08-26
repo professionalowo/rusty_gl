@@ -1,5 +1,6 @@
 use crate::glfw;
 
+#[derive(Debug)]
 pub struct Timer<const FPS: u32> {
     now: f64,
     last_frame: f64,
@@ -21,7 +22,7 @@ impl<const FPS: u32> Timer<FPS> {
         self.now - self.last_frame >= 1.0 / FPS as f64
     }
 
-    pub fn end(&mut self) {
+    pub fn rendered(&mut self) {
         self.last_frame = self.now;
     }
 }
