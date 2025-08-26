@@ -30,6 +30,14 @@ impl<T: Copy> Mat3<T> {
             self.cols[2].z,
         ]
     }
+
+    pub fn transpose(&self) -> Self {
+        Self::new(
+            Vec3::new(self.cols[0].x, self.cols[1].x, self.cols[2].x),
+            Vec3::new(self.cols[0].y, self.cols[1].y, self.cols[2].y),
+            Vec3::new(self.cols[0].z, self.cols[1].z, self.cols[2].z),
+        )
+    }
 }
 
 impl<T: Copy + Add<Output = T>> Add for Mat3<T> {

@@ -45,6 +45,35 @@ impl<T: Copy> Mat4<T> {
             self.cols[3].w,
         ]
     }
+
+    pub fn transpose(&self) -> Self {
+        Self::new(
+            Vec4::new(
+                self.cols[0].x,
+                self.cols[1].x,
+                self.cols[2].x,
+                self.cols[3].x,
+            ),
+            Vec4::new(
+                self.cols[0].y,
+                self.cols[1].y,
+                self.cols[2].y,
+                self.cols[3].y,
+            ),
+            Vec4::new(
+                self.cols[0].z,
+                self.cols[1].z,
+                self.cols[2].z,
+                self.cols[3].z,
+            ),
+            Vec4::new(
+                self.cols[0].w,
+                self.cols[1].w,
+                self.cols[2].w,
+                self.cols[3].w,
+            ),
+        )
+    }
 }
 
 impl Mat4<f32> {
