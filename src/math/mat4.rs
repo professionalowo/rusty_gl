@@ -4,7 +4,13 @@ use std::{
 };
 
 const RANK: usize = 4;
-use crate::{gl::{glUniformMatrix4fv, uniform::{uniform_trait::Uniform, UniformLocation}}, math::vec4::Vec4};
+use crate::{
+    gl::{
+        glUniformMatrix4fv,
+        uniform::{UniformLocation, uniform_trait::Uniform},
+    },
+    math::vec4::Vec4,
+};
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]
