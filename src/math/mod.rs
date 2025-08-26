@@ -6,21 +6,12 @@ pub mod vec2;
 pub mod vec3;
 pub mod vec4;
 
-#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Scalar<T>(pub T);
 
 impl<T> From<T> for Scalar<T> {
     fn from(value: T) -> Self {
         Self(value)
-    }
-}
-
-impl<T> Default for Scalar<T>
-where
-    T: Default,
-{
-    fn default() -> Self {
-        Self(T::default())
     }
 }
 
