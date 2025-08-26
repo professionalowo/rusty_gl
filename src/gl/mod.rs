@@ -3,6 +3,8 @@
 #![allow(non_snake_case)]
 #![allow(dead_code)]
 
+use std::fmt;
+
 include!(concat!(env!("OUT_DIR"), "/gl_bindings.rs"));
 
 pub mod program;
@@ -58,6 +60,19 @@ impl From<u32> for GLError {
             GL_INVALID_OPERATION => GLError::InvalidOperation,
             GL_OUT_OF_MEMORY => GLError::OutOfMemory,
             _ => GLError::Other(code),
+        }
+    }
+}
+
+impl fmt::Display for GLError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::NoError => write!(f, "No Error"),
+            Self::InvalidEnum => write!(f, "Invalid Enum"),
+            Self::InvalidOperation => write!(f, "Invalid Operation"),
+            Self::InvalidValue => write!(f, "Invalid Value"),
+            Self::OutOfMemory => write!(f, "Out of memory"),
+            Self::Other(c) => write!(f, "Other error: {}", c),
         }
     }
 }

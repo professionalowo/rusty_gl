@@ -1,8 +1,11 @@
-use std::{ffi, fmt::Debug};
+use std::{
+    ffi,
+    fmt::{self, Debug},
+};
 
 pub mod uniform_trait;
 
-use crate::gl::{glGetUniformLocation, program::Program, uniform::uniform_trait::Uniform};
+use crate::gl::{self, glGetUniformLocation, program::Program, uniform::uniform_trait::Uniform};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct UniformLocation(pub i32);
@@ -33,14 +36,17 @@ impl UniformLocation {
 
 fn get_location(program: u32, name: &str) -> Result<i32, UniformLocationError> {
     let name_cstr = ffi::CString::new(name)?;
-    let loc = unsafe { glGetUniformLocation(program, name_cstr.as_ptr() as *const i8) };
-    if loc == -1 {
-        Err(UniformLocationError::UnusedUniform {
+    let name_ptr = name_cstr.as_ptr() as *const i8;
+    let res = unsafe { glGetUniformLocation(program, name_ptr) };
+
+    gl::get_error()?;
+
+    match res {
+        -1 => Err(UniformLocationError::UnusedUniform {
             program,
-            name: name.to_string(),
-        })
-    } else {
-        Ok(loc)
+            name: String::from(name),
+        }),
+        loc => Ok(loc),
     }
 }
 
@@ -48,10 +54,29 @@ fn get_location(program: u32, name: &str) -> Result<i32, UniformLocationError> {
 pub enum UniformLocationError {
     UnusedUniform { program: u32, name: String },
     FFIError(ffi::NulError),
+    GlError(gl::GLError),
 }
 
-impl From<ffi::NulError> for UniformLocationError{
-	fn from(value: ffi::NulError) -> Self {
-		Self::FFIError(value)
-	}
+impl fmt::Display for UniformLocationError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::UnusedUniform { program, name } => {
+                write!(f, "Uniform {} unused in program {}", name, program)
+            }
+            Self::FFIError(e) => fmt::Display::fmt(e, f),
+            Self::GlError(e) => fmt::Display::fmt(e, f),
+        }
+    }
+}
+
+impl From<gl::GLError> for UniformLocationError {
+    fn from(value: gl::GLError) -> Self {
+        Self::GlError(value)
+    }
+}
+
+impl From<ffi::NulError> for UniformLocationError {
+    fn from(value: ffi::NulError) -> Self {
+        Self::FFIError(value)
+    }
 }
