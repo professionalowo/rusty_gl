@@ -3,7 +3,7 @@ use std::path::PathBuf;
 use crate::{
     framework::textures::stbi::ImageData,
     gl::{
-        self, GLenum, GLint, GLsizei, GLuint, glUniform1i,
+        self,
         uniform::{UniformLocation, uniform_trait::Uniform},
     },
 };
@@ -12,12 +12,12 @@ mod stbi;
 mod upload;
 
 pub struct Texture2D {
-    id: GLuint,
-    width: GLsizei,
-    height: GLsizei,
-    internal_format: GLint,
-    format: GLenum,
-    type_: GLenum,
+    id: gl::GLuint,
+    width: gl::GLsizei,
+    height: gl::GLsizei,
+    internal_format: gl::GLint,
+    format: gl::GLenum,
+    type_: gl::GLenum,
 }
 
 #[derive(Debug)]
@@ -52,7 +52,7 @@ impl Texture2D {
         upload::bind_texture(gl::GL_TEXTURE_2D, 0);
     }
 
-    pub fn resize(&mut self, w: GLsizei, h: GLsizei) {
+    pub fn resize(&mut self, w: gl::GLsizei, h: gl::GLsizei) {
         self.width = w;
         self.height = h;
         upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
@@ -81,12 +81,12 @@ impl Texture2D {
         upload::tex_parameteri(
             gl::GL_TEXTURE_2D,
             gl::GL_TEXTURE_WRAP_S,
-            gl::GL_REPEAT as GLint,
+            gl::GL_REPEAT as gl::GLint,
         );
         upload::tex_parameteri(
             gl::GL_TEXTURE_2D,
             gl::GL_TEXTURE_WRAP_R,
-            gl::GL_REPEAT as GLint,
+            gl::GL_REPEAT as gl::GLint,
         );
         let depth = self.internal_format == gl::GL_DEPTH_COMPONENT as i32
             || self.internal_format == gl::GL_DEPTH_COMPONENT16 as i32
@@ -96,9 +96,9 @@ impl Texture2D {
             gl::GL_TEXTURE_2D,
             gl::GL_TEXTURE_MAG_FILTER,
             if depth {
-                gl::GL_NEAREST as GLint
+                gl::GL_NEAREST as gl::GLint
             } else {
-                gl::GL_LINEAR as GLint
+                gl::GL_LINEAR as gl::GLint
             },
         );
 
@@ -106,11 +106,11 @@ impl Texture2D {
             gl::GL_TEXTURE_2D,
             gl::GL_TEXTURE_MIN_FILTER,
             if mipmap {
-                gl::GL_LINEAR_MIPMAP_LINEAR as GLint
+                gl::GL_LINEAR_MIPMAP_LINEAR as gl::GLint
             } else if depth {
-                gl::GL_NEAREST as GLint
+                gl::GL_NEAREST as gl::GLint
             } else {
-                gl::GL_LINEAR as GLint
+                gl::GL_LINEAR as gl::GLint
             },
         );
         gl::get_error()?;
@@ -119,8 +119,8 @@ impl Texture2D {
             gl::GL_TEXTURE_2D,
             0,
             self.internal_format,
-            self.width as GLsizei,
-            self.height as GLsizei,
+            self.width as gl::GLsizei,
+            self.height as gl::GLsizei,
             0,
             self.format,
             self.type_,
@@ -177,7 +177,7 @@ impl Uniform for &Texture2D {
         let UniformLocation(location) = *location;
         self.bind(unit);
         unsafe {
-            glUniform1i(location, unit as i32);
+            gl::glUniform1i(location, unit as i32);
         }
     }
 }
