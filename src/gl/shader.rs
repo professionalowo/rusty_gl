@@ -12,15 +12,27 @@ pub enum ShaderError {
     CompilationError(String),
 }
 
+impl From<std::io::Error> for ShaderError {
+    fn from(value: std::io::Error) -> Self {
+        Self::FileSystemError(value)
+    }
+}
+
+impl From<std::ffi::NulError> for ShaderError {
+    fn from(value: std::ffi::NulError) -> Self {
+        Self::FFIError(value)
+    }
+}
+
 impl Shader {
     pub fn try_from_path(shader_type: u32, path: PathBuf) -> Result<Self, ShaderError> {
-        let source = std::fs::read_to_string(path).map_err(ShaderError::FileSystemError)?;
+        let source = std::fs::read_to_string(path)?;
         Self::try_from_str(shader_type, &source)
     }
 
     pub fn try_from_str(shader_type: u32, source: impl AsRef<str>) -> Result<Self, ShaderError> {
         let shader_id = unsafe { glCreateShader(shader_type) };
-        let c_str = std::ffi::CString::new(source.as_ref()).map_err(ShaderError::FFIError)?;
+        let c_str = std::ffi::CString::new(source.as_ref())?;
         let c_str_ptr = c_str.as_ptr();
         unsafe {
             glShaderSource(shader_id, 1, &c_str_ptr, std::ptr::null());
@@ -45,14 +57,14 @@ impl Shader {
                     info_log.as_mut_ptr() as *mut i8,
                 );
             }
-            let error_message = info_log
+
+            let end_idx = info_log
                 .iter()
-                .take_while(|&&c| c != 0)
-                .cloned()
-                .collect::<Vec<u8>>();
-            return Err(ShaderError::CompilationError(
-                String::from_utf8_lossy(&error_message).to_string(),
-            ));
+                .position(|&c| c == 0)
+                .unwrap_or(info_log.len());
+
+            let error_message = String::from_utf8_lossy(&info_log[..end_idx]).to_string();
+            return Err(ShaderError::CompilationError(error_message));
         }
 
         Ok(Shader { id: shader_id })
