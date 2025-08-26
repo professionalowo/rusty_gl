@@ -104,11 +104,6 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec4<T> {
         }
     }
 }
-pub enum RotationAxis {
-    X,
-    Y,
-    Z,
-}
 
 impl<T: Copy + Mul<Output = T>> Mul<Vec4<T>> for Scalar<T> {
     type Output = Vec4<T>;
