@@ -1,5 +1,5 @@
+use self::stbi_uc;
 use super::*;
-use crate::framework::textures::stbi::stbi_uc;
 use std::ffi::c_int;
 pub trait Load {
     const TYPE: u32;

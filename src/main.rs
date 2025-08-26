@@ -2,7 +2,7 @@ use std::f32::consts::PI;
 use std::path::PathBuf;
 
 use rusty_gl::framework::camera::Camera;
-use rusty_gl::framework::textures::Texture2D;
+use rusty_gl::framework::texture::Texture2D;
 use rusty_gl::framework::timer::Timer;
 use rusty_gl::gl;
 use rusty_gl::gl::program::Program;

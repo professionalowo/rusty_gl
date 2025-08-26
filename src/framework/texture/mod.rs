@@ -1,7 +1,7 @@
 use std::{fmt, path::PathBuf};
 
 use crate::{
-    framework::textures::stbi::ImageData,
+    framework::texture::stbi::ImageData,
     gl::{
         self,
         uniform::{UniformLocation, uniform_trait::Uniform},

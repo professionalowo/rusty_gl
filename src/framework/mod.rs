@@ -1,3 +1,3 @@
 pub mod camera;
-pub mod textures;
+pub mod texture;
 pub mod timer;
