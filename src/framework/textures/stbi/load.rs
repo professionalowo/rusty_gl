@@ -16,7 +16,7 @@ fn try_load_opt<L: Load>(bytes: &[u8]) -> Result<ImageData, ImageError> {
     let mut height = 0;
     let mut channels = 0;
     let data = unsafe {
-        let ptr = stbi_loadf_from_memory(
+        let ptr = L::load_from_memory(
             bytes.as_ptr(),
             bytes.len() as i32,
             &mut width,
@@ -29,9 +29,8 @@ fn try_load_opt<L: Load>(bytes: &[u8]) -> Result<ImageData, ImageError> {
                 failure_reason().unwrap_or_else(|| "Unknown error".to_string()),
             ));
         }
-        let data = L::cast_pointer(ptr as *mut <L>::Input);
         Box::from_raw(std::slice::from_raw_parts_mut(
-            data,
+            ptr,
             (width * height * channels).try_into()?,
         ))
     };
@@ -58,15 +57,20 @@ fn format_from_channels(channels: i32) -> gl::GLenum {
 }
 
 trait Load {
-    type Input;
     fn map_channels(channels: i32) -> u32;
-    fn cast_pointer(ptr: *mut Self::Input) -> *mut u8;
+    unsafe fn load_from_memory(
+        buffer: *const stbi_uc,
+        len: ::std::os::raw::c_int,
+        x: *mut ::std::os::raw::c_int,
+        y: *mut ::std::os::raw::c_int,
+        channels_in_file: *mut ::std::os::raw::c_int,
+        desired_channels: ::std::os::raw::c_int,
+    ) -> *mut u8;
 }
 
 struct LoadFloat;
 
 impl Load for LoadFloat {
-    type Input = f32;
     fn map_channels(channels: i32) -> u32 {
         match channels {
             4 => gl::GL_RGBA32F,
@@ -77,7 +81,17 @@ impl Load for LoadFloat {
         }
     }
 
-    fn cast_pointer(ptr: *mut f32) -> *mut u8 {
+    unsafe fn load_from_memory(
+        buffer: *const stbi_uc,
+        len: ::std::os::raw::c_int,
+        x: *mut ::std::os::raw::c_int,
+        y: *mut ::std::os::raw::c_int,
+        channels_in_file: *mut ::std::os::raw::c_int,
+        desired_channels: ::std::os::raw::c_int,
+    ) -> *mut u8 {
+        let ptr = unsafe {
+            stbi_loadf_from_memory(buffer, len, x, y, channels_in_file, desired_channels)
+        };
         ptr.cast::<u8>()
     }
 }
@@ -85,7 +99,6 @@ impl Load for LoadFloat {
 struct LoadInt;
 
 impl Load for LoadInt {
-    type Input = u8;
     fn map_channels(channels: i32) -> u32 {
         match channels {
             1 => gl::GL_RED,
@@ -96,7 +109,14 @@ impl Load for LoadInt {
         }
     }
 
-    fn cast_pointer(ptr: *mut u8) -> *mut u8 {
-        ptr.cast::<u8>()
+    unsafe fn load_from_memory(
+        buffer: *const stbi_uc,
+        len: ::std::os::raw::c_int,
+        x: *mut ::std::os::raw::c_int,
+        y: *mut ::std::os::raw::c_int,
+        channels_in_file: *mut ::std::os::raw::c_int,
+        desired_channels: ::std::os::raw::c_int,
+    ) -> *mut u8 {
+        unsafe { stbi_load_from_memory(buffer, len, x, y, channels_in_file, desired_channels) }
     }
 }
