@@ -25,6 +25,8 @@ fn main() {
     glfw::window_hint(glfw::GLFW_OPENGL_PROFILE, glfw::GLFW_OPENGL_CORE_PROFILE);
     glfw::window_hint(glfw::GLFW_OPENGL_FORWARD_COMPAT, glfw::GLFW_TRUE);
 
+    gl::enable(gl::GL_DEPTH_TEST);
+
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
     let vao = VertexArrayObject::gen_vertex_arrays();
     let vbo = VertexBufferObject::gen_buffers();
@@ -149,8 +151,6 @@ fn main() {
     let camera_pos_loc = UniformLocation::try_for_program(&program, "camera_pos")
         .expect("Failed to get uniform location for camera position");
 
-    gl::enable(gl::GL_DEPTH_TEST);
-
     const FPS_LIMIT: f64 = 1.0 / 60.0;
     let mut last_frame: f64 = 0.0;
 
@@ -204,6 +204,7 @@ fn main() {
             UniformLocation::provide(&pointlight_intensity_loc, POINTLIGHT_INTENSITY);
 
             gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
+
             program.unbind();
 
             window.swap_buffers();
