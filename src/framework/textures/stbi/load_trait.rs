@@ -13,7 +13,7 @@ pub trait Load {
     ) -> *mut u8;
 }
 
-pub struct LoadFloat;
+pub(super) struct LoadFloat;
 
 impl Load for LoadFloat {
     #[inline]
@@ -41,7 +41,7 @@ impl Load for LoadFloat {
     }
 }
 
-pub struct LoadInt;
+pub(super) struct LoadInt;
 
 impl Load for LoadInt {
     #[inline]
