@@ -12,14 +12,8 @@ impl UniformLocation {
     where
         S: AsRef<str>,
     {
-        Self::try_get(program.id(), name)
-    }
-
-    fn try_get<S>(program: u32, name: S) -> Result<Self, UniformLocationError>
-    where
-        S: AsRef<str>,
-    {
-        get_location(program, name).map(UniformLocation)
+        let Program(id) = *program;
+        get_location(id, name).map(UniformLocation)
     }
 
     pub fn provide<U>(location: &Self, value: U)
