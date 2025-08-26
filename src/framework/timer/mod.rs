@@ -8,10 +8,7 @@ pub struct Timer<const FPS: u32> {
 
 impl<const FPS: u32> Timer<FPS> {
     pub fn new() -> Self {
-        Self {
-            now: 0.0,
-            last_frame: 0.0,
-        }
+        Self::default()
     }
 
     pub fn start(&mut self) {
@@ -24,5 +21,14 @@ impl<const FPS: u32> Timer<FPS> {
 
     pub fn rendered(&mut self) {
         self.last_frame = self.now;
+    }
+}
+
+impl<const FPS: u32> Default for Timer<FPS> {
+    fn default() -> Self {
+        Self {
+            last_frame: 0.0,
+            now: 0.0,
+        }
     }
 }
