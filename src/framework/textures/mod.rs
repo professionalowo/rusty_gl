@@ -11,6 +11,7 @@ use crate::{
 mod stbi;
 mod upload;
 
+#[derive(Debug)]
 pub struct Texture2D {
     id: gl::GLuint,
     width: gl::GLsizei,
@@ -39,6 +40,10 @@ impl From<stbi::ImageError> for TextureError {
 }
 
 impl Texture2D {
+    pub const fn is_same(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+
     pub fn try_from_file(path: PathBuf, mipmap: bool) -> Result<Self, TextureError> {
         let texture = Self::upload_image_data(ImageData::try_load(path)?, mipmap)?;
         Ok(texture)
