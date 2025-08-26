@@ -13,6 +13,7 @@ use memmap2::Mmap;
 use crate::gl;
 
 mod load;
+mod load_trait;
 
 #[derive(Debug)]
 pub(super) struct ImageData {
@@ -67,17 +68,4 @@ impl ImageData {
 
 pub fn is_hdr(data: &[u8]) -> bool {
     unsafe { stbi_is_hdr_from_memory(data.as_ptr(), data.len() as i32) != 0 }
-}
-
-pub fn failure_reason() -> Option<String> {
-    use std::ffi::CStr;
-
-    unsafe {
-        let ptr = stbi_failure_reason();
-        if ptr.is_null() {
-            None
-        } else {
-            Some(CStr::from_ptr(ptr).to_string_lossy().into_owned())
-        }
-    }
 }
