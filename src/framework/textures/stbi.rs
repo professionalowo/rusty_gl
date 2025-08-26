@@ -25,16 +25,16 @@ pub struct ImageData {
 #[derive(Debug)]
 pub enum ImageError {
     IoError(std::io::Error),
-    StbiError(String),
     CastError(std::num::TryFromIntError),
+    StbiError(String),
 }
 
 impl std::fmt::Display for ImageError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::IoError(err) => fmt::Display::fmt(err, f),
+            Self::CastError(err) => fmt::Display::fmt(err, f),
             Self::StbiError(err) => write!(f, "STBI Error: {}", err),
-            Self::CastError(err) => write!(f, "Cast Error: {}", err),
         }
     }
 }
