@@ -5,6 +5,7 @@
 
 include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
+use core::fmt;
 use std::{fs::File, path::PathBuf};
 
 use memmap2::Mmap;
@@ -31,7 +32,7 @@ pub enum ImageError {
 impl std::fmt::Display for ImageError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Self::IoError(err) => write!(f, "IO Error: {}", err),
+            Self::IoError(err) => fmt::Display::fmt(err, f),
             Self::StbiError(err) => write!(f, "STBI Error: {}", err),
             Self::CastError(err) => write!(f, "Cast Error: {}", err),
         }
