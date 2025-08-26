@@ -40,7 +40,10 @@ impl Shader {
         Self::try_from_str(shader_type, &source)
     }
 
-    pub fn try_from_str(shader_type: u32, source: impl AsRef<str>) -> Result<Self, ShaderError> {
+    pub fn try_from_str<R>(shader_type: u32, source: R) -> Result<Self, ShaderError>
+    where
+        R: AsRef<str>,
+    {
         let id = unsafe { glCreateShader(shader_type) };
         let c_str = std::ffi::CString::new(source.as_ref())?;
         let c_str_ptr = c_str.as_ptr();
