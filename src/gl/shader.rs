@@ -41,23 +41,23 @@ impl Shader {
     }
 
     pub fn try_from_str(shader_type: u32, source: impl AsRef<str>) -> Result<Self, ShaderError> {
-        let shader_id = unsafe { glCreateShader(shader_type) };
+        let id = unsafe { glCreateShader(shader_type) };
         let c_str = std::ffi::CString::new(source.as_ref())?;
         let c_str_ptr = c_str.as_ptr();
         unsafe {
-            glShaderSource(shader_id, 1, &c_str_ptr, std::ptr::null());
-            glCompileShader(shader_id);
+            glShaderSource(id, 1, &c_str_ptr, std::ptr::null());
+            glCompileShader(id);
         }
 
         let mut status = 0;
         unsafe {
-            glGetShaderiv(shader_id, GL_COMPILE_STATUS, &mut status);
+            glGetShaderiv(id, GL_COMPILE_STATUS, &mut status);
         }
         if status == 0 {
-            return Err(ShaderError::CompilationError(get_info_log(shader_id)));
+            return Err(ShaderError::CompilationError(get_info_log(id)));
         }
 
-        Ok(Shader { id: shader_id })
+        Ok(Shader { id })
     }
 
     pub const fn id(&self) -> u32 {
