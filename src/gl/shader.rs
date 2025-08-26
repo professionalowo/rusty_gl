@@ -1,9 +1,7 @@
 use crate::gl;
 use std::{fmt, path::PathBuf};
 
-pub struct Shader {
-    id: u32,
-}
+pub struct Shader(u32);
 
 #[derive(Debug)]
 pub enum ShaderError {
@@ -60,11 +58,11 @@ impl Shader {
             return Err(ShaderError::CompilationError(get_info_log(id)));
         }
 
-        Ok(Shader { id })
+        Ok(Shader(id))
     }
 
     pub const fn id(&self) -> u32 {
-        self.id
+        self.0
     }
 }
 
@@ -93,7 +91,7 @@ fn get_info_log(shader_id: u32) -> String {
 impl Drop for Shader {
     fn drop(&mut self) {
         unsafe {
-            gl::glDeleteShader(self.id);
+            gl::glDeleteShader(self.0);
         }
     }
 }
