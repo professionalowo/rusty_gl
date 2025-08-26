@@ -62,17 +62,18 @@ trait Load {
     fn map_channels(channels: i32) -> u32;
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
-        len: ::std::os::raw::c_int,
-        x: *mut ::std::os::raw::c_int,
-        y: *mut ::std::os::raw::c_int,
-        channels_in_file: *mut ::std::os::raw::c_int,
-        desired_channels: ::std::os::raw::c_int,
+        len: c_int,
+        x: *mut c_int,
+        y: *mut c_int,
+        channels_in_file: *mut c_int,
+        desired_channels: c_int,
     ) -> *mut u8;
 }
 
 struct LoadFloat;
 
 impl Load for LoadFloat {
+    #[inline]
     fn map_channels(channels: i32) -> u32 {
         match channels {
             4 => gl::GL_RGBA32F,
@@ -83,6 +84,7 @@ impl Load for LoadFloat {
         }
     }
 
+    #[inline]
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
         len: c_int,
@@ -101,6 +103,7 @@ impl Load for LoadFloat {
 struct LoadInt;
 
 impl Load for LoadInt {
+    #[inline]
     fn map_channels(channels: i32) -> u32 {
         match channels {
             1 => gl::GL_RED,
@@ -111,6 +114,7 @@ impl Load for LoadInt {
         }
     }
 
+    #[inline]
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
         len: c_int,
