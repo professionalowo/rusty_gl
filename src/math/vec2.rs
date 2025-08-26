@@ -1,4 +1,4 @@
-use std::ops::{Add, Mul, Neg, Sub};
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use crate::math::Scalar;
 
@@ -89,6 +89,19 @@ impl<T: Copy + Mul<Output = T>> Mul<Vec2<T>> for Scalar<T> {
     }
 }
 
+impl<T: Copy + Div<Output = T>> Div<Scalar<T>> for Vec2<T> {
+    type Output = Vec2<T>;
+
+    fn div(self, rhs: Scalar<T>) -> Self::Output {
+        let Scalar(div) = rhs;
+
+        Self::Output {
+            x: self.x / div,
+            y: self.y / div,
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -114,5 +127,28 @@ mod tests {
         let a = Vec2::new(1.0, 2.0);
         let result = -a;
         assert_eq!(result, Vec2::new(-1.0, -2.0));
+    }
+
+    #[test]
+    fn test_vec2_mul() {
+        let a = Vec2::new(1.0, 2.0);
+        let b = Scalar(3.0);
+        let result = a * b;
+        assert_eq!(result, Vec2::new(3.0, 6.0));
+    }
+
+    #[test]
+    fn test_vec2_div() {
+        let a = Vec2::new(1.0, 2.0);
+        let b = Scalar(2.0);
+        let result = a / b;
+        assert_eq!(result, Vec2::new(0.5, 1.0));
+    }
+
+    #[test]
+    fn test_vec2_eq() {
+        let a = Vec2::new(1.0, 2.0);
+        let b = Vec2::new(1.0, 2.0);
+        assert!(a == b);
     }
 }
