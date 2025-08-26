@@ -3,6 +3,7 @@ use std::path::PathBuf;
 
 use rusty_gl::framework::camera::Camera;
 use rusty_gl::framework::textures::Texture2D;
+use rusty_gl::framework::timer::Timer;
 use rusty_gl::gl;
 use rusty_gl::gl::program::Program;
 use rusty_gl::gl::shader::Shader;
@@ -151,11 +152,10 @@ fn main() {
 
     gl::enable(gl::GL_DEPTH_TEST);
 
-    const FPS_LIMIT: f64 = 1.0 / 60.0;
-    let mut last_frame: f64 = 0.0;
+    let mut timer: Timer<60> = Timer::new();
 
     while let Ok(false) = window.should_close() {
-        let now = glfw::get_time();
+        timer.start();
 
         window.poll_events();
 
@@ -188,7 +188,7 @@ fn main() {
                 },
             }
         }
-        if now - last_frame >= FPS_LIMIT {
+        if timer.should_render() {
             gl::clear_color(0.0, 0.0, 0.0, 1.0);
             gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
@@ -208,7 +208,7 @@ fn main() {
             program.unbind();
 
             window.swap_buffers();
-            last_frame = now;
+            timer.end();
         }
     }
     glfw::terminate();
