@@ -1,0 +1,102 @@
+use super::*;
+
+pub(super) fn try_loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
+    try_load_opt::<LoadFloat>(bytes)
+}
+
+pub(super) fn try_load(bytes: &[u8]) -> Result<ImageData, ImageError> {
+    try_load_opt::<LoadInt>(bytes)
+}
+
+fn try_load_opt<L: Load>(bytes: &[u8]) -> Result<ImageData, ImageError> {
+    unsafe {
+        stbi_set_flip_vertically_on_load(1);
+    }
+    let mut width = 0;
+    let mut height = 0;
+    let mut channels = 0;
+    let data = unsafe {
+        let ptr = stbi_loadf_from_memory(
+            bytes.as_ptr(),
+            bytes.len() as i32,
+            &mut width,
+            &mut height,
+            &mut channels,
+            0,
+        );
+        if ptr.is_null() {
+            return Err(ImageError::StbiError(
+                failure_reason().unwrap_or_else(|| "Unknown error".to_string()),
+            ));
+        }
+        let data = L::cast_pointer(ptr as *mut <L>::Input);
+        Box::from_raw(std::slice::from_raw_parts_mut(
+            data,
+            (width * height * channels).try_into()?,
+        ))
+    };
+    let internal_format = L::map_channels(channels);
+    let format = format_from_channels(channels);
+    Ok(ImageData {
+        width,
+        height,
+        format,
+        data,
+        type_: gl::GL_FLOAT,
+        internal_format: internal_format.try_into()?,
+    })
+}
+
+fn format_from_channels(channels: i32) -> gl::GLenum {
+    match channels {
+        4 => gl::GL_RGBA,
+        3 => gl::GL_RGB,
+        2 => gl::GL_RG,
+        1 => gl::GL_RED,
+        _ => gl::GL_RED,
+    }
+}
+
+trait Load {
+    type Input;
+    fn map_channels(channels: i32) -> u32;
+    fn cast_pointer(ptr: *mut Self::Input) -> *mut u8;
+}
+
+struct LoadFloat;
+
+impl Load for LoadFloat {
+    type Input = f32;
+    fn map_channels(channels: i32) -> u32 {
+        match channels {
+            4 => gl::GL_RGBA32F,
+            3 => gl::GL_RGB32F,
+            2 => gl::GL_RG32F,
+            1 => gl::GL_R32F,
+            _ => gl::GL_R32F,
+        }
+    }
+
+    fn cast_pointer(ptr: *mut f32) -> *mut u8 {
+        ptr.cast::<u8>()
+    }
+}
+
+struct LoadInt;
+
+impl Load for LoadInt {
+    type Input = u8;
+    fn map_channels(channels: i32) -> u32 {
+        match channels {
+            1 => gl::GL_RED,
+            2 => gl::GL_RG,
+            3 => gl::GL_RGB,
+            4 => gl::GL_RGBA,
+            _ => gl::GL_RED,
+        }
+    }
+
+    fn cast_pointer(ptr: *mut u8) -> *mut u8 {
+        ptr.cast::<u8>()
+    }
+}
