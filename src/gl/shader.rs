@@ -1,5 +1,5 @@
-use crate::gl::*;
-use std::path::PathBuf;
+use crate::gl;
+use std::{fmt, path::PathBuf};
 
 pub struct Shader {
     id: u32,
@@ -44,17 +44,17 @@ impl Shader {
     where
         R: AsRef<str>,
     {
-        let id = unsafe { glCreateShader(shader_type) };
+        let id = unsafe { gl::glCreateShader(shader_type) };
         let c_str = std::ffi::CString::new(source.as_ref())?;
         let c_str_ptr = c_str.as_ptr();
         unsafe {
-            glShaderSource(id, 1, &c_str_ptr, std::ptr::null());
-            glCompileShader(id);
+            gl::glShaderSource(id, 1, &c_str_ptr, std::ptr::null());
+            gl::glCompileShader(id);
         }
 
         let mut status = 0;
         unsafe {
-            glGetShaderiv(id, GL_COMPILE_STATUS, &mut status);
+            gl::glGetShaderiv(id, gl::GL_COMPILE_STATUS, &mut status);
         }
         if status == 0 {
             return Err(ShaderError::CompilationError(get_info_log(id)));
@@ -71,11 +71,11 @@ impl Shader {
 fn get_info_log(shader_id: u32) -> String {
     let mut log_length = 0;
     unsafe {
-        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &mut log_length);
+        gl::glGetShaderiv(shader_id, gl::GL_INFO_LOG_LENGTH, &mut log_length);
     }
     let mut info_log: Vec<u8> = vec![0; log_length as usize];
     unsafe {
-        glGetShaderInfoLog(
+        gl::glGetShaderInfoLog(
             shader_id,
             log_length,
             std::ptr::null_mut(),
@@ -93,7 +93,7 @@ fn get_info_log(shader_id: u32) -> String {
 impl Drop for Shader {
     fn drop(&mut self) {
         unsafe {
-            glDeleteShader(self.id);
+            gl::glDeleteShader(self.id);
         }
     }
 }
