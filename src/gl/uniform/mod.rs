@@ -5,7 +5,7 @@ use std::{
 
 pub mod uniform_trait;
 
-use crate::gl::{self, glGetUniformLocation, program::Program, uniform::uniform_trait::Uniform};
+use crate::gl::{self, program::Program, uniform::uniform_trait::Uniform};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct UniformLocation(pub i32);
@@ -37,7 +37,7 @@ impl UniformLocation {
 fn get_location(program: u32, name: &str) -> Result<i32, UniformLocationError> {
     let name_cstr = ffi::CString::new(name)?;
     let name_ptr = name_cstr.as_ptr() as *const i8;
-    let res = unsafe { glGetUniformLocation(program, name_ptr) };
+    let res = unsafe { gl::glGetUniformLocation(program, name_ptr) };
 
     gl::get_error()?;
 

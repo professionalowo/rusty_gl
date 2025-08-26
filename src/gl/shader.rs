@@ -66,15 +66,15 @@ impl Shader {
     }
 }
 
-fn get_info_log(shader_id: u32) -> String {
+fn get_info_log(id: u32) -> String {
     let mut log_length = 0;
     unsafe {
-        gl::glGetShaderiv(shader_id, gl::GL_INFO_LOG_LENGTH, &mut log_length);
+        gl::glGetShaderiv(id, gl::GL_INFO_LOG_LENGTH, &mut log_length);
     }
     let mut info_log: Vec<u8> = vec![0; log_length as usize];
     unsafe {
         gl::glGetShaderInfoLog(
-            shader_id,
+            id,
             log_length,
             std::ptr::null_mut(),
             info_log.as_mut_ptr() as *mut i8,
