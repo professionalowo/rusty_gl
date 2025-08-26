@@ -25,16 +25,8 @@ pub fn terminate() {
         glfw::glfwTerminate();
     }
 }
-#[derive(Debug)]
-pub struct WindowHintError<E>(E);
 
-impl<E> From<E> for WindowHintError<E> {
-    fn from(err: E) -> Self {
-        WindowHintError(err)
-    }
-}
-
-pub fn window_hint<U: TryInto<i32>>(target: U, hint: U) -> Result<(), WindowHintError<U::Error>> {
+pub fn window_hint<U: TryInto<i32>>(target: U, hint: U) -> Result<(), U::Error> {
     let target = target.try_into()?;
     let hint = hint.try_into()?;
     unsafe {
