@@ -13,7 +13,7 @@ use memmap2::Mmap;
 use crate::gl;
 
 #[derive(Debug)]
-pub struct ImageData {
+pub(super) struct ImageData {
     pub width: gl::GLsizei,
     pub height: gl::GLsizei,
     pub format: gl::GLenum,
