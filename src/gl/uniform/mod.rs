@@ -1,4 +1,4 @@
-use std::{ffi::CString, fmt::Debug};
+use std::{ffi, fmt::Debug};
 
 pub mod uniform_trait;
 
@@ -32,7 +32,7 @@ impl UniformLocation {
 }
 
 fn get_location(program: u32, name: &str) -> Result<i32, UniformLocationError> {
-    let name_cstr = CString::new(name).map_err(|_| UniformLocationError::FFIError)?;
+    let name_cstr = ffi::CString::new(name)?;
     let loc = unsafe { glGetUniformLocation(program, name_cstr.as_ptr() as *const i8) };
     if loc == -1 {
         Err(UniformLocationError::UnusedUniform {
@@ -47,5 +47,11 @@ fn get_location(program: u32, name: &str) -> Result<i32, UniformLocationError> {
 #[derive(Debug)]
 pub enum UniformLocationError {
     UnusedUniform { program: u32, name: String },
-    FFIError,
+    FFIError(ffi::NulError),
+}
+
+impl From<ffi::NulError> for UniformLocationError{
+	fn from(value: ffi::NulError) -> Self {
+		Self::FFIError(value)
+	}
 }
