@@ -60,7 +60,7 @@ pub enum UniformLocationError {
 impl fmt::Display for UniformLocationError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::UnusedUniform { program, name } => {
+            Self::UnusedUniform { name, program } => {
                 write!(f, "Uniform {} unused in program {}", name, program)
             }
             Self::FFIError(e) => fmt::Display::fmt(e, f),
