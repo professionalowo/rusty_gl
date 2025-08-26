@@ -22,15 +22,15 @@ where
         channels,
         data,
     } = load::<L>(bytes)?;
-    let internal_format = L::map_channels(channels);
+    let internal_format = i32::try_from(L::map_channels(channels))?;
     let format = format_from_channels(channels);
     Ok(ImageData {
         width,
         height,
         format,
         data,
-        type_: gl::GL_FLOAT,
-        internal_format: internal_format.try_into()?,
+        type_: L::TYPE,
+        internal_format,
     })
 }
 

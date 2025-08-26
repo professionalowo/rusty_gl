@@ -2,6 +2,8 @@ use super::*;
 use crate::framework::textures::stbi::stbi_uc;
 use std::ffi::c_int;
 pub trait Load {
+    const TYPE: u32;
+
     fn map_channels(channels: i32) -> u32;
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
@@ -16,6 +18,8 @@ pub trait Load {
 pub(super) struct LoadFloat;
 
 impl Load for LoadFloat {
+    const TYPE: u32 = gl::GL_FLOAT;
+
     #[inline]
     fn map_channels(channels: i32) -> u32 {
         match channels {
@@ -44,6 +48,7 @@ impl Load for LoadFloat {
 pub(super) struct LoadInt;
 
 impl Load for LoadInt {
+    const TYPE: u32 = gl::GL_UNSIGNED_BYTE;
     #[inline]
     fn map_channels(channels: i32) -> u32 {
         match channels {
