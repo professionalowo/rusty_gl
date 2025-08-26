@@ -15,8 +15,22 @@ impl UniformLocation {
     where
         S: AsRef<str>,
     {
-        let Program(id) = *program;
-        get_location(id, name.as_ref()).map(UniformLocation)
+        let name = name.as_ref();
+        let name_cstr = ffi::CString::new(name)?;
+        let name_ptr = name_cstr.as_ptr() as *const i8;
+
+        let Program(program) = *program;
+        let res = unsafe { gl::glGetUniformLocation(program, name_ptr) };
+
+        gl::get_error()?;
+
+        match res {
+            -1 => Err(UniformLocationError::UnusedUniform {
+                program,
+                name: String::from(name),
+            }),
+            loc => Ok(Self(loc)),
+        }
     }
 
     pub fn provide<U>(location: &Self, value: U)
@@ -31,22 +45,6 @@ impl UniformLocation {
         U: Uniform,
     {
         value.set(Some(options), location);
-    }
-}
-
-fn get_location(program: u32, name: &str) -> Result<i32, UniformLocationError> {
-    let name_cstr = ffi::CString::new(name)?;
-    let name_ptr = name_cstr.as_ptr() as *const i8;
-    let res = unsafe { gl::glGetUniformLocation(program, name_ptr) };
-
-    gl::get_error()?;
-
-    match res {
-        -1 => Err(UniformLocationError::UnusedUniform {
-            program,
-            name: String::from(name),
-        }),
-        loc => Ok(loc),
     }
 }
 
