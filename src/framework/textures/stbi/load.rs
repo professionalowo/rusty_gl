@@ -1,3 +1,5 @@
+use std::ffi::c_int;
+
 use super::*;
 
 pub(super) fn try_loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
@@ -83,11 +85,11 @@ impl Load for LoadFloat {
 
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
-        len: ::std::os::raw::c_int,
-        x: *mut ::std::os::raw::c_int,
-        y: *mut ::std::os::raw::c_int,
-        channels_in_file: *mut ::std::os::raw::c_int,
-        desired_channels: ::std::os::raw::c_int,
+        len: c_int,
+        x: *mut c_int,
+        y: *mut c_int,
+        channels_in_file: *mut c_int,
+        desired_channels: c_int,
     ) -> *mut u8 {
         let ptr = unsafe {
             stbi_loadf_from_memory(buffer, len, x, y, channels_in_file, desired_channels)
@@ -111,11 +113,11 @@ impl Load for LoadInt {
 
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
-        len: ::std::os::raw::c_int,
-        x: *mut ::std::os::raw::c_int,
-        y: *mut ::std::os::raw::c_int,
-        channels_in_file: *mut ::std::os::raw::c_int,
-        desired_channels: ::std::os::raw::c_int,
+        len: c_int,
+        x: *mut c_int,
+        y: *mut c_int,
+        channels_in_file: *mut c_int,
+        desired_channels: c_int,
     ) -> *mut u8 {
         unsafe { stbi_load_from_memory(buffer, len, x, y, channels_in_file, desired_channels) }
     }
