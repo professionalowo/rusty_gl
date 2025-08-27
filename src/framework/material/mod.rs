@@ -4,6 +4,7 @@ use crate::math::vec4::Vec4;
 
 use super::texture::Texture2D;
 
+#[derive(Debug)]
 pub struct Material {
     textures: HashMap<String, Texture2D>,
     k_amb: Vec4<f32>,
