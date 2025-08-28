@@ -62,13 +62,17 @@ impl Mesh {
     }
 
     pub fn bind(&self) {
-        todo!()
+        VertexArrayObject::bind_vertex_array(&self.vao);
     }
     pub fn unbind(&self) {
-        todo!()
+        VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
     }
     pub fn draw(&self) {
-        todo!()
+        gl::draw_elements(
+            gl::GL_TRIANGLES,
+            self.num_indices as i32,
+            gl::GL_UNSIGNED_INT,
+        );
     }
 
     pub fn from_ai_mesh(mesh: &assimp::Mesh<'_>) -> Result<Self, MeshLoadError> {
@@ -83,11 +87,12 @@ impl Mesh {
         } else {
             0
         });
-        let mut tangents: Vec<Vec3<f32>> = Vec::with_capacity(if mesh.has_tangents_and_bitangents() {
-            mesh.num_vertices() as usize
-        } else {
-            0
-        });
+        let mut tangents: Vec<Vec3<f32>> =
+            Vec::with_capacity(if mesh.has_tangents_and_bitangents() {
+                mesh.num_vertices() as usize
+            } else {
+                0
+            });
 
         for i in 0..mesh.num_vertices() {
             positions.push(Vec3::from(

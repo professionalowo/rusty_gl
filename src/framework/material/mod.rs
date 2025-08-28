@@ -2,6 +2,7 @@ use std::{collections::HashMap, ffi::CString, fmt};
 
 use crate::{
     framework::assimp::{AMaterial, AiError},
+    gl::{program::Program, uniform::UniformLocationError},
     math::{vec3::Vec3, vec4::Vec4},
 };
 
@@ -59,13 +60,14 @@ impl Material {
         &self.k_spec
     }
 
-    pub fn bind(&self) {
-        todo!()
+    pub fn bind(&self, program: &Program) -> Result<(), UniformLocationError> {
+        program.uniform("material.k_amb", &self.k_amb)?;
+        program.uniform("material.k_diff", &self.k_diff)?;
+        program.uniform("material.k_spec", &self.k_spec)?;
+        for (name, texture) in &self.textures {}
+        Ok(())
     }
     pub fn unbind(&self) {
-        todo!()
-    }
-    pub fn draw(&self) {
         todo!()
     }
 
