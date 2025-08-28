@@ -4,7 +4,12 @@ use std::{
 };
 
 use assimp::Color3D;
-use assimp_sys::{AiColor4D, aiGetMaterialColor};
+use assimp_sys::{
+    AiColor4D, AiString, AiTextureType, aiGetMaterialColor, aiGetMaterialString,
+    aiGetMaterialTexture,
+};
+
+use crate::framework::texture::Texture2D;
 
 pub struct AMaterial<'a>(pub assimp::Material<'a>);
 
@@ -50,6 +55,46 @@ impl<'a> AMaterial<'a> {
                 let AiColor4D { r, g, b, .. } = c;
                 Ok(Color3D::new(r, g, b))
             }
+            assimp_sys::AiReturn::Failure => Err(AiError::Failure),
+            assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
+        }
+    }
+
+    pub fn get_texture(&self, texture_type: AiTextureType, index: u32) -> Result<String, AiError> {
+        let Self(material) = self;
+        let mut path = AiString::default();
+        match unsafe {
+            aiGetMaterialTexture(
+                material.to_raw(),
+                texture_type,
+                index,
+                &mut path,
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+            )
+        } {
+            assimp_sys::AiReturn::Success => Ok(String::from(path.as_ref())),
+            assimp_sys::AiReturn::Failure => Err(AiError::Failure),
+            assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
+        }
+    }
+
+    pub fn get_material_string(
+        &self,
+        key: CString,
+        type_: u32,
+        index: u32,
+    ) -> Result<String, AiError> {
+        let Self(material) = self;
+        let mut str = AiString::default();
+        match unsafe {
+            aiGetMaterialString(material.to_raw(), key.as_ptr(), type_, index, &mut str)
+        } {
+            assimp_sys::AiReturn::Success => Ok(String::from(str.as_ref())),
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),
             assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
         }

@@ -37,6 +37,7 @@ impl fmt::Display for MaterialConversionError {
 
 #[derive(Debug, Default)]
 pub struct Material {
+    pub name: String,
     pub textures: HashMap<String, Texture2D>,
     pub k_amb: Vec4<f32>,
     pub k_diff: Vec4<f32>,
@@ -78,32 +79,28 @@ impl Material {
         }
     }
 
-    pub fn from_ai_mesh(value: assimp::Material) -> Result<Self, MaterialConversionError> {
-        let mat = AMaterial(value);
+    pub fn from_ai_mesh(
+        name: String,
+        value: &AMaterial,
+    ) -> Result<Self, MaterialConversionError> {
 
-        let diff = Vec3::from(mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0)?);
+        let diff = Vec3::from(value.get_material_color(CString::new("$clr.diffuse")?, 0, 0)?);
         let k_diff = diff.expand(1.0);
 
-        let spec = Vec3::from(mat.get_material_color(CString::new("$clr.specular")?, 0, 0)?);
+        let spec = Vec3::from(value.get_material_color(CString::new("$clr.specular")?, 0, 0)?);
         let k_spec = spec.expand(1.0);
 
-        let amb = Vec3::from(mat.get_material_color(CString::new("$clr.ambient")?, 0, 0)?);
+        let amb = Vec3::from(value.get_material_color(CString::new("$clr.ambient")?, 0, 0)?);
         let k_amb = amb.expand(1.0);
 
         let mut textures = HashMap::new();
 
         Ok(Self {
+            name,
             textures,
             k_amb,
             k_diff,
             k_spec,
         })
-    }
-}
-
-impl TryFrom<assimp::Material<'_>> for Material {
-    type Error = MaterialConversionError;
-    fn try_from(value: assimp::Material) -> Result<Self, Self::Error> {
-        Self::from_ai_mesh(value)
     }
 }

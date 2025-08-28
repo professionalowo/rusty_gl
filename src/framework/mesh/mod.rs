@@ -1,7 +1,10 @@
-use std::{fmt, path::PathBuf, rc::Rc};
+use std::{ffi::CString, fmt, path::PathBuf, rc::Rc};
+
+use assimp_sys::AiMaterial;
 
 use crate::{
     framework::{
+        assimp::AMaterial,
         drawelement::Drawelement,
         material::{Material, MaterialConversionError},
     },
@@ -208,7 +211,16 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as usize);
 
     for mat in scene.material_iter() {
-        let rc = Rc::new(mat.try_into()?);
+        let amat = AMaterial(mat);
+        let rc = Rc::new(Material::from_ai_mesh(
+            amat.get_material_string(
+                CString::new("?mat.name").map_err(MaterialConversionError::NulError)?,
+                0,
+                0,
+            )
+            .map_err(MaterialConversionError::AiError)?,
+            &amat,
+        )?);
         materials.push(rc);
     }
 
