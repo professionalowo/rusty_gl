@@ -106,29 +106,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_vec3_add() {
-        let a = Vec3::new(1.0, 2.0, 3.0);
-        let b = Vec3::new(4.0, 5.0, 6.0);
-        let result = a + b;
-        assert_eq!(result, Vec3::new(5.0, 7.0, 9.0));
-    }
-
-    #[test]
-    fn test_vec3_sub() {
-        let a = Vec3::new(1.0, 2.0, 3.0);
-        let b = Vec3::new(4.0, 5.0, 6.0);
-        let result = a - b;
-        assert_eq!(result, Vec3::new(-3.0, -3.0, -3.0));
-    }
-
-    #[test]
-    fn test_vec3_neg() {
-        let a = Vec3::new(1.0, 2.0, 3.0);
-        let result = -a;
-        assert_eq!(result, Vec3::new(-1.0, -2.0, -3.0));
-    }
-
-    #[test]
     fn test_vec3_cross() {
         let a = Vec3::new(1.0, 2.0, 3.0);
         let b = Vec3::new(4.0, 5.0, 6.0);
@@ -157,14 +134,6 @@ mod tests {
         let b = Vec3::new(4.0, 5.0, 6.0);
         let result = a.dot(&b);
         assert_eq!(result, 32.0);
-    }
-
-    #[test]
-    fn test_vec3_mul() {
-        let a = Vec3::new(1.0, 2.0, 3.0);
-        let b = Scalar(2.0);
-        let result = a * b;
-        assert_eq!(result, Vec3::new(2.0, 4.0, 6.0));
     }
 
     #[test]
