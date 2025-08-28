@@ -1,5 +1,7 @@
 use std::{fmt, path::PathBuf};
 
+use crate::framework::drawelement::Drawelement;
+
 pub struct Mesh {}
 
 impl Mesh {
@@ -35,7 +37,7 @@ impl From<&str> for MeshLoadError {
     }
 }
 
-pub fn load_mesh(path: PathBuf) -> Result<(), MeshLoadError> {
+pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let mut importer = assimp::Importer::new();
     importer.triangulate(true);
     importer.generate_normals(|_| ());
@@ -44,5 +46,5 @@ pub fn load_mesh(path: PathBuf) -> Result<(), MeshLoadError> {
         .to_str()
         .ok_or(MeshLoadError::InvalidPath(path.clone()))?;
     let scene = importer.read_file(path_str)?;
-    Ok(())
+    Ok(Box::new([]))
 }
