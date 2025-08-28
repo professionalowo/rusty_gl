@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt};
+use std::{collections::HashMap, ffi::CString, fmt};
 
 use crate::{
     framework::assimp::{AMaterial, AiError},
@@ -10,6 +10,7 @@ use super::texture::Texture2D;
 #[derive(Debug)]
 pub enum MaterialConversionError {
     AiError(AiError),
+    NulError(std::ffi::NulError),
 }
 
 impl From<AiError> for MaterialConversionError {
@@ -18,10 +19,17 @@ impl From<AiError> for MaterialConversionError {
     }
 }
 
+impl From<std::ffi::NulError> for MaterialConversionError {
+    fn from(value: std::ffi::NulError) -> Self {
+        Self::NulError(value)
+    }
+}
+
 impl fmt::Display for MaterialConversionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::AiError(a) => fmt::Display::fmt(a, f),
+            Self::NulError(n) => fmt::Display::fmt(n, f),
         }
     }
 }
@@ -64,15 +72,13 @@ impl TryFrom<assimp::Material<'_>> for Material {
     fn try_from(value: assimp::Material) -> Result<Self, Self::Error> {
         let mat = AMaterial(value);
 
-        let diff =
-            Vec3::from(mat.get_material_color("$clr.diffuse".as_ptr().cast::<i8>(), 0, 0)?);
+        let diff = Vec3::from(mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0)?);
         let k_diff = diff.expand(1.0);
 
-        let spec =
-            Vec3::from(mat.get_material_color("$clr.specular".as_ptr().cast::<i8>(), 0, 0)?);
+        let spec = Vec3::from(mat.get_material_color(CString::new("$clr.specular")?, 0, 0)?);
         let k_spec = spec.expand(1.0);
 
-        let amb = Vec3::from(mat.get_material_color("$clr.ambient".as_ptr().cast::<i8>(), 0, 0)?);
+        let amb = Vec3::from(mat.get_material_color(CString::new("$clr.ambient")?, 0, 0)?);
         let k_amb = amb.expand(1.0);
         Ok(Self {
             textures: HashMap::new(),
