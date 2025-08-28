@@ -192,4 +192,11 @@ mod tests {
         let vec: Vec3<f32> = tup.into();
         assert_eq!(vec, Vec3::new(1.0, 2.0, 3.0));
     }
+
+    #[test]
+    fn test_vec3_from_assimp() {
+        let assimp_vec = assimp::Vector3D::new(1.0, 2.0, 3.0);
+        let vec: Vec3<f32> = Vec3::from(assimp_vec);
+        assert_eq!(vec, Vec3::new(1.0, 2.0, 3.0));
+    }
 }
