@@ -60,6 +60,14 @@ where
         Vec4::new(x, y, z, w)
     }
 
+    pub fn from_slice(slice: &[T]) -> Option<Self> {
+        if let [x, y, z] = *slice {
+            Some(Self::new(x, y, z))
+        } else {
+            None
+        }
+    }
+
     pub unsafe fn from_raw(ptr: *const T) -> Self {
         unsafe { [ptr.read(), ptr.add(1).read(), ptr.add(2).read()] }.into()
     }
