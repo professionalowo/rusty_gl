@@ -60,7 +60,7 @@ where
         Vec4::new(x, y, z, w)
     }
 
-    pub fn from_slice(slice: &[T]) -> Option<Self> {
+    pub const  fn from_slice(slice: &[T]) -> Option<Self> {
         if let [x, y, z, ..] = *slice {
             Some(Self::new(x, y, z))
         } else {
