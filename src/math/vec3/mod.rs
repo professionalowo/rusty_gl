@@ -27,6 +27,25 @@ where
     pub const fn size() -> usize {
         3
     }
+
+    pub fn map<U, F>(&self, f: F) -> Vec3<U>
+    where
+        F: Fn(T) -> U,
+        U: Copy,
+    {
+        let x = f(self.x);
+        let y = f(self.y);
+        let z = f(self.z);
+        Vec3::<U>::new(x, y, z)
+    }
+
+    pub fn to<U>(&self) -> Vec3<U>
+    where
+        T: Into<U>,
+        U: Copy,
+    {
+        self.map(|v| T::into(v))
+    }
 }
 
 impl<T> Neg for Vec3<T>
