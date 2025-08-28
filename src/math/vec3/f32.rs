@@ -96,6 +96,10 @@ impl Vec3<f32> {
     ) -> Self {
         Self::new(x.max(ox), y.max(oy), z.max(oz))
     }
+
+    pub fn pow(Self { x, y, z }: Self, b: Self) -> Self {
+        Self::new(x.powf(b.x), y.powf(b.y), z.powf(b.z))
+    }
 }
 
 impl Div<f32> for Vec3<f32> {

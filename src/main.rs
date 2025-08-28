@@ -125,9 +125,9 @@ fn main() {
         Vec3::new(0.0, 1.0, 0.0),
     );
 
-    const POINTLIGHT_POS: Vec3<f32> = Vec3::new(1.0, 5.0, 1.0);
-    const POINTLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 1.0, 1.0);
-    const POINTLIGHT_INTENSITY: f32 = 0.2;
+    const POINTLIGHT_POS: Vec3<f32> = Vec3::new(75.0, 500.0, 500.0);
+    const POINTLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 0.58, 0.16);
+    const POINTLIGHT_INTENSITY: f32 = 1.5;
 
     gl::enable(gl::GL_DEPTH_TEST);
 
@@ -182,7 +182,10 @@ fn main() {
                     .uniform("pointlight_pos", &POINTLIGHT_POS)
                     .expect("Failed to set pointlight position");
                 program
-                    .uniform("pointlight_color", &POINTLIGHT_COLOR)
+                    .uniform(
+                        "pointlight_color",
+                        &Vec3::pow(POINTLIGHT_COLOR, Vec3::new(2.2, 2.2, 2.2)),
+                    )
                     .expect("Failed to set pointlight color");
                 program
                     .uniform("pointlight_intensity", POINTLIGHT_INTENSITY)
