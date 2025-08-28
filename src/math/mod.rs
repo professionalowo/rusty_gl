@@ -42,8 +42,8 @@ where
 {
     type Output = Self;
 
-    fn add(self, other: Self) -> Self {
-        Self(self.0 + other.0)
+    fn add(self, Self(o): Self) -> Self {
+        Self(self.0 + o)
     }
 }
 
@@ -60,8 +60,8 @@ impl<T> AddAssign<Scalar<T>> for Scalar<T>
 where
     T: AddAssign<T>,
 {
-    fn add_assign(&mut self, other: Self) {
-        self.0 += other.0;
+    fn add_assign(&mut self, Self(o): Self) {
+        self.0 += o;
     }
 }
 
@@ -82,8 +82,8 @@ where
 {
     type Output = Self;
 
-    fn sub(self, other: Self) -> Self {
-        Self(self.0 - other.0)
+    fn sub(self, Self(o): Self) -> Self {
+        Self(self.0 - o)
     }
 }
 
@@ -100,8 +100,8 @@ impl<T> SubAssign<Scalar<T>> for Scalar<T>
 where
     T: SubAssign<T>,
 {
-    fn sub_assign(&mut self, other: Self) {
-        self.0 -= other.0;
+    fn sub_assign(&mut self, Self(o): Self) {
+        self.0 -= o;
     }
 }
 
@@ -122,8 +122,8 @@ where
 {
     type Output = Self;
 
-    fn mul(self, other: Self) -> Self {
-        Self(self.0 * other.0)
+    fn mul(self, Self(o): Self) -> Self {
+        Self(self.0 * o)
     }
 }
 
@@ -140,8 +140,8 @@ impl<T> MulAssign<Scalar<T>> for Scalar<T>
 where
     T: MulAssign<T>,
 {
-    fn mul_assign(&mut self, other: Self) {
-        self.0 *= other.0;
+    fn mul_assign(&mut self, Self(o): Self) {
+        self.0 *= o;
     }
 }
 
@@ -162,8 +162,8 @@ where
 {
     type Output = Self;
 
-    fn div(self, other: Self) -> Self {
-        Self(self.0 / other.0)
+    fn div(self, Self(o): Self) -> Self {
+        Self(self.0 / o)
     }
 }
 
@@ -180,8 +180,8 @@ impl<T> DivAssign<Scalar<T>> for Scalar<T>
 where
     T: DivAssign<T>,
 {
-    fn div_assign(&mut self, other: Self) {
-        self.0 /= other.0;
+    fn div_assign(&mut self, Self(o): Self) {
+        self.0 /= o;
     }
 }
 
