@@ -1,6 +1,6 @@
 use std::{
-    ffi::{CString, c_uint},
-    fmt,
+    ffi::{CStr, CString, c_uint},
+    fmt, slice,
 };
 
 use assimp::Color3D;
@@ -8,8 +8,6 @@ use assimp_sys::{
     AiColor4D, AiString, AiTextureType, aiGetMaterialColor, aiGetMaterialString,
     aiGetMaterialTexture,
 };
-
-use crate::framework::texture::Texture2D;
 
 pub struct AMaterial<'a>(pub assimp::Material<'a>);
 
@@ -94,7 +92,11 @@ impl<'a> AMaterial<'a> {
         match unsafe {
             aiGetMaterialString(material.to_raw(), key.as_ptr(), type_, index, &mut str)
         } {
-            assimp_sys::AiReturn::Success => Ok(String::from(str.as_ref())),
+            assimp_sys::AiReturn::Success => Ok(unsafe {
+                CStr::from_ptr(str.data.as_ptr() as *const i8)
+                    .to_string_lossy()
+                    .into_owned()
+            }),
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),
             assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
         }

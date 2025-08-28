@@ -1,7 +1,5 @@
 use std::{ffi::CString, fmt, path::PathBuf, rc::Rc};
 
-use assimp_sys::AiMaterial;
-
 use crate::{
     framework::{
         assimp::AMaterial,
