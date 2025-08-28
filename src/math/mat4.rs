@@ -7,7 +7,7 @@ const RANK: usize = 4;
 
 use crate::{
     gl::{
-        glUniformMatrix4fv,
+        self,
         uniform::{UniformLocation, uniform_trait::Uniform},
     },
     math::vec4::Vec4,
@@ -203,7 +203,7 @@ impl Uniform for &Mat4<f32> {
         let value = cols.as_ptr() as *const f32;
         let UniformLocation(location) = *location;
         unsafe {
-            glUniformMatrix4fv(location, 1, u8::from(transpose), value);
+            gl::glUniformMatrix4fv(location, 1, u8::from(transpose), value);
         }
     }
 }
