@@ -1,5 +1,6 @@
 use std::ops::Div;
 
+use super::Vec3;
 use crate::{
     gl::{
         self,
@@ -8,14 +9,6 @@ use crate::{
     math::Scalar,
 };
 
-use super::Vec3;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum RotationAxis {
-    X,
-    Y,
-    Z,
-}
 impl Vec3<f32> {
     pub const fn rgb(r: f32, g: f32, b: f32) -> Self {
         Self::new(r, g, b)
