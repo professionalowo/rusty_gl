@@ -33,10 +33,12 @@ where
     type Output = Self;
 
     fn neg(self) -> Self {
+        let Self { x, y, z } = self;
+
         Self {
-            x: -self.x,
-            y: -self.y,
-            z: -self.z,
+            x: -x,
+            y: -y,
+            z: -z,
         }
     }
 }
@@ -45,10 +47,16 @@ impl<T: Copy + Add<Output = T>> Add for Vec3<T> {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
+        let Self { x, y, z } = self;
+        let Self {
+            x: ox,
+            y: oy,
+            z: oz,
+        } = other;
         Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
+            x: x + ox,
+            y: y + oy,
+            z: z + oz,
         }
     }
 }
@@ -95,11 +103,11 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec3<T> {
 
     fn mul(self, other: Scalar<T>) -> Self {
         let Self { x, y, z } = self;
-        let Scalar(scalar) = other;
+        let Scalar(s) = other;
         Self {
-            x: x * scalar,
-            y: y * scalar,
-            z: z * scalar,
+            x: x * s,
+            y: y * s,
+            z: z * s,
         }
     }
 }
@@ -108,9 +116,9 @@ impl<T: Copy + Mul<Output = T>> Mul<Vec3<T>> for Scalar<T> {
     type Output = Vec3<T>;
 
     fn mul(self, other: Self::Output) -> Self::Output {
-        let Self(scalar) = self;
+        let Self(s) = self;
         let Self::Output { x, y, z } = other;
-        Self::Output::new(scalar * x, scalar * y, scalar * z)
+        Self::Output::new(s * x, s * y, s * z)
     }
 }
 
