@@ -6,7 +6,10 @@ use crate::math::{Scalar, vec2::Vec2, vec4::Vec4};
 
 #[repr(C)]
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq)]
-pub struct Vec3<T: Copy> {
+pub struct Vec3<T>
+where
+    T: Copy,
+{
     pub x: T,
     pub y: T,
     pub z: T,
@@ -179,6 +182,22 @@ where
     }
 }
 
+impl<T> Not for Vec3<T>
+where
+    T: Copy + Not<Output = T>,
+{
+    type Output = Self;
+
+    fn not(self) -> Self::Output {
+        let Self { x, y, z } = self;
+        Self {
+            x: !x,
+            y: !y,
+            z: !z,
+        }
+    }
+}
+
 impl<T> From<[T; 3]> for Vec3<T>
 where
     T: Copy,
@@ -199,21 +218,6 @@ where
     }
 }
 
-impl<T> Not for Vec3<T>
-where
-    T: Copy + Not<Output = T>,
-{
-    type Output = Self;
-
-    fn not(self) -> Self::Output {
-        let Self { x, y, z } = self;
-        Self {
-            x: !x,
-            y: !y,
-            z: !z,
-        }
-    }
-}
 #[cfg(test)]
 mod tests {
     use super::*;
