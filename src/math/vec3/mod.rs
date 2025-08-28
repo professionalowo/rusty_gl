@@ -1,6 +1,6 @@
 pub mod f32;
 
-use std::ops::{Add, AddAssign, Mul, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, Neg, Not, Sub, SubAssign};
 
 use crate::math::Scalar;
 
@@ -136,6 +136,18 @@ impl<T: Copy> From<(T, T, T)> for Vec3<T> {
     }
 }
 
+impl<T: Copy + Not<Output = T>> Not for Vec3<T> {
+    type Output = Self;
+
+    fn not(self) -> Self::Output {
+        let Self { x, y, z } = self;
+        Self {
+            x: !x,
+            y: !y,
+            z: !z,
+        }
+    }
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -181,5 +193,26 @@ mod tests {
         let a = Vec3::new(1.0, 2.0, 3.0);
         let b = Scalar(2.0);
         assert_eq!(b * a, Vec3::new(2.0, 4.0, 6.0));
+    }
+
+    #[test]
+    fn test_vec3_not() {
+        let a = Vec3::new(true, false, true);
+        assert_eq!(!a, Vec3::new(false, true, false));
+    }
+
+    #[test]
+    fn test_vec3_default() {
+        let a: Vec3<u8> = Vec3::default();
+        assert_eq!(a, Vec3::new(u8::default(), u8::default(), u8::default()));
+    }
+
+    #[test]
+    fn test_vec3_eq() {
+        let a = Vec3::new(1, 2, 3);
+        let b = Vec3::new(1, 2, 3);
+        let c = Vec3::new(4, 5, 6);
+        assert_eq!(a, b);
+        assert_ne!(a, c);
     }
 }
