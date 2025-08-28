@@ -65,9 +65,9 @@ fn main() {
         0, 1, 4,
     ];
 
-    VertexArrayObject::bind_vertex_array(vao);
+    VertexArrayObject::bind_vertex_array(&vao);
 
-    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, vbo);
+    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &vbo);
     VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &VERTICES, gl::GL_STATIC_DRAW)
         .expect("Failed to buffer vertex data");
 
@@ -85,7 +85,7 @@ fn main() {
     let color_loc = Location(1);
     VertexBufferObject::enable_vertex_attrib_array(&color_loc);
 
-    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, cbo);
+    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &cbo);
     VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &COLORS, gl::GL_STATIC_DRAW)
         .expect("Failed to buffer color data");
     VertexBufferObject::vertex_attrib_pointer::<f32>(
@@ -97,14 +97,14 @@ fn main() {
     )
     .expect("Failed to set color attribute pointer");
 
-    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, VertexBufferObject::zero());
+    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &VertexBufferObject::zero());
 
-    VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, ibo);
+    VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, &ibo);
 
     VertexBufferObject::buffer_data(gl::GL_ELEMENT_ARRAY_BUFFER, &INDICES, gl::GL_STATIC_DRAW)
         .expect("Failed to buffer index data");
 
-    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, VertexBufferObject::zero());
+    VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &VertexBufferObject::zero());
 
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
@@ -161,6 +161,8 @@ fn main() {
     gl::enable(gl::GL_DEPTH_TEST);
 
     let elements = mesh::load_mesh(get_model_file_path(&entrypoint)).expect("Failed to load model");
+
+    dbg!(&elements);
     let mut timer: Timer<60> = Timer::new();
 
     while let Ok(false) = window.should_close() {

@@ -36,10 +36,10 @@ impl fmt::Display for MaterialConversionError {
 
 #[derive(Debug, Default)]
 pub struct Material {
-    textures: HashMap<String, Texture2D>,
-    k_amb: Vec4<f32>,
-    k_diff: Vec4<f32>,
-    k_spec: Vec4<f32>,
+    pub textures: HashMap<String, Texture2D>,
+    pub k_amb: Vec4<f32>,
+    pub k_diff: Vec4<f32>,
+    pub k_spec: Vec4<f32>,
 }
 
 impl Material {
@@ -63,6 +63,9 @@ impl Material {
         todo!()
     }
     pub fn unbind(&self) {
+        todo!()
+    }
+    pub fn draw(&self) {
         todo!()
     }
 }

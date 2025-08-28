@@ -1,6 +1,6 @@
 use crate::gl::{self, glBindVertexArray, glDeleteVertexArrays, glGenVertexArrays};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct VertexArrayObject(pub gl::GLuint);
 
 impl VertexArrayObject {
@@ -16,15 +16,15 @@ impl VertexArrayObject {
         Self(vao)
     }
 
-    pub fn bind_vertex_array(vao: Self) {
+    pub fn bind_vertex_array(vao: &Self) {
         let Self(index) = vao;
         unsafe {
-            glBindVertexArray(index);
+            glBindVertexArray(*index);
         }
     }
 
-    pub fn delete_vertex_array(vao: Self) {
-        let Self(index) = &vao;
+    pub fn delete_vertex_array(vao: &Self) {
+        let Self(index) = vao;
         unsafe {
             glDeleteVertexArrays(1, index);
         }

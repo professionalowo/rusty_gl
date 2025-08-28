@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::gl::{
     self, GLboolean, GLint, GLsizeiptr, glBindBuffer, glBufferData, glDeleteBuffers,
     glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer,
@@ -22,15 +24,15 @@ impl VertexBufferObject {
         Self(buffer)
     }
 
-    pub fn bind_buffer(n: u32, Self(buffer): Self) {
+    pub fn bind_buffer(n: u32, Self(buffer): &Self) {
         unsafe {
-            glBindBuffer(n, buffer);
+            glBindBuffer(n, *buffer);
         }
     }
 
-    pub fn delete_buffer(Self(buffer): Self) {
+    pub fn delete_buffer(Self(buffer): &Self) {
         unsafe {
-            glDeleteBuffers(1, &buffer);
+            glDeleteBuffers(1, buffer);
         }
     }
 
@@ -80,4 +82,12 @@ impl VertexBufferObject {
 #[derive(Debug)]
 pub enum VBOError {
     CastError,
+}
+
+impl fmt::Display for VBOError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::CastError => write!(f, "Failed to cast value"),
+        }
+    }
 }
