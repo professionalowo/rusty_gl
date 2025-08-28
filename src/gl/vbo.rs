@@ -6,7 +6,7 @@ use crate::gl::{
 #[derive(Debug, Clone)]
 pub struct Location(pub gl::GLuint);
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct VertexBufferObject(pub gl::GLuint);
 
 impl VertexBufferObject {

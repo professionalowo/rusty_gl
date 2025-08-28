@@ -255,6 +255,7 @@ name = "rusty_gl"
 version = "0.1.0"
 dependencies = [
  "assimp",
+ "assimp-sys",
  "bindgen",
  "cc",
  "memmap2",

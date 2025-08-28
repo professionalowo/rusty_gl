@@ -5,16 +5,16 @@ use crate::{
         drawelement::Drawelement,
         material::{Material, MaterialConversionError},
     },
-    gl,
+    gl::{self, vbo::VertexBufferObject},
 };
 
 #[derive(Debug, Default)]
 pub struct Mesh {
-    pub vao: gl::GLuint,
-    pub ibo: gl::GLuint,
+    pub vao: VertexBufferObject,
+    pub ibo: VertexBufferObject,
     pub num_vertices: u32,
     pub num_indices: u32,
-    pub vbo_ids: Vec<gl::GLuint>,
+    pub vbo_ids: Vec<VertexBufferObject>,
     pub vbo_types: Vec<gl::GLenum>,
     pub vbo_dims: Vec<u32>,
     pub primitive_type: gl::GLenum,
@@ -77,7 +77,7 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as usize);
 
     for mat in scene.material_iter() {
-        let rc = Rc::new(Material::default());
+        let rc = Rc::new(mat.try_into()?);
         materials.push(rc);
     }
 
