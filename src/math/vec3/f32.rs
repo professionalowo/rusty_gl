@@ -81,6 +81,13 @@ impl Div<f32> for Vec3<f32> {
     }
 }
 
+impl From<[f32; 3]> for Vec3<f32> {
+    fn from(arr: [f32; 3]) -> Self {
+        let [x, y, z] = arr;
+        Self::new(x, y, z)
+    }
+}
+
 impl Uniform for &Vec3<f32> {
     type Options = ();
 
