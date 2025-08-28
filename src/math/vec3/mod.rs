@@ -123,3 +123,21 @@ impl<T: Copy> From<(T, T, T)> for Vec3<T> {
         Self::new(x, y, z)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_vec3_from_array() {
+        let arr = [1, 2, 3];
+        let vec: Vec3<u8> = arr.into();
+        assert_eq!(vec, Vec3::new(1, 2, 3));
+    }
+
+    #[test]
+    fn test_vec3_from_tuple() {
+        let tup = (1, 2, 3);
+        let vec: Vec3<u8> = tup.into();
+        assert_eq!(vec, Vec3::new(1, 2, 3));
+    }
+}
