@@ -3,12 +3,10 @@ use std::path::PathBuf;
 
 use rusty_gl::framework::camera::Camera;
 use rusty_gl::framework::mesh;
-use rusty_gl::framework::texture::Texture2D;
 use rusty_gl::framework::timer::Timer;
 use rusty_gl::gl;
 use rusty_gl::gl::program::Program;
 use rusty_gl::gl::shader::Shader;
-use rusty_gl::gl::uniform::UniformLocation;
 use rusty_gl::gl::vao::VertexArrayObject;
 use rusty_gl::gl::vbo::{Location, VertexBufferObject};
 use rusty_gl::glfw;
