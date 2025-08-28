@@ -88,6 +88,13 @@ impl From<[f32; 3]> for Vec3<f32> {
     }
 }
 
+impl From<(f32, f32, f32)> for Vec3<f32> {
+    fn from(tup: (f32, f32, f32)) -> Self {
+        let (x, y, z) = tup;
+        Self::new(x, y, z)
+    }
+}
+
 impl Uniform for &Vec3<f32> {
     type Options = ();
 
@@ -164,5 +171,19 @@ mod tests {
         let b = Scalar(2.0);
         let result = a * b;
         assert_eq!(result, Vec3::new(2.0, 4.0, 6.0));
+    }
+
+    #[test]
+    fn test_vec3_from_array() {
+        let arr = [1.0, 2.0, 3.0];
+        let vec: Vec3<f32> = arr.into();
+        assert_eq!(vec, Vec3::new(1.0, 2.0, 3.0));
+    }
+
+    #[test]
+    fn test_vec3_from_tuple() {
+        let tup = (1.0, 2.0, 3.0);
+        let vec: Vec3<f32> = tup.into();
+        assert_eq!(vec, Vec3::new(1.0, 2.0, 3.0));
     }
 }
