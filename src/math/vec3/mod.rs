@@ -112,3 +112,17 @@ impl<T: Copy + Mul<Output = T>> Mul<Vec3<T>> for Scalar<T> {
         }
     }
 }
+
+impl<T: Copy> From<[T; 3]> for Vec3<T> {
+    fn from(arr: [T; 3]) -> Self {
+        let [x, y, z] = arr;
+        Self::new(x, y, z)
+    }
+}
+
+impl<T: Copy> From<(T, T, T)> for Vec3<T> {
+    fn from(tup: (T, T, T)) -> Self {
+        let (x, y, z) = tup;
+        Self::new(x, y, z)
+    }
+}
