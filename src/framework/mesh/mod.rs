@@ -2,6 +2,18 @@ use std::{fmt, path::PathBuf};
 
 pub struct Mesh {}
 
+impl Mesh {
+    pub fn bind(&self) {
+        todo!()
+    }
+    pub fn unbind(&self) {
+        todo!()
+    }
+    pub fn draw(&self) {
+        todo!()
+    }
+}
+
 #[derive(Debug)]
 pub enum MeshLoadError {
     LoadFailed(String),
@@ -23,7 +35,7 @@ impl From<&str> for MeshLoadError {
     }
 }
 
-pub fn load_mesh(path: PathBuf) -> Result<Mesh, MeshLoadError> {
+pub fn load_mesh(path: PathBuf) -> Result<(), MeshLoadError> {
     let mut importer = assimp::Importer::new();
     importer.triangulate(true);
     importer.generate_normals(|_| ());
@@ -32,5 +44,5 @@ pub fn load_mesh(path: PathBuf) -> Result<Mesh, MeshLoadError> {
         .to_str()
         .ok_or(MeshLoadError::InvalidPath(path.clone()))?;
     let scene = importer.read_file(path_str)?;
-    Ok(Mesh {})
+    Ok(())
 }

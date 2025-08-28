@@ -33,4 +33,11 @@ impl Material {
     pub const fn n_spec(&self) -> f32 {
         self.n_spec
     }
+
+    pub fn bind(&self) {
+        todo!()
+    }
+    pub fn unbind(&self) {
+        todo!()
+    }
 }
