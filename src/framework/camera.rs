@@ -38,6 +38,10 @@ impl Camera {
         build_view_matrix(&self.position, &look, &self.up)
     }
 
+    pub fn view_normal(&self) -> Mat4<f32> {
+        self.view().invert().unwrap_or(Mat4::identity()).transpose()
+    }
+
     pub fn projection(&self, aspect_ratio: f32) -> Mat4<f32> {
         perspective(self.fov_deg, aspect_ratio, self.near_plane, self.far_plane)
     }

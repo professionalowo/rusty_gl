@@ -1,7 +1,9 @@
 use crate::gl::{
     GL_INFO_LOG_LENGTH, GL_LINK_STATUS, GL_VALIDATE_STATUS, glAttachShader, glCreateProgram,
     glDeleteProgram, glGetProgramInfoLog, glGetProgramiv, glLinkProgram, glUseProgram,
-    glValidateProgram, shader::Shader,
+    glValidateProgram,
+    shader::Shader,
+    uniform::{UniformLocation, UniformLocationError, uniform_trait::Uniform},
 };
 
 pub struct Program(pub u32);
@@ -48,6 +50,17 @@ impl Program {
             return Err(error_msg);
         }
         Ok(Program(id))
+    }
+
+    pub fn uniform<U: Uniform>(
+        &self,
+        name: impl AsRef<str>,
+        value: U,
+    ) -> Result<(), UniformLocationError> {
+        let name = name.as_ref();
+        let loc = UniformLocation::try_for_program(self, name)?;
+        UniformLocation::provide(&loc, value);
+        Ok(())
     }
 
     pub fn bind(&self) {
