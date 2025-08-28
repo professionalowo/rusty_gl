@@ -67,11 +67,12 @@ impl Vec3<f32> {
 impl Div<f32> for Vec3<f32> {
     type Output = Self;
 
-    fn div(self, scalar: f32) -> Self {
-        if scalar == 0.0 {
+    fn div(self, s: f32) -> Self {
+        if s == 0.0 {
             self
         } else {
-            Self::new(self.x / scalar, self.y / scalar, self.z / scalar)
+            let Self { x, y, z } = self;
+            Self::new(x / s, y / s, z / s)
         }
     }
 }
