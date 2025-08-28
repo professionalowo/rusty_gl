@@ -190,11 +190,7 @@ where
 
     fn not(self) -> Self::Output {
         let Self { x, y, z } = self;
-        Self {
-            x: !x,
-            y: !y,
-            z: !z,
-        }
+        Self::new(!x, !y, !z)
     }
 }
 
