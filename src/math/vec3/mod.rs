@@ -61,7 +61,7 @@ where
     }
 
     pub fn from_slice(slice: &[T]) -> Option<Self> {
-        if let [x, y, z] = *slice {
+        if let [x, y, z, ..] = *slice {
             Some(Self::new(x, y, z))
         } else {
             None
@@ -317,5 +317,15 @@ mod tests {
         let vec = unsafe { Vec3::from_raw(ptr.add(1)) };
 
         assert_eq!(vec, Vec3::new(2, 3, 4));
+    }
+
+    #[test]
+    fn test_vec3_from_slice() {
+        let data = [1, 2, 3, 4, 5];
+        let vec = Vec3::from_slice(&data[1..]);
+
+        assert_eq!(vec, Some(Vec3::new(2, 3, 4)));
+
+        assert_eq!(Vec3::from_slice(&[0]), None)
     }
 }
