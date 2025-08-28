@@ -48,10 +48,10 @@ where
 impl<T: Copy + Add<Output = T>> Add for Vec2<T> {
     type Output = Self;
 
-    fn add(self, other: Self) -> Self {
+    fn add(self, Self { x, y }: Self) -> Self {
         Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
+            x: self.x + x,
+            y: self.y + y,
         }
     }
 }
@@ -59,10 +59,10 @@ impl<T: Copy + Add<Output = T>> Add for Vec2<T> {
 impl<T: Copy + Sub<Output = T>> Sub for Vec2<T> {
     type Output = Self;
 
-    fn sub(self, other: Self) -> Self {
+    fn sub(self, Self { x, y }: Self) -> Self {
         Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
+            x: self.x - x,
+            y: self.y - y,
         }
     }
 }
@@ -70,10 +70,10 @@ impl<T: Copy + Sub<Output = T>> Sub for Vec2<T> {
 impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec2<T> {
     type Output = Self;
 
-    fn mul(self, other: Scalar<T>) -> Self {
+    fn mul(self, Scalar(s): Scalar<T>) -> Self {
         Self {
-            x: self.x * other.0,
-            y: self.y * other.0,
+            x: self.x * s,
+            y: self.y * s,
         }
     }
 }
@@ -81,10 +81,10 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec2<T> {
 impl<T: Copy + Mul<Output = T>> Mul<Vec2<T>> for Scalar<T> {
     type Output = Vec2<T>;
 
-    fn mul(self, other: Self::Output) -> Self::Output {
+    fn mul(self, Self::Output { x, y }: Self::Output) -> Self::Output {
         Self::Output {
-            x: self.0 * other.x,
-            y: self.0 * other.y,
+            x: self.0 * x,
+            y: self.0 * y,
         }
     }
 }
@@ -92,9 +92,7 @@ impl<T: Copy + Mul<Output = T>> Mul<Vec2<T>> for Scalar<T> {
 impl<T: Copy + Div<Output = T>> Div<Scalar<T>> for Vec2<T> {
     type Output = Vec2<T>;
 
-    fn div(self, rhs: Scalar<T>) -> Self::Output {
-        let Scalar(div) = rhs;
-
+    fn div(self, Scalar(div): Scalar<T>) -> Self::Output {
         Self::Output {
             x: self.x / div,
             y: self.y / div,
@@ -103,15 +101,13 @@ impl<T: Copy + Div<Output = T>> Div<Scalar<T>> for Vec2<T> {
 }
 
 impl<T: Copy> From<(T, T)> for Vec2<T> {
-    fn from(tup: (T, T)) -> Self {
-        let (x, y) = tup;
+    fn from((x, y): (T, T)) -> Self {
         Self::new(x, y)
     }
 }
 
 impl<T: Copy> From<[T; 2]> for Vec2<T> {
-    fn from(arr: [T; 2]) -> Self {
-        let [x, y] = arr;
+    fn from([x, y]: [T; 2]) -> Self {
         Self::new(x, y)
     }
 }
