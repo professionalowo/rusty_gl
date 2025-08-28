@@ -30,7 +30,12 @@ impl Drawelement {
     }
 
     pub fn draw(&self, model: &Mat4<f32>) {
-        if let Some(p) = self.program.as_ref() {}
+        if let Some(p) = self.program.as_ref() {
+            let model_normal = model
+                .invert()
+                .map(|mat| mat.transpose())
+                .unwrap_or(Mat4::identity());
+        }
         for mesh in self.meshes.iter() {
             mesh.bind();
             mesh.draw();
