@@ -117,6 +117,12 @@ impl From<assimp::Vector3D> for Vec3<f32> {
     }
 }
 
+impl From<assimp::Color3D> for Vec3<f32> {
+    fn from(c: assimp::Color3D) -> Self {
+        Self::rgb(c.r, c.g, c.b)
+    }
+}
+
 impl Uniform for &Vec3<f32> {
     type Options = ();
 
