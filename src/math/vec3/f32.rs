@@ -25,7 +25,7 @@ impl Vec3<f32> {
     pub fn rotate(&self, angle: f32, axis: &Vec3<f32>) -> Self {
         let theta = angle.to_radians();
         let c = theta.cos();
-        let s = theta.sin();
+        let s = Scalar(theta.sin());
 
         let axis = axis.normalize();
         let Self {
@@ -38,7 +38,7 @@ impl Vec3<f32> {
             x * c + tx * self.dot(&axis),
             y * c + ty * self.dot(&axis),
             z * c + tz * self.dot(&axis),
-        ) + axis.cross(&self) * Scalar(s)
+        ) + axis.cross(&self) * s
     }
 
     pub const fn cross(&self, other: &Self) -> Self {
@@ -98,11 +98,10 @@ impl From<assimp::Vector3D> for Vec3<f32> {
 impl Uniform for &Vec3<f32> {
     type Options = ();
 
-    fn set(&self, _options: Option<Self::Options>, location: &UniformLocation) {
+    fn set(&self, _options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
         let Vec3 { x, y, z } = self;
-        let UniformLocation(location) = *location;
         unsafe {
-            gl::glUniform3f(location, *x, *y, *z);
+            gl::glUniform3f(*location, *x, *y, *z);
         }
     }
 }

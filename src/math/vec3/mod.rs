@@ -89,17 +89,12 @@ where
 {
     type Output = Self;
 
-    fn add(self, other: Self) -> Self {
+    fn add(self, Self { x: a, y: b, z: c }: Self) -> Self {
         let Self { x, y, z } = self;
-        let Self {
-            x: ox,
-            y: oy,
-            z: oz,
-        } = other;
         Self {
-            x: x + ox,
-            y: y + oy,
-            z: z + oz,
+            x: x + a,
+            y: y + b,
+            z: z + c,
         }
     }
 }
@@ -108,8 +103,7 @@ impl<T> AddAssign for Vec3<T>
 where
     T: Copy + AddAssign,
 {
-    fn add_assign(&mut self, other: Self) {
-        let Self { x, y, z } = other;
+    fn add_assign(&mut self, Self { x, y, z }: Self) {
         self.x += x;
         self.y += y;
         self.z += z;
@@ -120,8 +114,7 @@ impl<T> SubAssign for Vec3<T>
 where
     T: Copy + SubAssign,
 {
-    fn sub_assign(&mut self, other: Self) {
-        let Self { x, y, z } = other;
+    fn sub_assign(&mut self, Self { x, y, z }: Self) {
         self.x -= x;
         self.y -= y;
         self.z -= z;
@@ -134,8 +127,7 @@ where
 {
     type Output = Self;
 
-    fn sub(self, other: Self) -> Self {
-        let Self { x, y, z } = other;
+    fn sub(self, Self { x, y, z }: Self) -> Self {
         Self {
             x: self.x - x,
             y: self.y - y,
@@ -150,9 +142,8 @@ where
 {
     type Output = Self;
 
-    fn mul(self, other: Scalar<T>) -> Self {
+    fn mul(self, Scalar(s): Scalar<T>) -> Self {
         let Self { x, y, z } = self;
-        let Scalar(s) = other;
         Self {
             x: x * s,
             y: y * s,
@@ -165,9 +156,8 @@ impl<T> MulAssign<Scalar<T>> for Vec3<T>
 where
     T: Copy + Mul<Output = T>,
 {
-    fn mul_assign(&mut self, other: Scalar<T>) {
+    fn mul_assign(&mut self, Scalar(s): Scalar<T>) {
         let Self { x, y, z } = *self;
-        let Scalar(s) = other;
         self.x = x * s;
         self.y = y * s;
         self.z = z * s;
@@ -180,9 +170,8 @@ where
 {
     type Output = Vec3<T>;
 
-    fn mul(self, other: Self::Output) -> Self::Output {
+    fn mul(self, Self::Output { x, y, z }: Self::Output) -> Self::Output {
         let Self(s) = self;
-        let Self::Output { x, y, z } = other;
         Self::Output::new(s * x, s * y, s * z)
     }
 }
@@ -203,8 +192,7 @@ impl<T> From<[T; 3]> for Vec3<T>
 where
     T: Copy,
 {
-    fn from(arr: [T; 3]) -> Self {
-        let [x, y, z] = arr;
+    fn from([x, y, z]: [T; 3]) -> Self {
         Self::new(x, y, z)
     }
 }
@@ -213,8 +201,7 @@ impl<T> From<(T, T, T)> for Vec3<T>
 where
     T: Copy,
 {
-    fn from(tup: (T, T, T)) -> Self {
-        let (x, y, z) = tup;
+    fn from((x, y, z): (T, T, T)) -> Self {
         Self::new(x, y, z)
     }
 }
