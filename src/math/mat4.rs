@@ -4,6 +4,9 @@ use std::{
 };
 
 const RANK: usize = 4;
+use ndarray::array;
+use ndarray_linalg::Inverse;
+
 use crate::{
     gl::{
         glUniformMatrix4fv,
@@ -86,8 +89,52 @@ impl Mat4<f32> {
         )
     }
 
-    pub fn inverse(&self) -> Self {
-        
+    pub fn invert(&self) -> Option<Self> {
+        self.inv().ok()
+    }
+}
+
+impl Inverse for Mat4<f32> {
+    type Output = Self;
+
+    fn inv(&self) -> ndarray_linalg::error::Result<Self::Output> {
+        let a = array![
+            [
+                self.cols[0].x,
+                self.cols[1].x,
+                self.cols[2].x,
+                self.cols[3].x
+            ],
+            [
+                self.cols[0].y,
+                self.cols[1].y,
+                self.cols[2].y,
+                self.cols[3].y
+            ],
+            [
+                self.cols[0].z,
+                self.cols[1].z,
+                self.cols[2].z,
+                self.cols[3].z
+            ],
+            [
+                self.cols[0].w,
+                self.cols[1].w,
+                self.cols[2].w,
+                self.cols[3].w
+            ],
+        ];
+        match a.inv() {
+            Err(e) => Err(e),
+            Ok(inv) => {
+                Ok(Self::new(
+                    Vec4::new(inv[(0, 0)], inv[(1, 0)], inv[(2, 0)], inv[(3, 0)]), // first column
+                    Vec4::new(inv[(0, 1)], inv[(1, 1)], inv[(2, 1)], inv[(3, 1)]), // second column
+                    Vec4::new(inv[(0, 2)], inv[(1, 2)], inv[(2, 2)], inv[(3, 2)]), // third column
+                    Vec4::new(inv[(0, 3)], inv[(1, 3)], inv[(2, 3)], inv[(3, 3)]), // fourth column
+                ))
+            }
+        }
     }
 }
 
