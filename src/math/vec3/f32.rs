@@ -74,6 +74,28 @@ impl Vec3<f32> {
         } = *other;
         x * ox + y * oy + z * oz
     }
+
+    pub const fn min(
+        Self { x, y, z }: Self,
+        Self {
+            x: ox,
+            y: oy,
+            z: oz,
+        }: Self,
+    ) -> Self {
+        Self::new(x.min(ox), y.min(oy), z.min(oz))
+    }
+
+    pub const fn max(
+        Self { x, y, z }: Self,
+        Self {
+            x: ox,
+            y: oy,
+            z: oz,
+        }: Self,
+    ) -> Self {
+        Self::new(x.max(ox), y.max(oy), z.max(oz))
+    }
 }
 
 impl Div<f32> for Vec3<f32> {

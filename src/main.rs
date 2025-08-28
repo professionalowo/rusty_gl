@@ -2,6 +2,7 @@ use std::f32::consts::PI;
 use std::path::PathBuf;
 
 use rusty_gl::framework::camera::Camera;
+use rusty_gl::framework::mesh;
 use rusty_gl::framework::texture::Texture2D;
 use rusty_gl::framework::timer::Timer;
 use rusty_gl::gl;
@@ -21,6 +22,9 @@ use rusty_gl::math::vec3::Vec3;
 const BACKGROUND: Vec3<f32> = Vec3::rgb(0.12, 0.12, 0.12);
 
 fn main() {
+    let mut args = std::env::args();
+    let entrypoint = args.nth(1).expect("No object specified");
+
     glfw::init().expect("Failed to initialize GLFW");
 
     glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MAJOR, 3).expect("Failed to set window hint");
@@ -156,6 +160,8 @@ fn main() {
 
     gl::enable(gl::GL_DEPTH_TEST);
 
+    let elements = mesh::load_mesh(get_model_file_path(&entrypoint)).expect("Failed to load model");
+
     let mut timer: Timer<60> = Timer::new();
 
     while let Ok(false) = window.should_close() {
@@ -216,6 +222,14 @@ fn main() {
         }
     }
     glfw::terminate();
+}
+
+#[allow(dead_code)]
+fn get_model_file_path(filename: &str) -> PathBuf {
+    let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
+    PathBuf::from(manifest_dir)
+        .join("render-data")
+        .join(filename)
 }
 
 #[allow(dead_code)]
