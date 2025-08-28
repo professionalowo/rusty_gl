@@ -14,7 +14,7 @@ use crate::{
 };
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub struct Mat4<T: Copy> {
     cols: [Vec4<T>; RANK],
 }
@@ -242,12 +242,7 @@ impl<T: Copy + Mul<Output = T> + Default + Add<Output = T> + Sum> Mul for Mat4<T
     type Output = Self;
 
     fn mul(self, other: Self) -> Self {
-        let result = Mat4::new(
-            Vec4::new(T::default(), T::default(), T::default(), T::default()),
-            Vec4::new(T::default(), T::default(), T::default(), T::default()),
-            Vec4::new(T::default(), T::default(), T::default(), T::default()),
-            Vec4::new(T::default(), T::default(), T::default(), T::default()),
-        );
+        let result = Mat4::default();
 
         for i in 0..RANK {
             for j in 0..RANK {
