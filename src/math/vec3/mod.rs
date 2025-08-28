@@ -209,13 +209,13 @@ mod tests {
     use super::*;
     #[test]
     fn test_vec3_from_array() {
-        let vec: Vec3<u8> = Vec3::from([1, 2, 3]);
+        let vec = Vec3::from([1, 2, 3]);
         assert_eq!(vec, Vec3::new(1, 2, 3));
     }
 
     #[test]
     fn test_vec3_from_tuple() {
-        let vec: Vec3<u8> = Vec3::from((1, 2, 3));
+        let vec = Vec3::from((1, 2, 3));
         assert_eq!(vec, Vec3::new(1, 2, 3));
     }
 
