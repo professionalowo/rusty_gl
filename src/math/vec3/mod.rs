@@ -326,4 +326,12 @@ mod tests {
 
         assert_eq!(Vec3::from_slice(&[0]), None)
     }
+
+    #[test]
+    fn test_vec3_map() {
+        assert_eq!(
+            Vec3::new(1, 0, 1).map(|x| x == 0),
+            Vec3::new(false, true, false)
+        )
+    }
 }
