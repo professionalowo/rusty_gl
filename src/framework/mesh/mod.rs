@@ -1,7 +1,10 @@
-use std::{fmt, path::PathBuf};
+use std::{fmt, path::PathBuf, rc::Rc};
 
 use crate::{
-    framework::{drawelement::Drawelement, material::Material},
+    framework::{
+        drawelement::Drawelement,
+        material::{Material, MaterialConversionError},
+    },
     gl,
 };
 
@@ -34,6 +37,7 @@ pub enum MeshLoadError {
     LoadFailed(String),
     InvalidPath(PathBuf),
     MaterialNotFound(usize),
+    MaterialConversionFailed(MaterialConversionError),
 }
 
 impl fmt::Display for MeshLoadError {
@@ -42,6 +46,7 @@ impl fmt::Display for MeshLoadError {
             Self::LoadFailed(s) => write!(f, "Failed to load mesh: {}", s),
             Self::InvalidPath(p) => write!(f, "Invalid path: {:?}", p),
             Self::MaterialNotFound(index) => write!(f, "Material not found: {}", index),
+            Self::MaterialConversionFailed(e) => fmt::Display::fmt(e, f),
         }
     }
 }
@@ -49,6 +54,12 @@ impl fmt::Display for MeshLoadError {
 impl From<&str> for MeshLoadError {
     fn from(s: &str) -> Self {
         Self::LoadFailed(s.to_string())
+    }
+}
+
+impl From<MaterialConversionError> for MeshLoadError {
+    fn from(value: MaterialConversionError) -> Self {
+        Self::MaterialConversionFailed(value)
     }
 }
 
@@ -63,10 +74,12 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let scene = importer.read_file(path_str)?;
 
     let mut drawelements: Vec<Drawelement> = Vec::with_capacity(scene.num_meshes() as usize);
-    let mut materials: Vec<Option<Material>> = Vec::with_capacity(scene.num_materials() as usize);
+    let mut materials: Vec<Option<Rc<Material>>> =
+        Vec::with_capacity(scene.num_materials() as usize);
 
     for mat in scene.material_iter() {
-        materials.push(Material::try_from(mat).ok());
+        let rc = Rc::new(Material::try_from(mat)?);
+        materials.push(Some(rc));
     }
 
     for mesh in scene.mesh_iter() {

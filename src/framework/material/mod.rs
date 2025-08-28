@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt};
 
 use crate::math::vec4::Vec4;
 
@@ -6,6 +6,12 @@ use super::texture::Texture2D;
 
 #[derive(Debug)]
 pub struct MaterialConversionError;
+
+impl fmt::Display for MaterialConversionError{
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+		write!(f,"Could not convert material")
+	}
+}
 
 #[derive(Debug)]
 pub struct Material {
