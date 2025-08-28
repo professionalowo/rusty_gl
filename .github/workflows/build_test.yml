@@ -12,9 +12,9 @@ jobs:
             matrix:
                 include:
                     - os: ubuntu-latest
-                      install: sudo apt-get update && sudo apt-get install -qy libglfw3-dev libgl1-mesa-dev libopenblas-dev
+                      install: sudo apt-get update && sudo apt-get install -qy libglfw3-dev libgl1-mesa-dev
                     - os: macos-latest
-                      install: brew install glfw openblas
+                      install: brew install glfw
         steps:
             - name: Install Dependencies
               run: ${{ matrix.install }}
