@@ -1,17 +1,28 @@
 use std::{collections::HashMap, fmt};
 
-use assimp_sys::{AiColor3D, AiColor4D};
-
-use crate::math::vec4::Vec4;
+use crate::{
+    framework::assimp::{AMaterial, AiError},
+    math::{vec3::Vec3, vec4::Vec4},
+};
 
 use super::texture::Texture2D;
 
 #[derive(Debug)]
-pub struct MaterialConversionError;
+pub enum MaterialConversionError {
+    AiError(AiError),
+}
+
+impl From<AiError> for MaterialConversionError {
+    fn from(value: AiError) -> Self {
+        Self::AiError(value)
+    }
+}
 
 impl fmt::Display for MaterialConversionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "Could not convert material")
+        match self {
+            Self::AiError(a) => fmt::Display::fmt(a, f),
+        }
     }
 }
 
@@ -51,16 +62,23 @@ impl Material {
 impl TryFrom<assimp::Material<'_>> for Material {
     type Error = MaterialConversionError;
     fn try_from(value: assimp::Material) -> Result<Self, Self::Error> {
-        let mut diff = AiColor4D {
-            r: 0.0,
-            b: 0.0,
-            g: 0.0,
-            a: 0.0,
-        };
-        let mut spec = diff.clone();
-        let mut amb = diff.clone();
+        let mat = AMaterial(value);
 
-        let raw = value.to_raw();
-        Err(MaterialConversionError)
+        let diff =
+            Vec3::from(mat.get_material_color("$clr.diffuse".as_ptr().cast::<i8>(), 0, 0)?);
+        let k_diff = diff.expand(1.0);
+
+        let spec =
+            Vec3::from(mat.get_material_color("$clr.specular".as_ptr().cast::<i8>(), 0, 0)?);
+        let k_spec = spec.expand(1.0);
+
+        let amb = Vec3::from(mat.get_material_color("$clr.ambient".as_ptr().cast::<i8>(), 0, 0)?);
+        let k_amb = amb.expand(1.0);
+        Ok(Self {
+            textures: HashMap::new(),
+            k_amb,
+            k_diff,
+            k_spec,
+        })
     }
 }
