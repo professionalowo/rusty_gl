@@ -105,11 +105,8 @@ impl<T: Copy + Mul<Output = T>> Mul<Vec3<T>> for Scalar<T> {
 
     fn mul(self, other: Self::Output) -> Self::Output {
         let Self(scalar) = self;
-        Self::Output {
-            x: scalar * other.x,
-            y: scalar * other.y,
-            z: scalar * other.z,
-        }
+        let Self::Output { x, y, z } = other;
+        Self::Output::new(scalar * x, scalar * y, scalar * z)
     }
 }
 
