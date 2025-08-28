@@ -1,7 +1,7 @@
 use self::stbi_uc;
 use super::*;
 use std::ffi::c_int;
-pub trait Load {
+pub(super) trait Load {
     const TYPE: u32;
 
     fn map_channels(channels: i32) -> u32;
