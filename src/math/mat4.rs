@@ -197,13 +197,12 @@ impl From<[f32; RANK * RANK]> for Mat4<f32> {
 impl Uniform for &Mat4<f32> {
     type Options = bool; // transpose
 
-    fn set(&self, options: Option<Self::Options>, location: &UniformLocation) {
+    fn set(&self, options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
         let transpose = options.unwrap_or(false);
         let cols = self.cols();
         let value = cols.as_ptr() as *const f32;
-        let UniformLocation(location) = *location;
         unsafe {
-            gl::glUniformMatrix4fv(location, 1, u8::from(transpose), value);
+            gl::glUniformMatrix4fv(*location, 1, u8::from(transpose), value);
         }
     }
 }
