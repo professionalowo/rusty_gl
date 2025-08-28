@@ -11,7 +11,7 @@ use crate::gl::{self, program::Program, uniform::uniform_trait::Uniform};
 pub struct UniformLocation(pub i32);
 
 impl UniformLocation {
-    pub fn try_for_program<S>(program: &Program, name: S) -> Result<Self, UniformLocationError>
+    pub fn try_for_program<S>(Program(id): &Program, name: S) -> Result<Self, UniformLocationError>
     where
         S: AsRef<str>,
     {
@@ -19,14 +19,13 @@ impl UniformLocation {
         let name_cstr = ffi::CString::new(name)?;
         let name_ptr = name_cstr.as_ptr() as *const i8;
 
-        let Program(id) = *program;
-        let res = unsafe { gl::glGetUniformLocation(id, name_ptr) };
+        let res = unsafe { gl::glGetUniformLocation(*id, name_ptr) };
 
         gl::get_error()?;
 
         match res {
             -1 => Err(UniformLocationError::UnusedUniform {
-                id,
+                id: *id,
                 name: String::from(name),
             }),
             loc => Ok(Self(loc)),
