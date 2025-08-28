@@ -28,12 +28,17 @@ impl Vec3<f32> {
         let s = theta.sin();
 
         let axis = axis.normalize();
-        let temp = axis * Scalar(1.0 - c);
+        let Self {
+            x: tx,
+            y: ty,
+            z: tz,
+        } = axis * Scalar(1.0 - c);
+        let Self { x, y, z } = *self;
         Self::new(
-            self.x * c + temp.x * self.dot(&axis),
-            self.y * c + temp.y * self.dot(&axis),
-            self.z * c + temp.z * self.dot(&axis),
-        ) + Self::cross(&axis, &self) * Scalar(s)
+            x * c + tx * self.dot(&axis),
+            y * c + ty * self.dot(&axis),
+            z * c + tz * self.dot(&axis),
+        ) + axis.cross(&self) * Scalar(s)
     }
 
     pub const fn cross(&self, other: &Self) -> Self {
