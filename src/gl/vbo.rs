@@ -22,24 +22,21 @@ impl VertexBufferObject {
         Self(buffer)
     }
 
-    pub fn bind_buffer(n: u32, buffer: Self) {
-        let Self(buffer) = buffer;
+    pub fn bind_buffer(n: u32, Self(buffer): Self) {
         unsafe {
             glBindBuffer(n, buffer);
         }
     }
 
-    pub fn delete_buffer(buffer: Self) {
-        let Self(buffer) = &buffer;
+    pub fn delete_buffer(Self(buffer): Self) {
         unsafe {
-            glDeleteBuffers(1, buffer);
+            glDeleteBuffers(1, &buffer);
         }
     }
 
-    pub fn enable_vertex_attrib_array(location: &Location) {
-        let Location(index) = *location;
+    pub fn enable_vertex_attrib_array(Location(index): &Location) {
         unsafe {
-            glEnableVertexAttribArray(index);
+            glEnableVertexAttribArray(*index);
         }
     }
 
