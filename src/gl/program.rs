@@ -62,6 +62,17 @@ impl Program {
         UniformLocation::provide(&loc, value);
         Ok(())
     }
+    pub fn uniform_opt<U: Uniform>(
+        &self,
+        name: impl AsRef<str>,
+        value: U,
+        opt: U::Options,
+    ) -> Result<(), UniformLocationError> {
+        let name = name.as_ref();
+        let loc = UniformLocation::try_for_program(self, name)?;
+        UniformLocation::provide_opt(&loc, value, opt);
+        Ok(())
+    }
 
     pub fn bind(&self) {
         unsafe {

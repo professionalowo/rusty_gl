@@ -64,10 +64,19 @@ impl Material {
         //program.uniform("k_amb", &self.k_amb)?;
         program.uniform("k_diff", &self.k_diff)?;
         program.uniform("k_spec", &self.k_spec)?;
-        for (name, texture) in &self.textures {}
+        let mut unit = 0;
+        for (name, texture) in &self.textures {
+            texture.bind(unit);
+            unit += 1;
+            program.uniform_opt(name, texture, unit)?;
+        }
         Ok(())
     }
-    pub fn unbind(&self) {}
+    pub fn unbind(&self) {
+        for (_, texture) in &self.textures {
+            texture.unbind();
+        }
+    }
 
     pub fn from_ai_mesh(value: assimp::Material) -> Result<Self, MaterialConversionError> {
         let mat = AMaterial(value);
@@ -80,8 +89,11 @@ impl Material {
 
         let amb = Vec3::from(mat.get_material_color(CString::new("$clr.ambient")?, 0, 0)?);
         let k_amb = amb.expand(1.0);
+
+        let mut textures = HashMap::new();
+
         Ok(Self {
-            textures: HashMap::new(),
+            textures,
             k_amb,
             k_diff,
             k_spec,
