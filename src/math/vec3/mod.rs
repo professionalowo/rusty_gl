@@ -133,15 +133,13 @@ mod tests {
     use super::*;
     #[test]
     fn test_vec3_from_array() {
-        let arr = [1, 2, 3];
-        let vec: Vec3<u8> = arr.into();
+        let vec: Vec3<u8> = Vec3::from([1, 2, 3]);
         assert_eq!(vec, Vec3::new(1, 2, 3));
     }
 
     #[test]
     fn test_vec3_from_tuple() {
-        let tup = (1, 2, 3);
-        let vec: Vec3<u8> = tup.into();
+        let vec: Vec3<u8> = Vec3::from((1, 2, 3));
         assert_eq!(vec, Vec3::new(1, 2, 3));
     }
 
@@ -171,5 +169,9 @@ mod tests {
         let a = Vec3::new(1.0, 2.0, 3.0);
         let b = Scalar(2.0);
         assert_eq!(a * b, Vec3::new(2.0, 4.0, 6.0));
+
+        let a = Vec3::new(1.0, 2.0, 3.0);
+        let b = Scalar(2.0);
+        assert_eq!(b * a, Vec3::new(2.0, 4.0, 6.0));
     }
 }
