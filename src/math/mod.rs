@@ -1,4 +1,6 @@
-use std::ops::{Add, AddAssign, Deref, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{
+    Add, AddAssign, Deref, Div, DivAssign, Mul, MulAssign, Neg, Not, Shl, Shr, Sub, SubAssign,
+};
 
 pub mod mat3;
 pub mod mat4;
@@ -196,6 +198,61 @@ where
     }
 }
 
+impl<T> Not for Scalar<T>
+where
+    T: Not<Output = T>,
+{
+    type Output = Self;
+
+    fn not(self) -> Self {
+        Self(!self.0)
+    }
+}
+
+impl<T> Shl<T> for Scalar<T>
+where
+    T: Shl<Output = T>,
+{
+    type Output = Self;
+
+    fn shl(self, other: T) -> Self {
+        Self(self.0 << other)
+    }
+}
+
+impl<T> Shl<Scalar<T>> for Scalar<T>
+where
+    T: Shl<Output = T>,
+{
+    type Output = Self;
+
+    fn shl(self, Self(o): Self) -> Self {
+        Self(self.0 << o)
+    }
+}
+
+impl<T> Shr<T> for Scalar<T>
+where
+    T: Shr<Output = T>,
+{
+    type Output = Self;
+
+    fn shr(self, other: T) -> Self {
+        Self(self.0 >> other)
+    }
+}
+
+impl<T> Shr<Scalar<T>> for Scalar<T>
+where
+    T: Shr<Output = T>,
+{
+    type Output = Self;
+
+    fn shr(self, Self(o): Self) -> Self {
+        Self(self.0 >> o)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -264,5 +321,26 @@ mod tests {
     #[test]
     fn test_scalar_neg() {
         assert_eq!(-Scalar(5), Scalar(-5));
+    }
+
+    #[test]
+    fn test_scalar_not() {
+        assert_eq!(!Scalar(true), Scalar(false));
+    }
+
+    #[test]
+    fn test_scalar_shl() {
+        let a = Scalar(5);
+        let b = Scalar(2);
+        assert_eq!(a << b, Scalar(20));
+        assert_eq!(a << 2, Scalar(20));
+    }
+
+    #[test]
+    fn test_scalar_shr() {
+        let a = Scalar(20);
+        let b = Scalar(2);
+        assert_eq!(a >> b, Scalar(5));
+        assert_eq!(a >> 2, Scalar(5));
     }
 }
