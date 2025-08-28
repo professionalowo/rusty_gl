@@ -5,8 +5,8 @@ use crate::math::Scalar;
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Vec2<T: Copy> {
-    x: T,
-    y: T,
+    pub x: T,
+    pub y: T,
 }
 
 impl<T: Copy> Vec2<T> {
@@ -99,6 +99,20 @@ impl<T: Copy + Div<Output = T>> Div<Scalar<T>> for Vec2<T> {
             x: self.x / div,
             y: self.y / div,
         }
+    }
+}
+
+impl<T: Copy> From<(T, T)> for Vec2<T> {
+    fn from(tup: (T, T)) -> Self {
+        let (x, y) = tup;
+        Self::new(x, y)
+    }
+}
+
+impl<T: Copy> From<[T; 2]> for Vec2<T> {
+    fn from(arr: [T; 2]) -> Self {
+        let [x, y] = arr;
+        Self::new(x, y)
     }
 }
 
