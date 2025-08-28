@@ -1,6 +1,6 @@
 pub mod f32;
 
-use std::ops::{Add, AddAssign, Mul, Neg, Not, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Not, Sub, SubAssign};
 
 use crate::math::Scalar;
 
@@ -112,6 +112,16 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec3<T> {
     }
 }
 
+impl<T: Copy + Mul<Output = T>> MulAssign<Scalar<T>> for Vec3<T> {
+    fn mul_assign(&mut self, other: Scalar<T>) {
+        let Self { x, y, z } = *self;
+        let Scalar(s) = other;
+        self.x = x * s;
+        self.y = y * s;
+        self.z = z * s;
+    }
+}
+
 impl<T: Copy + Mul<Output = T>> Mul<Vec3<T>> for Scalar<T> {
     type Output = Vec3<T>;
 
@@ -167,8 +177,15 @@ mod tests {
     fn test_vec3_add() {
         let a = Vec3::new(1.0, 2.0, 3.0);
         let b = Vec3::new(4.0, 5.0, 6.0);
-
         assert_eq!(a + b, Vec3::new(5.0, 7.0, 9.0));
+    }
+
+    #[test]
+    fn test_vec3_add_assign() {
+        let mut a = Vec3::new(1.0, 2.0, 3.0);
+        let b = Vec3::new(4.0, 5.0, 6.0);
+        a += b;
+        assert_eq!(a, Vec3::new(5.0, 7.0, 9.0));
     }
 
     #[test]
@@ -176,6 +193,14 @@ mod tests {
         let a = Vec3::new(1.0, 2.0, 3.0);
         let b = Vec3::new(4.0, 5.0, 6.0);
         assert_eq!(a - b, Vec3::new(-3.0, -3.0, -3.0));
+    }
+
+    #[test]
+    fn test_vec3_sub_assign() {
+        let mut a = Vec3::new(1.0, 2.0, 3.0);
+        let b = Vec3::new(4.0, 5.0, 6.0);
+        a -= b;
+        assert_eq!(a, Vec3::new(-3.0, -3.0, -3.0));
     }
 
     #[test]
@@ -193,6 +218,14 @@ mod tests {
         let a = Vec3::new(1.0, 2.0, 3.0);
         let b = Scalar(2.0);
         assert_eq!(b * a, Vec3::new(2.0, 4.0, 6.0));
+    }
+
+    #[test]
+    fn test_vec3_mul_assign() {
+        let mut a = Vec3::new(1.0, 2.0, 3.0);
+        let b = Scalar(2.0);
+        a *= b;
+        assert_eq!(a, Vec3::new(2.0, 4.0, 6.0));
     }
 
     #[test]
