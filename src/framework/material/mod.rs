@@ -5,6 +5,9 @@ use crate::math::vec4::Vec4;
 use super::texture::Texture2D;
 
 #[derive(Debug)]
+pub struct MaterialConversionError;
+
+#[derive(Debug)]
 pub struct Material {
     textures: HashMap<String, Texture2D>,
     k_amb: Vec4<f32>,
@@ -39,5 +42,12 @@ impl Material {
     }
     pub fn unbind(&self) {
         todo!()
+    }
+}
+
+impl TryFrom<assimp::Material<'_>> for Material {
+    type Error = MaterialConversionError;
+    fn try_from(value: assimp::Material) -> Result<Self, Self::Error> {
+        Err(MaterialConversionError)
     }
 }

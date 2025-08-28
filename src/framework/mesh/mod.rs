@@ -1,9 +1,21 @@
-use std::{fmt, mem::take, path::PathBuf};
+use std::{fmt, path::PathBuf};
 
-use crate::framework::{drawelement::Drawelement, material::Material};
+use crate::{
+    framework::{drawelement::Drawelement, material::Material},
+    gl,
+};
 
-#[derive(Debug)]
-pub struct Mesh {}
+#[derive(Debug, Default)]
+pub struct Mesh {
+    pub vao: gl::GLuint,
+    pub ibo: gl::GLuint,
+    pub num_vertices: u32,
+    pub num_indices: u32,
+    pub vbo_ids: Vec<gl::GLuint>,
+    pub vbo_types: Vec<gl::GLenum>,
+    pub vbo_dims: Vec<u32>,
+    pub primitive_type: gl::GLenum,
+}
 
 impl Mesh {
     pub fn bind(&self) {
@@ -54,7 +66,7 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let mut materials: Vec<Option<Material>> = Vec::with_capacity(scene.num_materials() as usize);
 
     for mat in scene.material_iter() {
-        materials.push(None);
+        materials.push(Material::try_from(mat).ok());
     }
 
     for mesh in scene.mesh_iter() {
@@ -64,7 +76,7 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
             .ok_or_else(|| MeshLoadError::MaterialNotFound(index))?
             .take();
 
-        let mesh = Some(Mesh {});
+        let mesh = Some(Mesh::default());
 
         let drawelement = Drawelement { material, mesh };
         drawelements.push(drawelement);
