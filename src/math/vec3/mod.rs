@@ -1,6 +1,9 @@
 pub mod f32;
 
-use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Not, Sub, SubAssign};
+use std::{
+    mem::MaybeUninit,
+    ops::{Add, AddAssign, Mul, MulAssign, Neg, Not, Sub, SubAssign},
+};
 
 use crate::math::{Scalar, vec2::Vec2, vec4::Vec4};
 
@@ -58,6 +61,10 @@ where
     pub const fn expand(&self, w: T) -> Vec4<T> {
         let Self { x, y, z } = *self;
         Vec4::new(x, y, z, w)
+    }
+
+    pub unsafe fn from_raw(ptr: *const T) -> Self {
+        unsafe { [ptr.read(), ptr.add(1).read(), ptr.add(2).read()] }.into()
     }
 }
 
@@ -301,5 +308,14 @@ mod tests {
         let c = Vec3::new(4, 5, 6);
         assert_eq!(a, b);
         assert_ne!(a, c);
+    }
+
+    #[test]
+    fn test_vec3_from_raw() {
+        let data = [1, 2, 3];
+        let ptr = data.as_ptr();
+        let vec = unsafe { Vec3::from_raw(ptr) };
+
+        assert_eq!(vec, Vec3::new(1, 2, 3));
     }
 }
