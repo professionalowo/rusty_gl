@@ -12,7 +12,10 @@ pub struct Vec3<T: Copy> {
     pub z: T,
 }
 
-impl<T: Copy> Vec3<T> {
+impl<T> Vec3<T>
+where
+    T: Copy,
+{
     pub const fn new(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
     }
@@ -26,9 +29,9 @@ impl<T: Copy> Vec3<T> {
     }
 }
 
-impl<T: Copy> Neg for Vec3<T>
+impl<T> Neg for Vec3<T>
 where
-    T: Neg<Output = T>,
+    T: Copy + Neg<Output = T>,
 {
     type Output = Self;
 
@@ -43,7 +46,10 @@ where
     }
 }
 
-impl<T: Copy + Add<Output = T>> Add for Vec3<T> {
+impl<T> Add for Vec3<T>
+where
+    T: Copy + Add<Output = T>,
+{
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
@@ -85,7 +91,10 @@ where
     }
 }
 
-impl<T: Copy + Sub<Output = T>> Sub for Vec3<T> {
+impl<T> Sub for Vec3<T>
+where
+    T: Copy + Sub<Output = T>,
+{
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
@@ -98,7 +107,10 @@ impl<T: Copy + Sub<Output = T>> Sub for Vec3<T> {
     }
 }
 
-impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec3<T> {
+impl<T> Mul<Scalar<T>> for Vec3<T>
+where
+    T: Copy + Mul<Output = T>,
+{
     type Output = Self;
 
     fn mul(self, other: Scalar<T>) -> Self {
@@ -112,7 +124,10 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec3<T> {
     }
 }
 
-impl<T: Copy + Mul<Output = T>> MulAssign<Scalar<T>> for Vec3<T> {
+impl<T> MulAssign<Scalar<T>> for Vec3<T>
+where
+    T: Copy + Mul<Output = T>,
+{
     fn mul_assign(&mut self, other: Scalar<T>) {
         let Self { x, y, z } = *self;
         let Scalar(s) = other;
@@ -122,7 +137,10 @@ impl<T: Copy + Mul<Output = T>> MulAssign<Scalar<T>> for Vec3<T> {
     }
 }
 
-impl<T: Copy + Mul<Output = T>> Mul<Vec3<T>> for Scalar<T> {
+impl<T> Mul<Vec3<T>> for Scalar<T>
+where
+    T: Copy + Mul<Output = T>,
+{
     type Output = Vec3<T>;
 
     fn mul(self, other: Self::Output) -> Self::Output {
@@ -132,21 +150,30 @@ impl<T: Copy + Mul<Output = T>> Mul<Vec3<T>> for Scalar<T> {
     }
 }
 
-impl<T: Copy> From<[T; 3]> for Vec3<T> {
+impl<T> From<[T; 3]> for Vec3<T>
+where
+    T: Copy,
+{
     fn from(arr: [T; 3]) -> Self {
         let [x, y, z] = arr;
         Self::new(x, y, z)
     }
 }
 
-impl<T: Copy> From<(T, T, T)> for Vec3<T> {
+impl<T> From<(T, T, T)> for Vec3<T>
+where
+    T: Copy,
+{
     fn from(tup: (T, T, T)) -> Self {
         let (x, y, z) = tup;
         Self::new(x, y, z)
     }
 }
 
-impl<T: Copy + Not<Output = T>> Not for Vec3<T> {
+impl<T> Not for Vec3<T>
+where
+    T: Copy + Not<Output = T>,
+{
     type Output = Self;
 
     fn not(self) -> Self::Output {
