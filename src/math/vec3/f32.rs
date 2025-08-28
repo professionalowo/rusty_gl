@@ -124,16 +124,14 @@ mod tests {
     #[test]
     fn test_vec3_length() {
         let a = Vec3::new(1.0, 0.0, 0.0);
-        let result = a.length();
-        assert_eq!(result, 1.0);
+        assert_eq!(a.length(), 1.0);
     }
 
     #[test]
     fn test_vec3_dot() {
         let a = Vec3::new(1.0, 2.0, 3.0);
         let b = Vec3::new(4.0, 5.0, 6.0);
-        let result = a.dot(&b);
-        assert_eq!(result, 32.0);
+        assert_eq!(a.dot(&b), 32.0);
     }
 
     #[test]
