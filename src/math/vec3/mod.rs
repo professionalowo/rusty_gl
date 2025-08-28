@@ -58,9 +58,10 @@ where
     T: Copy + AddAssign,
 {
     fn add_assign(&mut self, other: Self) {
-        self.x += other.x;
-        self.y += other.y;
-        self.z += other.z;
+        let Self { x, y, z } = other;
+        self.x += x;
+        self.y += y;
+        self.z += z;
     }
 }
 
@@ -69,9 +70,10 @@ where
     T: Copy + SubAssign,
 {
     fn sub_assign(&mut self, other: Self) {
-        self.x -= other.x;
-        self.y -= other.y;
-        self.z -= other.z;
+        let Self { x, y, z } = other;
+        self.x -= x;
+        self.y -= y;
+        self.z -= z;
     }
 }
 
@@ -79,10 +81,11 @@ impl<T: Copy + Sub<Output = T>> Sub for Vec3<T> {
     type Output = Self;
 
     fn sub(self, other: Self) -> Self {
+        let Self { x, y, z } = other;
         Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
+            x: self.x - x,
+            y: self.y - y,
+            z: self.z - z,
         }
     }
 }
@@ -91,11 +94,12 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec3<T> {
     type Output = Self;
 
     fn mul(self, other: Scalar<T>) -> Self {
+        let Self { x, y, z } = self;
         let Scalar(scalar) = other;
         Self {
-            x: self.x * scalar,
-            y: self.y * scalar,
-            z: self.z * scalar,
+            x: x * scalar,
+            y: y * scalar,
+            z: z * scalar,
         }
     }
 }
