@@ -2,7 +2,7 @@ use std::ops::Div;
 
 use crate::{
     gl::{
-        glUniform3f,
+        self,
         uniform::{UniformLocation, uniform_trait::Uniform},
     },
     math::Scalar,
@@ -44,11 +44,13 @@ impl Vec3<f32> {
     }
 
     pub const fn cross(&self, other: &Self) -> Self {
-        Self::new(
-            self.y * other.z - self.z * other.y,
-            self.z * other.x - self.x * other.z,
-            self.x * other.y - self.y * other.x,
-        )
+        let Self { x, y, z } = *self;
+        let Self {
+            x: ox,
+            y: oy,
+            z: oz,
+        } = *other;
+        Self::new(y * oz - z * oy, z * ox - x * oz, x * oy - y * ox)
     }
 
     pub fn normalize(&self) -> Self {
@@ -108,7 +110,7 @@ impl Uniform for &Vec3<f32> {
         let Vec3 { x, y, z } = self;
         let UniformLocation(location) = *location;
         unsafe {
-            glUniform3f(location, *x, *y, *z);
+            gl::glUniform3f(location, *x, *y, *z);
         }
     }
 }
