@@ -22,7 +22,6 @@ impl Drawelement {
         program.bind();
         self.material.bind(program)?;
         program.uniform("view", &camera.view())?;
-        program.uniform("view_normal", &camera.view_normal())?;
         program.uniform("projection", &camera.projection(aspect))?;
         Ok(())
     }

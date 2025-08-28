@@ -61,15 +61,13 @@ impl Material {
     }
 
     pub fn bind(&self, program: &Program) -> Result<(), UniformLocationError> {
-        program.uniform("material.k_amb", &self.k_amb)?;
-        program.uniform("material.k_diff", &self.k_diff)?;
-        program.uniform("material.k_spec", &self.k_spec)?;
+        //program.uniform("k_amb", &self.k_amb)?;
+        program.uniform("k_diff", &self.k_diff)?;
+        program.uniform("k_spec", &self.k_spec)?;
         for (name, texture) in &self.textures {}
         Ok(())
     }
-    pub fn unbind(&self) {
-        todo!()
-    }
+    pub fn unbind(&self) {}
 
     pub fn from_ai_mesh(value: assimp::Material) -> Result<Self, MaterialConversionError> {
         let mat = AMaterial(value);

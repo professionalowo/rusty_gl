@@ -1,21 +1,23 @@
 #version 330 core
 
-in vec3 v_color;
+in vec3 n_ws;
 in vec3 pos_ws;
 
 uniform float pointlight_intensity;
 uniform vec3 pointlight_color;
 uniform vec3 pointlight_pos;
 uniform vec3 camera_pos;
+uniform vec4 k_diff;
+uniform vec4 k_spec;
 
 out vec4 out_col;
 
 vec3 phong(vec3 n, vec3 l, vec3 v, vec3 I, float ns) {
 
-	vec3 diff = v_color * max(0, dot(n, l));
+	vec3 diff = k_diff.rgb * max(0, dot(n, l));
 
 	vec3 r = 2*n*dot(n,l)-l;
-	vec3 spec = v_color * pow(max(0, dot(r, v)), ns);
+	vec3 spec = k_spec.rgb * pow(max(0, dot(r, v)), ns);
 
 	return (diff + spec) * I;
 }
@@ -23,7 +25,7 @@ vec3 phong(vec3 n, vec3 l, vec3 v, vec3 I, float ns) {
 void main()
 {
     vec3 v = normalize(camera_pos - pos_ws);
-    vec3 n = vec3(1,0,0);
+    vec3 n = normalize(n_ws);
     vec3 to_light = pointlight_pos - pos_ws;
 	float dist = length(to_light);
 	to_light = normalize(to_light);

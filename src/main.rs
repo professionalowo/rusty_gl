@@ -119,13 +119,11 @@ fn main() {
     let program = Program::from_shaders(&[vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
 
-    let texture = Texture2D::try_from_file(get_texture_file_path("solid_red.png"), false)
-        .expect("Failed to load texture");
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
     let mut camera = Camera::with_defaults(
-        Vec3::new(0.0, 0.0, 2.0),
-        Vec3::new(0.0, 0.0, -1.0),
+        Vec3::new(-516.0, 584.0, -138.0),
+        Vec3::new(1.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
     );
 
@@ -133,36 +131,10 @@ fn main() {
     const POINTLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 1.0, 1.0);
     const POINTLIGHT_INTENSITY: f32 = 0.2;
 
-    let model_loc = UniformLocation::try_for_program(&program, "model")
-        .expect("Failed to get uniform location for model");
-
-    let view_loc = UniformLocation::try_for_program(&program, "view")
-        .expect("Failed to get uniform location for view");
-
-    let projection_loc = UniformLocation::try_for_program(&program, "projection")
-        .expect("Failed to get uniform location for projection");
-
-    let texture_loc = UniformLocation::try_for_program(&program, "col_tex")
-        .expect("Failed to get uniform location for texture");
-
-    let pointlight_pos_loc = UniformLocation::try_for_program(&program, "pointlight_pos")
-        .expect("Failed to get uniform location for pointlight position");
-
-    let pointlight_color_loc = UniformLocation::try_for_program(&program, "pointlight_color")
-        .expect("Failed to get uniform location for pointlight color");
-
-    let pointlight_intensity_loc =
-        UniformLocation::try_for_program(&program, "pointlight_intensity")
-            .expect("Failed to get uniform location for pointlight intensity");
-
-    let camera_pos_loc = UniformLocation::try_for_program(&program, "camera_pos")
-        .expect("Failed to get uniform location for camera position");
-
     gl::enable(gl::GL_DEPTH_TEST);
 
-    let elements = mesh::load_mesh(get_model_file_path(&entrypoint)).expect("Failed to load model");
+    let scene = mesh::load_mesh(get_model_file_path(&entrypoint)).expect("Failed to load model");
 
-    dbg!(&elements);
     let mut timer: Timer<60> = Timer::new();
 
     while let Ok(false) = window.should_close() {
@@ -171,7 +143,7 @@ fn main() {
         window.poll_events();
 
         const TURN_ANGLE: f32 = PI / 2.0;
-        const MOVE_DISTANCE: f32 = 0.1;
+        const MOVE_DISTANCE: f32 = 10.0;
 
         if let Some(event) = window.pump_event() {
             match event {
@@ -184,9 +156,9 @@ fn main() {
                     keycode,
                     ..
                 } => match keycode {
-                    Keycode::W => camera.rotate_horizontal(TURN_ANGLE),
+                    Keycode::W => camera.rotate_horizontal(-TURN_ANGLE),
                     Keycode::A => camera.rotate_vertical(TURN_ANGLE),
-                    Keycode::S => camera.rotate_horizontal(-TURN_ANGLE),
+                    Keycode::S => camera.rotate_horizontal(TURN_ANGLE),
                     Keycode::D => camera.rotate_vertical(-TURN_ANGLE),
                     _ => (),
                 },
@@ -203,20 +175,28 @@ fn main() {
             gl::clear_color_vec(&BACKGROUND);
             gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
-            program.bind();
+            for element in scene.iter().as_slice() {
+                element
+                    .bind(&program, &camera, window.aspect_ratio())
+                    .expect("Failed to bind element");
 
-            UniformLocation::provide(&model_loc, &MODEL_MATRIX);
-            UniformLocation::provide(&view_loc, &camera.view());
-            UniformLocation::provide(&projection_loc, &camera.projection(window.aspect_ratio()));
-            UniformLocation::provide(&camera_pos_loc, camera.position());
-            UniformLocation::provide(&texture_loc, &texture);
-            UniformLocation::provide(&pointlight_pos_loc, &POINTLIGHT_POS);
-            UniformLocation::provide(&pointlight_color_loc, &POINTLIGHT_COLOR);
-            UniformLocation::provide(&pointlight_intensity_loc, POINTLIGHT_INTENSITY);
-
-            gl::draw_elements(gl::GL_TRIANGLES, INDICES.len() as i32, gl::GL_UNSIGNED_BYTE);
-
-            program.unbind();
+                program
+                    .uniform("pointlight_pos", &POINTLIGHT_POS)
+                    .expect("Failed to set pointlight position");
+                program
+                    .uniform("pointlight_color", &POINTLIGHT_COLOR)
+                    .expect("Failed to set pointlight color");
+                program
+                    .uniform("pointlight_intensity", POINTLIGHT_INTENSITY)
+                    .expect("Failed to set pointlight intensity");
+                program
+                    .uniform("camera_pos", camera.position())
+                    .expect("Failed to set camera position");
+                element
+                    .draw(&program, &MODEL_MATRIX)
+                    .expect("Failed to draw element");
+                element.unbind(&program);
+            }
 
             window.swap_buffers();
             timer.rendered();
