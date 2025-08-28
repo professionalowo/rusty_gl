@@ -2,7 +2,7 @@ pub mod f32;
 
 use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Not, Sub, SubAssign};
 
-use crate::math::Scalar;
+use crate::math::{Scalar, vec2::Vec2, vec4::Vec4};
 
 #[repr(C)]
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq)]
@@ -45,6 +45,16 @@ where
         U: Copy,
     {
         self.map(|v| T::into(v))
+    }
+
+    pub const fn truncate(&self) -> Vec2<T> {
+        let Self { x, y, .. } = *self;
+        Vec2::new(x, y)
+    }
+
+    pub const fn expand(&self, w: T) -> Vec4<T> {
+        let Self { x, y, z } = *self;
+        Vec4::new(x, y, z, w)
     }
 }
 
