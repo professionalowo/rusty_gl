@@ -56,11 +56,18 @@ impl Vec3<f32> {
     }
 
     pub fn length(&self) -> f32 {
-        (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
+        let Self { x, y, z } = self;
+        (x * x + y * y + z * z).sqrt()
     }
 
     pub const fn dot(&self, other: &Self) -> f32 {
-        self.x * other.x + self.y * other.y + self.z * other.z
+        let Self { x, y, z } = *self;
+        let Self {
+            x: ox,
+            y: oy,
+            z: oz,
+        } = *other;
+        x * ox + y * oy + z * oz
     }
 }
 
