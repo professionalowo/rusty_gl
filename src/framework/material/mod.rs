@@ -68,11 +68,8 @@ impl Material {
     pub fn draw(&self) {
         todo!()
     }
-}
 
-impl TryFrom<assimp::Material<'_>> for Material {
-    type Error = MaterialConversionError;
-    fn try_from(value: assimp::Material) -> Result<Self, Self::Error> {
+    pub fn from_ai_mesh(value: assimp::Material) -> Result<Self, MaterialConversionError> {
         let mat = AMaterial(value);
 
         let diff = Vec3::from(mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0)?);
@@ -89,5 +86,12 @@ impl TryFrom<assimp::Material<'_>> for Material {
             k_diff,
             k_spec,
         })
+    }
+}
+
+impl TryFrom<assimp::Material<'_>> for Material {
+    type Error = MaterialConversionError;
+    fn try_from(value: assimp::Material) -> Result<Self, Self::Error> {
+        Self::from_ai_mesh(value)
     }
 }
