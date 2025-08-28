@@ -85,6 +85,10 @@ impl Mat4<f32> {
             Vec4::new(0.0, 0.0, 0.0, 1.0),
         )
     }
+
+    pub fn inverse(&self) -> Self {
+        
+    }
 }
 
 impl Uniform for &Mat4<f32> {

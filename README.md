@@ -7,7 +7,7 @@
 If you are using Ubuntu install the following components:
 
 ```sh
-apt-get install -qy libglfw3-dev libgl1-mesa-dev
+apt-get install -qy libglfw3-dev libgl1-mesa-dev libopenblas-dev
 ```
 
 ### MacOS
@@ -15,7 +15,7 @@ apt-get install -qy libglfw3-dev libgl1-mesa-dev
 If you are using brew run the following command to install required components:
 
 ```sh
-brew install glfw
+brew install glfw openblas
 ```
 
 ### Windows
