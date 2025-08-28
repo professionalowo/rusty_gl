@@ -1,9 +1,6 @@
 pub mod f32;
 
-use std::{
-    mem::MaybeUninit,
-    ops::{Add, AddAssign, Mul, MulAssign, Neg, Not, Sub, SubAssign},
-};
+use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Not, Sub, SubAssign};
 
 use crate::math::{Scalar, vec2::Vec2, vec4::Vec4};
 
@@ -76,12 +73,7 @@ where
 
     fn neg(self) -> Self {
         let Self { x, y, z } = self;
-
-        Self {
-            x: -x,
-            y: -y,
-            z: -z,
-        }
+        Self::new(-x, -y, -z)
     }
 }
 
@@ -312,10 +304,10 @@ mod tests {
 
     #[test]
     fn test_vec3_from_raw() {
-        let data = [1, 2, 3];
+        let data = [1, 2, 3, 4, 5];
         let ptr = data.as_ptr();
-        let vec = unsafe { Vec3::from_raw(ptr) };
+        let vec = unsafe { Vec3::from_raw(ptr.add(1)) };
 
-        assert_eq!(vec, Vec3::new(1, 2, 3));
+        assert_eq!(vec, Vec3::new(2, 3, 4));
     }
 }
