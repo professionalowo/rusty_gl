@@ -14,7 +14,7 @@ use crate::{
 };
 
 #[repr(C)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Mat4<T: Copy> {
     cols: [Vec4<T>; RANK],
 }
@@ -261,5 +261,22 @@ impl<T: Copy + Mul<Output = T> + Default + Add<Output = T> + Sum> Mul for Mat4<T
         }
 
         result
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_mat4_transpose() {
+        let a = Mat4::identity();
+        assert_eq!(a.transpose(), Mat4::identity());
+    }
+
+    #[test]
+    fn test_mat4_inverse() {
+        let a = Mat4::identity();
+        assert_eq!(a.invert(), Some(a));
     }
 }
