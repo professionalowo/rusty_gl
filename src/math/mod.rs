@@ -1,4 +1,4 @@
-use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Deref, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 pub mod mat3;
 pub mod mat4;
@@ -8,6 +8,14 @@ pub mod vec4;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Scalar<T>(pub T);
+
+impl<T> Deref for Scalar<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
 impl<T> From<T> for Scalar<T> {
     fn from(value: T) -> Self {
