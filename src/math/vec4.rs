@@ -44,12 +44,12 @@ where
 impl<T: Copy + Add<Output = T>> Add for Vec4<T> {
     type Output = Self;
 
-    fn add(self, other: Self) -> Self {
+    fn add(self, Self { x, y, z, w }: Self) -> Self {
         Self {
-            x: self.x + other.x,
-            y: self.y + other.y,
-            z: self.z + other.z,
-            w: self.w + other.w,
+            x: self.x + x,
+            y: self.y + y,
+            z: self.z + z,
+            w: self.w + w,
         }
     }
 }
@@ -58,11 +58,11 @@ impl<T> AddAssign for Vec4<T>
 where
     T: Copy + AddAssign,
 {
-    fn add_assign(&mut self, other: Self) {
-        self.x += other.x;
-        self.y += other.y;
-        self.z += other.z;
-        self.w += other.w;
+    fn add_assign(&mut self, Self { x, y, z, w }: Self) {
+        self.x += x;
+        self.y += y;
+        self.z += z;
+        self.w += w;
     }
 }
 
@@ -70,23 +70,23 @@ impl<T> SubAssign for Vec4<T>
 where
     T: Copy + SubAssign,
 {
-    fn sub_assign(&mut self, other: Self) {
-        self.x -= other.x;
-        self.y -= other.y;
-        self.z -= other.z;
-        self.w -= other.w;
+    fn sub_assign(&mut self, Self { x, y, z, w }: Self) {
+        self.x -= x;
+        self.y -= y;
+        self.z -= z;
+        self.w -= w;
     }
 }
 
 impl<T: Copy + Sub<Output = T>> Sub for Vec4<T> {
     type Output = Self;
 
-    fn sub(self, other: Self) -> Self {
+    fn sub(self, Self { x, y, z, w }: Self) -> Self {
         Self {
-            x: self.x - other.x,
-            y: self.y - other.y,
-            z: self.z - other.z,
-            w: self.w - other.w,
+            x: self.x - x,
+            y: self.y - y,
+            z: self.z - z,
+            w: self.w - w,
         }
     }
 }
@@ -94,13 +94,12 @@ impl<T: Copy + Sub<Output = T>> Sub for Vec4<T> {
 impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec4<T> {
     type Output = Self;
 
-    fn mul(self, other: Scalar<T>) -> Self {
-        let Scalar(scalar) = other;
+    fn mul(self, Scalar(s): Scalar<T>) -> Self {
         Self {
-            x: self.x * scalar,
-            y: self.y * scalar,
-            z: self.z * scalar,
-            w: self.w * scalar,
+            x: self.x * s,
+            y: self.y * s,
+            z: self.z * s,
+            w: self.w * s,
         }
     }
 }
@@ -108,27 +107,25 @@ impl<T: Copy + Mul<Output = T>> Mul<Scalar<T>> for Vec4<T> {
 impl<T: Copy + Mul<Output = T>> Mul<Vec4<T>> for Scalar<T> {
     type Output = Vec4<T>;
 
-    fn mul(self, other: Self::Output) -> Self::Output {
-        let Self(scalar) = self;
+    fn mul(self, Self::Output { x, y, z, w }: Self::Output) -> Self::Output {
+        let Self(s) = self;
         Self::Output {
-            x: scalar * other.x,
-            y: scalar * other.y,
-            z: scalar * other.z,
-            w: scalar * other.w,
+            x: s * x,
+            y: s * y,
+            z: s * z,
+            w: s * w,
         }
     }
 }
 
 impl<T: Copy> From<(T, T, T, T)> for Vec4<T> {
-    fn from(tup: (T, T, T, T)) -> Self {
-        let (x, y, z, w) = tup;
+    fn from((x, y, z, w): (T, T, T, T)) -> Self {
         Self::new(x, y, z, w)
     }
 }
 
 impl<T: Copy> From<[T; 4]> for Vec4<T> {
-    fn from(arr: [T; 4]) -> Self {
-        let [x, y, z, w] = arr;
+    fn from([x, y, z, w]: [T; 4]) -> Self {
         Self::new(x, y, z, w)
     }
 }
