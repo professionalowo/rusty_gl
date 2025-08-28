@@ -74,12 +74,11 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let scene = importer.read_file(path_str)?;
 
     let mut drawelements: Vec<Drawelement> = Vec::with_capacity(scene.num_meshes() as usize);
-    let mut materials: Vec<Option<Rc<Material>>> =
-        Vec::with_capacity(scene.num_materials() as usize);
+    let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as usize);
 
     for mat in scene.material_iter() {
-        let rc = Rc::new(Material::try_from(mat)?);
-        materials.push(Some(rc));
+        let rc = Rc::new(Material::default());
+        materials.push(rc);
     }
 
     for mesh in scene.mesh_iter() {
@@ -87,9 +86,9 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
         let material = materials
             .get_mut(index)
             .ok_or_else(|| MeshLoadError::MaterialNotFound(index))?
-            .take();
+            .clone();
 
-        let mesh = Some(Mesh::default());
+        let mesh = Mesh::default();
 
         let drawelement = Drawelement { material, mesh };
         drawelements.push(drawelement);

@@ -161,7 +161,6 @@ fn main() {
     gl::enable(gl::GL_DEPTH_TEST);
 
     let elements = mesh::load_mesh(get_model_file_path(&entrypoint)).expect("Failed to load model");
-    dbg!(&elements);
     let mut timer: Timer<60> = Timer::new();
 
     while let Ok(false) = window.should_close() {

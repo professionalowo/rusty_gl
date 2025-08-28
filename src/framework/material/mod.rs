@@ -13,7 +13,7 @@ impl fmt::Display for MaterialConversionError{
 	}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Material {
     textures: HashMap<String, Texture2D>,
     k_amb: Vec4<f32>,
