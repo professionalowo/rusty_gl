@@ -1,6 +1,7 @@
 use std::{
     ffi::{CStr, CString, c_char, c_uint},
     fmt,
+    ops::Deref,
 };
 
 use assimp::Color3D;
@@ -10,6 +11,14 @@ use assimp_sys::{
 };
 
 pub struct AMaterial<'a>(pub assimp::Material<'a>);
+
+impl<'a> Deref for AMaterial<'a> {
+    type Target = assimp::Material<'a>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
 #[derive(Debug)]
 pub enum AiError {
@@ -39,15 +48,8 @@ impl<'a> AMaterial<'a> {
             b: 0.0,
             a: 0.0,
         };
-        let Self(material) = self;
         match unsafe {
-            aiGetMaterialColor(
-                material.to_raw(),
-                key.as_ptr(),
-                property_type,
-                index,
-                &mut c,
-            )
+            aiGetMaterialColor(self.to_raw(), key.as_ptr(), property_type, index, &mut c)
         } {
             assimp_sys::AiReturn::Success => {
                 let AiColor4D { r, g, b, .. } = c;
@@ -59,11 +61,10 @@ impl<'a> AMaterial<'a> {
     }
 
     pub fn get_texture(&self, texture_type: AiTextureType, index: u32) -> Result<String, AiError> {
-        let Self(material) = self;
         let mut path = AiString::default();
         match unsafe {
             aiGetMaterialTexture(
-                material.to_raw(),
+                self.to_raw(),
                 texture_type,
                 index,
                 &mut path,
@@ -87,12 +88,9 @@ impl<'a> AMaterial<'a> {
         type_: u32,
         index: u32,
     ) -> Result<String, AiError> {
-        let Self(material) = self;
         let mut str = AiString::default();
 
-        match unsafe {
-            aiGetMaterialString(material.to_raw(), key.as_ptr(), type_, index, &mut str)
-        } {
+        match unsafe { aiGetMaterialString(self.to_raw(), key.as_ptr(), type_, index, &mut str) } {
             assimp_sys::AiReturn::Success => Ok(unsafe { AString::from_ai_string(&str) }),
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),
             assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
