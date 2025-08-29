@@ -45,7 +45,12 @@ impl Mesh {
         VertexArrayObject::bind_vertex_array(&self.vao);
         let vbo = VertexBufferObject::gen_buffers();
         VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &vbo);
-        VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, data, gl::GL_STATIC_DRAW)?;
+        VertexBufferObject::buffer_data(
+            gl::GL_ARRAY_BUFFER,
+            (data.len() as u32 * dimensions).into(),
+			&data,
+            gl::GL_STATIC_DRAW,
+        )?;
         let loc = Location(self.vbos.len() as u32);
         VertexBufferObject::enable_vertex_attrib_array(&loc);
         VertexBufferObject::vertex_attrib_pointer::<T>(
@@ -57,6 +62,7 @@ impl Mesh {
         )?;
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
         VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &VertexBufferObject::zero());
+
         self.vbos.push((vbo, gl::GL_ARRAY_BUFFER, dimensions));
 
         Ok(())
@@ -143,13 +149,17 @@ impl Mesh {
         if !tangents.is_empty() {
             m.add_vbo(3, tangents.as_slice())?;
         }
-
         m.num_indices = indices.len() as u32;
         VertexArrayObject::bind_vertex_array(&m.vao);
         VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, &m.ibo);
-        VertexBufferObject::buffer_data(gl::GL_ELEMENT_ARRAY_BUFFER, &indices, gl::GL_STATIC_DRAW)?;
+        VertexBufferObject::buffer_data(
+            gl::GL_ELEMENT_ARRAY_BUFFER,
+            (indices.len() as u32 * 2).into(),
+            &indices,
+            gl::GL_STATIC_DRAW,
+        )?;
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
-        VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &VertexBufferObject::zero());
+        VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, &VertexBufferObject::zero());
         Ok(m)
     }
 }

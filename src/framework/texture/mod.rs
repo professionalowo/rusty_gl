@@ -1,10 +1,10 @@
-use std::{fmt, path::{Path, PathBuf}};
+use std::{fmt, path::Path};
 
 use crate::{
     framework::texture::stbi::ImageData,
     gl::{
         self,
-        uniform::{UniformLocation, uniform_trait::Uniform},
+        uniform::{UniformLocation, UniformLocationError, uniform_trait::Uniform},
     },
 };
 
@@ -57,9 +57,34 @@ impl Texture2D {
         let texture = Self::upload_image_data(ImageData::try_load(path)?, mipmap)?;
         Ok(texture)
     }
-    pub fn bind(&self, unit: u32) {
-        upload::active_texture(gl::GL_TEXTURE0 + unit);
+
+    pub fn from_data<T>(
+        width: gl::GLsizei,
+        height: gl::GLsizei,
+        internal_format: gl::GLint,
+        format: gl::GLenum,
+        type_: gl::GLenum,
+        data: &[T],
+        mipmap: bool,
+    ) -> Result<Self, TextureError> {
+        let mut s: Texture2D = Self {
+            id: 0,
+            width,
+            height,
+            format,
+            internal_format,
+            type_,
+        };
+        s.upload(data, mipmap)?;
+        Ok(s)
+    }
+
+    pub fn bind(&self, unit: u32) -> Result<(), UniformLocationError> {
+        upload::active_texture(unit);
+        gl::get_error()?;
         upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
+        gl::get_error()?;
+        Ok(())
     }
 
     pub fn unbind(&self) {
@@ -84,7 +109,7 @@ impl Texture2D {
         upload::bind_texture(gl::GL_TEXTURE_2D, 0);
     }
 
-    fn upload(&mut self, data: &[u8], mipmap: bool) -> Result<(), gl::GLError> {
+    fn upload<T>(&mut self, data: &[T], mipmap: bool) -> Result<(), gl::GLError> {
         upload::gen_textures(&mut self.id);
         gl::get_error()?;
 

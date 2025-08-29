@@ -43,7 +43,7 @@ impl VertexBufferObject {
     }
 
     pub fn vertex_attrib_pointer<T>(
-        location: &Location,
+        Location(index): &Location,
         size: impl TryInto<GLint>,
         type_: u32,
         normalized: impl TryInto<GLboolean>,
@@ -58,20 +58,20 @@ impl VertexBufferObject {
             Ok(n) => n,
             Err(_) => return Err(VBOError::CastError),
         };
-        let Location(index) = *location;
         let pointer = pointer.unwrap_or(std::ptr::null());
         unsafe {
-            glVertexAttribPointer(index, size, type_, normalized, stride, pointer);
+            glVertexAttribPointer(*index, size, type_, normalized, stride, pointer);
         }
         Ok(())
     }
 
-    pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) -> Result<(), VBOError> {
+    pub fn buffer_data<T>(
+        n: u32,
+        size: GLsizeiptr,
+        data: &[T],
+        usage: u32,
+    ) -> Result<(), VBOError> {
         let pointer = data.as_ptr() as *const std::ffi::c_void;
-        let size = match GLsizeiptr::try_from(data.len() * std::mem::size_of::<T>()) {
-            Ok(s) => s,
-            Err(_) => return Err(VBOError::CastError),
-        };
         unsafe {
             glBufferData(n, size, pointer, usage);
         }

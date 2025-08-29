@@ -2,28 +2,39 @@
 
 in vec3 n_ws;
 in vec3 pos_ws;
+in vec2 tc;
 
 uniform float pointlight_intensity;
 uniform vec3 pointlight_color;
 uniform vec3 pointlight_pos;
 uniform vec3 camera_pos;
-uniform vec4 k_diff;
-uniform vec4 k_spec;
+//uniform vec4 k_diff;
+//uniform vec4 k_spec;
+
+uniform sampler2D specular;
+uniform sampler2D diffuse;
+uniform sampler2D alphamap;
 
 out vec4 out_col;
 
 vec3 phong(vec3 n, vec3 l, vec3 v, vec3 I, float ns) {
 
-	vec3 diff = k_diff.rgb * max(0, dot(n, l));
+	vec3 diff = texture(diffuse,tc).rgb * max(0, dot(n, l));
 
 	vec3 r = 2*n*dot(n,l)-l;
-	vec3 spec = k_spec.rgb * pow(max(0, dot(r, v)), ns);
+	vec3 spec = texture(specular,tc).rgb * pow(max(0, dot(r, v)), ns);
 
 	return (diff + spec) * I;
 }
 
 void main()
 {
+		
+	float alpha = texture(alphamap, tc).r;
+	if (alpha < 0.5) {
+		discard;
+		return;
+	}
     vec3 v = normalize(camera_pos - pos_ws);
     vec3 n = normalize(n_ws);
     vec3 to_light = pointlight_pos - pos_ws;

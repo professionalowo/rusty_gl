@@ -1,8 +1,6 @@
 use std::{
     ffi::{CStr, CString, c_char, c_uint},
     fmt,
-    ops::{Deref, DerefMut},
-    slice,
 };
 
 use assimp::Color3D;

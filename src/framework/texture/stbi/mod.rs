@@ -6,10 +6,7 @@
 include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
 use core::fmt;
-use std::{
-    fs::File,
-    path::{Path, PathBuf},
-};
+use std::{fs::File, path::Path};
 
 use memmap2::Mmap;
 

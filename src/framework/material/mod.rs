@@ -12,7 +12,7 @@ use crate::{
         assimp::{AMaterial, AiError},
         texture::TextureError,
     },
-    gl::{program::Program, uniform::UniformLocationError},
+    gl::{self, program::Program, uniform::UniformLocationError},
     math::{vec3::Vec3, vec4::Vec4},
 };
 
@@ -81,13 +81,13 @@ impl Material {
 
     pub fn bind(&self, program: &Program) -> Result<(), UniformLocationError> {
         //program.uniform("k_amb", &self.k_amb)?;
-        program.uniform("k_diff", &self.k_diff)?;
-        program.uniform("k_spec", &self.k_spec)?;
+        // program.uniform("k_diff", &self.k_diff)?;
+        // program.uniform("k_spec", &self.k_spec)?;
         let mut unit = 0;
         for (name, texture) in &self.textures {
-            texture.bind(unit);
-            unit += 1;
+            texture.bind(unit)?;
             program.uniform_opt(name, texture, unit)?;
+            unit += 1;
         }
         Ok(())
     }
@@ -115,28 +115,54 @@ impl Material {
 
         if mat.get_texture_count(AiTextureType::Diffuse) > 0 {
             let tex = mat.get_texture(AiTextureType::Diffuse, 0)?;
-            let mut buf = PathBuf::from(base_path).join(tex);
-        //let texture = Texture2D::try_from_file(buf, false)?;
-
-        //textures.insert("diffuse", );
+            let buf = PathBuf::from(base_path).join(tex);
+            let texture = Texture2D::try_from_file(buf, false)?;
+            textures.insert("diffuse".to_string(), texture);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0) {
+            let texture = Texture2D::from_data(
+                1,
+                1,
+                gl::GL_RGB32F as i32,
+                gl::GL_RGB,
+                gl::GL_FLOAT,
+                &[col.r],
+                false,
+            )?;
+            textures.insert("specular".to_string(), texture);
         }
 
         if mat.get_texture_count(AiTextureType::Specular) > 0 {
             let tex = mat.get_texture(AiTextureType::Specular, 0)?;
-            dbg!(&tex);
+            let buf = PathBuf::from(base_path).join(tex);
+            let texture = Texture2D::try_from_file(buf, false)?;
+            textures.insert("specular".to_string(), texture);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.specular")?, 0, 0) {
+            let texture = Texture2D::from_data(
+                1,
+                1,
+                gl::GL_RGB32F as i32,
+                gl::GL_RGB,
+                gl::GL_FLOAT,
+                &[col.r],
+                false,
+            )?;
+            textures.insert("specular".to_string(), texture);
         }
 
+        /*
         if mat.get_texture_count(AiTextureType::Height) > 0 {
             let tex = mat.get_texture(AiTextureType::Height, 0)?;
-            dbg!(&tex);
+            let buf = PathBuf::from(base_path).join(tex);
+            let texture = Texture2D::try_from_file(buf, false)?;
+            textures.insert("normalmap".to_string(), texture);
         }
 
         if mat.get_texture_count(AiTextureType::Opacity) > 0 {
             let tex = mat.get_texture(AiTextureType::Opacity, 0)?;
-            dbg!(&tex);
-        }
+            let buf = PathBuf::from(base_path).join(tex);
+            let texture = Texture2D::try_from_file(buf, false)?;
+            textures.insert("alphamap".to_string(), texture);
+        }*/
         Ok(Self {
             name,
             textures,
