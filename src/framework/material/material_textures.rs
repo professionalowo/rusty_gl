@@ -12,7 +12,7 @@ pub struct MaterialTextures {
 }
 
 impl MaterialTextures {
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self {
             diffuse: None,
             specular: None,
