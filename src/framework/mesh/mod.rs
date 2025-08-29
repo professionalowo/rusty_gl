@@ -168,7 +168,6 @@ impl Mesh {
         VertexBufferObject::buffer_data(gl::GL_ELEMENT_ARRAY_BUFFER, &indices, gl::GL_STATIC_DRAW)?;
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
         VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, &VertexBufferObject::zero());
-        dbg!(&m);
         Ok(m)
     }
 }
