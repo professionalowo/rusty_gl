@@ -8,7 +8,10 @@ use std::{
 use assimp_sys::AiTextureType;
 
 use crate::{
-    framework::assimp::{AMaterial, AiError},
+    framework::{
+        assimp::{AMaterial, AiError},
+        texture::TextureError,
+    },
     gl::{program::Program, uniform::UniformLocationError},
     math::{vec3::Vec3, vec4::Vec4},
 };
@@ -19,6 +22,7 @@ use super::texture::Texture2D;
 pub enum MaterialConversionError {
     AiError(AiError),
     NulError(std::ffi::NulError),
+    TextureError(TextureError),
 }
 
 impl From<AiError> for MaterialConversionError {
@@ -33,11 +37,18 @@ impl From<std::ffi::NulError> for MaterialConversionError {
     }
 }
 
+impl From<TextureError> for MaterialConversionError {
+    fn from(value: TextureError) -> Self {
+        Self::TextureError(value)
+    }
+}
+
 impl fmt::Display for MaterialConversionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::AiError(a) => fmt::Display::fmt(a, f),
             Self::NulError(n) => fmt::Display::fmt(n, f),
+            Self::TextureError(e) => fmt::Display::fmt(e, f),
         }
     }
 }
@@ -104,16 +115,17 @@ impl Material {
 
         if mat.get_texture_count(AiTextureType::Diffuse) > 0 {
             let tex = mat.get_texture(AiTextureType::Diffuse, 0)?;
-            dbg!(&tex);
+            let mut buf = PathBuf::from(base_path).join(tex);
+        //let texture = Texture2D::try_from_file(buf, false)?;
+
+        //textures.insert("diffuse", );
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0) {
-            dbg!(col);
         }
 
         if mat.get_texture_count(AiTextureType::Specular) > 0 {
             let tex = mat.get_texture(AiTextureType::Specular, 0)?;
             dbg!(&tex);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.specular")?, 0, 0) {
-            dbg!(col);
         }
 
         if mat.get_texture_count(AiTextureType::Height) > 0 {
@@ -125,7 +137,6 @@ impl Material {
             let tex = mat.get_texture(AiTextureType::Opacity, 0)?;
             dbg!(&tex);
         }
-
         Ok(Self {
             name,
             textures,

@@ -1,6 +1,8 @@
 use std::{
-    ffi::{CStr, CString, c_uint},
-    fmt, slice,
+    ffi::{CStr, CString, c_char, c_uint},
+    fmt,
+    ops::{Deref, DerefMut},
+    slice,
 };
 
 use assimp::Color3D;
@@ -75,11 +77,7 @@ impl<'a> AMaterial<'a> {
                 std::ptr::null_mut(),
             )
         } {
-            assimp_sys::AiReturn::Success => Ok(unsafe {
-                CStr::from_ptr(path.data.as_ptr() as *const i8)
-                    .to_string_lossy()
-                    .into_owned()
-            }),
+            assimp_sys::AiReturn::Success => Ok(unsafe { AString::from_ai_string(&path) }),
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),
             assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
         }
@@ -93,14 +91,11 @@ impl<'a> AMaterial<'a> {
     ) -> Result<String, AiError> {
         let Self(material) = self;
         let mut str = AiString::default();
+
         match unsafe {
             aiGetMaterialString(material.to_raw(), key.as_ptr(), type_, index, &mut str)
         } {
-            assimp_sys::AiReturn::Success => Ok(unsafe {
-                CStr::from_ptr(str.data.as_ptr() as *const i8)
-                    .to_string_lossy()
-                    .into_owned()
-            }),
+            assimp_sys::AiReturn::Success => Ok(unsafe { AString::from_ai_string(&str) }),
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),
             assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
         }
@@ -109,5 +104,22 @@ impl<'a> AMaterial<'a> {
     pub fn get_texture_count(&self, texture_type: AiTextureType) -> u32 {
         let Self(material) = self;
         unsafe { aiGetMaterialTextureCount(material.to_raw(), texture_type) }
+    }
+}
+
+#[repr(C)]
+struct AString {
+    pub length: c_uint,
+    pub data: [c_char; 1024],
+}
+
+impl AString {
+    unsafe fn from_ai_string(ptr: *const AiString) -> String {
+        let s = unsafe { &*(ptr as *const Self) };
+
+        let len = s.length as usize;
+        let bytes: Vec<u8> = s.data[..len].iter().map(|&c| c as u8).collect();
+
+        String::from_utf8_lossy(&bytes).into_owned()
     }
 }
