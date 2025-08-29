@@ -214,7 +214,7 @@ impl Uniform for &Texture2D {
     fn set(&self, options: Option<Self::Options>, location: &UniformLocation) {
         let unit = options.unwrap_or(0);
         let UniformLocation(location) = *location;
-        self.bind(unit);
+        self.bind(unit).expect("Couldnt bind texture");
         unsafe {
             gl::glUniform1i(location, unit as i32);
         }
