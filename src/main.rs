@@ -46,10 +46,10 @@ fn main() {
     .expect("Failed to create fragment shader");
 
     let vao = VertexArrayObject::gen_vertex_arrays();
-    //VertexArrayObject::bind_vertex_array(&vao);
+    VertexArrayObject::bind_vertex_array(&vao);
     let program = Program::from_shaders(&[vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
-    //VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
+    VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
     let mut camera = Camera::with_defaults(
