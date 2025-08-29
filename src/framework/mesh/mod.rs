@@ -46,44 +46,6 @@ impl Mesh {
         }
     }
 
-    fn add_vbo<T>(
-        &mut self,
-        index: usize,
-        dimensions: u32,
-        data: &[T],
-    ) -> Result<(), MeshLoadError> {
-        if self.num_vertices != 0 && self.num_vertices != data.len() as u32 {
-            return Err(MeshLoadError::MeshConversionFailed);
-        }
-        self.num_vertices = data.len() as u32;
-
-        VertexArrayObject::bind_vertex_array(&self.vao);
-        let vbo = VertexBufferObject::gen_buffers();
-        VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &vbo);
-        VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &data, gl::GL_STATIC_DRAW)?;
-        let loc = Location(index as u32);
-
-        VertexBufferObject::enable_vertex_attrib_array(&loc);
-        VertexBufferObject::vertex_attrib_pointer(
-            &loc,
-            dimensions,
-            gl::GL_FLOAT,
-            false,
-            (dimensions * 4) as i32,
-            None,
-        )?;
-        VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
-        VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &VertexBufferObject::zero());
-
-        self.vbos[index] = Some(VboData {
-            vbo,
-            buffer_type: gl::GL_ARRAY_BUFFER,
-            dimensions,
-        });
-
-        Ok(())
-    }
-
     pub fn bind(&self) {
         VertexArrayObject::bind_vertex_array(&self.vao);
     }
@@ -172,6 +134,46 @@ impl Mesh {
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
         VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, &VertexBufferObject::zero());
         Ok(m)
+    }
+
+    fn add_vbo<T>(
+        &mut self,
+        index: usize,
+        dimensions: u32,
+        data: &[T],
+    ) -> Result<(), MeshLoadError> {
+        if self.num_vertices != 0 && self.num_vertices != data.len() as u32 {
+            return Err(MeshLoadError::MeshConversionFailed);
+        }
+        self.num_vertices = data.len() as u32;
+
+        let buffer_type = gl::GL_ARRAY_BUFFER;
+
+        VertexArrayObject::bind_vertex_array(&self.vao);
+        let vbo = VertexBufferObject::gen_buffers();
+        VertexBufferObject::bind_buffer(buffer_type, &vbo);
+        VertexBufferObject::buffer_data(buffer_type, &data, gl::GL_STATIC_DRAW)?;
+        let loc = Location(index as u32);
+
+        VertexBufferObject::enable_vertex_attrib_array(&loc);
+        VertexBufferObject::vertex_attrib_pointer(
+            &loc,
+            dimensions,
+            gl::GL_FLOAT,
+            false,
+            (dimensions * 4) as i32,
+            None,
+        )?;
+        VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
+        VertexBufferObject::bind_buffer(buffer_type, &VertexBufferObject::zero());
+
+        self.vbos[index] = Some(VboData {
+            vbo,
+            buffer_type,
+            dimensions,
+        });
+
+        Ok(())
     }
 }
 
