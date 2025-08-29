@@ -46,10 +46,10 @@ fn main() {
     .expect("Failed to create fragment shader");
 
     let vao = VertexArrayObject::gen_vertex_arrays();
-    VertexArrayObject::bind_vertex_array(&vao);
+    //VertexArrayObject::bind_vertex_array(&vao);
     let program = Program::from_shaders(&[vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
-    VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
+    //VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
     let mut camera = Camera::with_defaults(
@@ -62,7 +62,7 @@ fn main() {
     const POINTLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 0.58, 0.16);
     const POINTLIGHT_INTENSITY: f32 = 1.5;
 
-    const DIRLIGHT_DIR: Vec3<f32> = Vec3::new(75.0, 500.0, 500.0);
+    const DIRLIGHT_DIR: Vec3<f32> = Vec3::new(0.25, -0.93, -0.25);
     const DIRLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 0.97, 0.8);
     const DIRLIGHT_INTENSITY: f32 = 1.5;
 
