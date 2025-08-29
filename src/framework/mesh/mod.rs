@@ -214,18 +214,15 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let mut drawelements: Vec<Drawelement> = Vec::with_capacity(scene.num_meshes() as usize);
     let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as usize);
 
-    for mat in scene.material_iter() {
-        let amat = AMaterial(mat);
-        let rc = Rc::new(Material::from_ai_mesh(
-            base_path,
-            amat.get_material_string(
+    for mat in scene.material_iter().map(AMaterial) {
+        let name = mat
+            .get_material_string(
                 CString::new("?mat.name").map_err(MaterialConversionError::NulError)?,
                 0,
                 0,
             )
-            .map_err(MaterialConversionError::AiError)?,
-            &amat,
-        )?);
+            .map_err(MaterialConversionError::AiError)?;
+        let rc = Rc::new(Material::from_ai_mesh(base_path, name, &mat)?);
         materials.push(rc);
     }
 
