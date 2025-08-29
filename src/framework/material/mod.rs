@@ -1,5 +1,4 @@
 use std::{
-    collections::HashMap,
     ffi::CString,
     fmt,
     path::{Path, PathBuf},
@@ -10,6 +9,7 @@ use assimp_sys::AiTextureType;
 use crate::{
     framework::{
         assimp::{AMaterial, AiError},
+        material::material_textures::MaterialTextures,
         texture::TextureError,
     },
     gl::{self, program::Program, uniform::UniformLocationError},
@@ -17,6 +17,8 @@ use crate::{
 };
 
 use super::texture::Texture2D;
+
+pub mod material_textures;
 
 #[derive(Debug)]
 pub enum MaterialConversionError {
@@ -56,17 +58,13 @@ impl fmt::Display for MaterialConversionError {
 #[derive(Debug, Default)]
 pub struct Material {
     pub name: String,
-    pub textures: HashMap<String, Texture2D>,
+    pub textures: MaterialTextures,
     pub k_amb: Vec4<f32>,
     pub k_diff: Vec4<f32>,
     pub k_spec: Vec4<f32>,
 }
 
 impl Material {
-    pub fn add_texture(&mut self, key: String, value: Texture2D) -> Option<Texture2D> {
-        self.textures.insert(key, value)
-    }
-
     pub const fn k_amb(&self) -> &Vec4<f32> {
         &self.k_amb
     }
@@ -80,21 +78,14 @@ impl Material {
     }
 
     pub fn bind(&self, program: &Program) -> Result<(), UniformLocationError> {
-        //program.uniform("k_amb", &self.k_amb)?;
+        // program.uniform("k_amb", &self.k_amb)?;
         // program.uniform("k_diff", &self.k_diff)?;
         // program.uniform("k_spec", &self.k_spec)?;
-        let mut unit = 0;
-        for (name, texture) in &self.textures {
-            texture.bind(unit)?;
-            program.uniform_opt(name, texture, unit)?;
-            unit += 1;
-        }
+        self.textures.bind(program)?;
         Ok(())
     }
     pub fn unbind(&self) {
-        for (_, texture) in &self.textures {
-            texture.unbind();
-        }
+        self.textures.unbind();
     }
 
     pub fn from_ai_mesh(
@@ -111,11 +102,11 @@ impl Material {
         let amb = Vec3::from(mat.get_material_color(CString::new("$clr.ambient")?, 0, 0)?);
         let k_amb = amb.expand(1.0);
 
-        let mut textures = HashMap::with_capacity(3);
+        let mut textures = MaterialTextures::new();
 
         if mat.get_texture_count(AiTextureType::Diffuse) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Diffuse)?;
-            textures.insert("diffuse".to_string(), texture);
+            textures.diffuse = Some(texture);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0) {
             let texture = Texture2D::from_data(
                 1,
@@ -126,12 +117,12 @@ impl Material {
                 &[col.r],
                 false,
             )?;
-            textures.insert("specular".to_string(), texture);
+            textures.specular = Some(texture);
         }
 
         if mat.get_texture_count(AiTextureType::Specular) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Specular)?;
-            textures.insert("specular".to_string(), texture);
+            textures.specular = Some(texture);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.specular")?, 0, 0) {
             let texture = Texture2D::from_data(
                 1,
@@ -142,7 +133,7 @@ impl Material {
                 &[col.r],
                 false,
             )?;
-            textures.insert("specular".to_string(), texture);
+            textures.specular = Some(texture);
         }
 
         /*
@@ -155,7 +146,7 @@ impl Material {
         */
         if mat.get_texture_count(AiTextureType::Opacity) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Opacity)?;
-            textures.insert("alphamap".to_string(), texture);
+            textures.alphamap = Some(texture);
         }
         Ok(Self {
             name,

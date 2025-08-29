@@ -2,6 +2,7 @@ use std::f32::consts::PI;
 use std::path::PathBuf;
 
 use rusty_gl::framework::camera::Camera;
+use rusty_gl::framework::material::material_textures::MaterialTextureType;
 use rusty_gl::framework::mesh;
 use rusty_gl::framework::timer::Timer;
 use rusty_gl::gl;
@@ -144,7 +145,11 @@ fn main() {
                 program
                     .uniform(
                         "has_alphamap",
-                        if element.material.textures.contains_key("alphamap") {
+                        if element
+                            .material
+                            .textures
+                            .has_texture(MaterialTextureType::AlphaMap)
+                        {
                             1
                         } else {
                             0
