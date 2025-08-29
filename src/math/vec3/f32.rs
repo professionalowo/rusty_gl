@@ -125,6 +125,24 @@ impl From<assimp::Vector3D> for Vec3<f32> {
     }
 }
 
+impl From<Vec3<f32>> for assimp::Vector3D {
+    fn from(Vec3 { x, y, z }: Vec3<f32>) -> Self {
+        Self::new(x, y, z)
+    }
+}
+
+impl From<assimp_sys::AiVector3D> for Vec3<f32> {
+    fn from(assimp_sys::AiVector3D { x, y, z }: assimp_sys::AiVector3D) -> Self {
+        Self::new(x, y, z)
+    }
+}
+
+impl From<Vec3<f32>> for assimp_sys::AiVector3D {
+    fn from(Vec3 { x, y, z }: Vec3<f32>) -> Self {
+        Self { x, y, z }
+    }
+}
+
 impl From<assimp::Color3D> for Vec3<f32> {
     fn from(c: assimp::Color3D) -> Self {
         Self::rgb(c.r, c.g, c.b)
