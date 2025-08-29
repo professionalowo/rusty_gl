@@ -31,7 +31,7 @@ fn main() {
         .expect("Failed to set window hint");
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
-   
+
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
             .expect("Failed to create vertex shader");
@@ -121,6 +121,16 @@ fn main() {
                 program
                     .uniform("camera_pos", camera.position())
                     .expect("Failed to set camera position");
+                program
+                    .uniform(
+                        "has_alphamap",
+                        if element.material.textures.contains_key("alphamap") {
+                            1
+                        } else {
+                            0
+                        },
+                    )
+                    .expect("Failed to se has_alphamap");
                 element
                     .draw(&program, &MODEL_MATRIX)
                     .expect("Failed to draw element");

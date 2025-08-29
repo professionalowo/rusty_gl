@@ -14,6 +14,7 @@ uniform vec3 camera_pos;
 uniform sampler2D specular;
 uniform sampler2D diffuse;
 uniform sampler2D alphamap;
+uniform int has_alphamap;
 
 out vec4 out_col;
 
@@ -31,10 +32,11 @@ void main()
 {
 		
 	float alpha = texture(alphamap, tc).r;
-	if (alpha<0.1) {
+	
+	if (has_alphamap==1 && alpha<0.3) {
 		discard;
-		return;
 	}
+
     vec3 v = normalize(camera_pos - pos_ws);
     vec3 n = normalize(n_ws);
     vec3 to_light = pointlight_pos - pos_ws;

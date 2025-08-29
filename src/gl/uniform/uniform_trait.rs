@@ -15,3 +15,10 @@ impl Uniform for GLfloat {
         }
     }
 }
+
+impl Uniform for i32 {
+    type Options = ();
+    fn set(&self, _options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
+        unsafe { gl::glUniform1i(*location, *self) };
+    }
+}
