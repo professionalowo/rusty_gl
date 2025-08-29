@@ -105,18 +105,15 @@ impl Mesh {
         }
 
         let mut indices: Vec<u32> = Vec::with_capacity(mesh.num_faces() as usize * 3);
-        for i in 0..mesh.num_faces() {
-            let face = mesh
-                .get_face(i)
-                .ok_or(MeshLoadError::MeshConversionFailed)?;
-            if face.num_indices == 3 {
-                indices.push(face[0]);
-                indices.push(face[1]);
-                indices.push(face[2]);
-            }
+        for array in mesh
+            .face_iter()
+            .filter(|f| f.num_indices == 3)
+            .map(|f| [f[0], f[1], f[2]])
+        {
+            indices.extend(array);
         }
 
-        let mut m = Mesh::with_defaults();
+        let mut m = Self::with_defaults();
         m.add_vbo(0, 3, positions.as_slice())?;
         if !normals.is_empty() {
             m.add_vbo(1, 3, normals.as_slice())?;
