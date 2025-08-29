@@ -20,7 +20,7 @@ pub struct Mesh {
     pub ibo: VertexBufferObject,
     pub num_vertices: u32,
     pub num_indices: u32,
-    pub vbos: Vec<(VertexBufferObject, gl::GLenum, u32)>,
+    pub vbos: [Option<(VertexBufferObject, gl::GLenum, u32)>; 4],
     pub primitive_type: gl::GLenum,
 }
 
@@ -31,12 +31,17 @@ impl Mesh {
             ibo: VertexBufferObject::gen_buffers(),
             num_vertices: 0,
             num_indices: 0,
-            vbos: Vec::with_capacity(4),
+            vbos: [None, None, None, None],
             primitive_type: gl::GL_TRIANGLES,
         }
     }
 
-    fn add_vbo<T>(&mut self, dimensions: u32, data: &[T]) -> Result<(), MeshLoadError> {
+    fn add_vbo<T>(
+        &mut self,
+        index: usize,
+        dimensions: u32,
+        data: &[T],
+    ) -> Result<(), MeshLoadError> {
         if self.num_vertices != 0 && self.num_vertices != data.len() as u32 {
             return Err(MeshLoadError::MeshConversionFailed);
         }
@@ -46,7 +51,7 @@ impl Mesh {
         let vbo = VertexBufferObject::gen_buffers();
         VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &vbo);
         VertexBufferObject::buffer_data(gl::GL_ARRAY_BUFFER, &data, gl::GL_STATIC_DRAW)?;
-        let loc = Location(self.vbos.len() as u32);
+        let loc = Location(index as u32);
 
         VertexBufferObject::enable_vertex_attrib_array(&loc);
         VertexBufferObject::vertex_attrib_pointer(
@@ -60,7 +65,7 @@ impl Mesh {
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
         VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &VertexBufferObject::zero());
 
-        self.vbos.push((vbo, gl::GL_ARRAY_BUFFER, dimensions));
+        self.vbos[index] = Some((vbo, gl::GL_ARRAY_BUFFER, dimensions));
 
         Ok(())
     }
@@ -136,15 +141,15 @@ impl Mesh {
         }
 
         let mut m = Mesh::with_defaults();
-        m.add_vbo(3, positions.as_slice())?;
+        m.add_vbo(0, 3, positions.as_slice())?;
         if !normals.is_empty() {
-            m.add_vbo(3, normals.as_slice())?;
+            m.add_vbo(1, 3, normals.as_slice())?;
         }
         if !texcoords.is_empty() {
-            m.add_vbo(2, texcoords.as_slice())?;
+            m.add_vbo(2, 2, texcoords.as_slice())?;
         }
         if !tangents.is_empty() {
-            m.add_vbo(3, tangents.as_slice())?;
+            m.add_vbo(3, 3, tangents.as_slice())?;
         }
         m.num_indices = indices.len() as u32;
         VertexArrayObject::bind_vertex_array(&m.vao);
