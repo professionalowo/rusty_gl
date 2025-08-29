@@ -76,7 +76,7 @@ fn main() {
         window.poll_events();
 
         const TURN_ANGLE: f32 = PI / 2.0;
-        const MOVE_DISTANCE: f32 = 100.0;
+        const MOVE_DISTANCE: f32 = 15.0;
 
         if let Some(event) = window.pump_event() {
             match event {
