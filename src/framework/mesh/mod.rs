@@ -1,5 +1,8 @@
 use std::{ffi::CString, fmt, path::PathBuf, rc::Rc};
 
+use assimp::Scene;
+use assimp_sys::AiVector3D;
+
 use crate::{
     framework::{
         assimp::AMaterial,
@@ -11,7 +14,7 @@ use crate::{
         vao::VertexArrayObject,
         vbo::{Location, VBOError, VertexBufferObject},
     },
-    math::{vec2::Vec2, vec3::Vec3},
+    math::{Scalar, vec2::Vec2, vec3::Vec3},
 };
 
 #[derive(Debug, Default)]
@@ -213,7 +216,7 @@ impl From<MaterialConversionError> for MeshLoadError {
     }
 }
 
-pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
+pub fn load_mesh(path: PathBuf, normalize: bool) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let base_path = path
         .parent()
         .ok_or_else(|| MeshLoadError::InvalidPath(path.clone()))?;
@@ -225,7 +228,11 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     let path_str = &path
         .to_str()
         .ok_or(MeshLoadError::InvalidPath(path.clone()))?;
-    let scene = importer.read_file(path_str)?;
+    let mut scene = importer.read_file(path_str)?;
+
+    if normalize {
+        normalize_scene(&mut scene);
+    }
 
     let mut drawelements: Vec<Drawelement> = Vec::with_capacity(scene.num_meshes() as usize);
     let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as usize);
@@ -255,4 +262,32 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
         drawelements.push(drawelement);
     }
     Ok(drawelements.into_boxed_slice())
+}
+
+fn normalize_scene(scene: &mut Scene<'_>) {
+    let mut bb_min = Vec3::scalar(f32::MAX);
+    let mut bb_max = Vec3::scalar(f32::MIN);
+
+    for mesh in scene.mesh_iter() {
+        for v in mesh.vertex_iter() {
+            bb_min = Vec3::min(bb_min, v.into());
+            bb_max = Vec3::max(bb_max, v.into());
+        }
+    }
+
+    let center = Scalar(0.5) * (bb_min + bb_max);
+    let min = Vec3::scalar(-1.0);
+    let max = Vec3::scalar(1.0);
+
+    let scale_v = (max - min) / (bb_max - bb_min);
+    let scale_f = scale_v.x.min(scale_v.y).min(scale_v.z);
+
+    for mesh in scene.mesh_iter() {
+        for (i, v) in mesh.vertex_iter().enumerate() {
+            let Vec3 { x, y, z } = (Vec3::from(v) - center) * Scalar(scale_f);
+            unsafe {
+                mesh.vertices.add(i).write(AiVector3D { x, y, z });
+            }
+        }
+    }
 }

@@ -34,7 +34,8 @@ fn main() {
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
-    let scene = mesh::load_mesh(get_model_file_path(&entrypoint)).expect("Failed to load model");
+    let scene =
+        mesh::load_mesh(get_model_file_path(&entrypoint), false).expect("Failed to load model");
 
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
@@ -68,16 +69,14 @@ fn main() {
     const DIRLIGHT_INTENSITY: f32 = 1.5;
 
     gl::enable(gl::GL_DEPTH_TEST);
-
     let mut timer: Timer<60> = Timer::new();
-
     while let Ok(false) = window.should_close() {
         timer.start();
 
         window.poll_events();
 
         const TURN_ANGLE: f32 = PI / 2.0;
-        const MOVE_DISTANCE: f32 = 10.0;
+        const MOVE_DISTANCE: f32 = 100.0;
 
         if let Some(event) = window.pump_event() {
             match event {

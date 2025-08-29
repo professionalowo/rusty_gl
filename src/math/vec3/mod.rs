@@ -1,6 +1,6 @@
 pub mod f32;
 
-use std::ops::{Add, AddAssign, Mul, MulAssign, Neg, Not, Sub, SubAssign};
+use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Not, Sub, SubAssign};
 
 use crate::math::{Scalar, vec2::Vec2, vec4::Vec4};
 
@@ -173,6 +173,17 @@ where
     fn mul(self, Self::Output { x, y, z }: Self::Output) -> Self::Output {
         let Self(s) = self;
         Self::Output::new(s * x, s * y, s * z)
+    }
+}
+
+impl<T> Div<Vec3<T>> for Vec3<T>
+where
+    T: Copy + Div<Output = T>,
+{
+    type Output = Vec3<T>;
+
+    fn div(self, Self::Output { x, y, z }: Self::Output) -> Self::Output {
+        Self::Output::new(self.x / x, self.y / y, self.z / z)
     }
 }
 
