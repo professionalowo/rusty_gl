@@ -285,8 +285,9 @@ fn normalize_scene(scene: &mut Scene<'_>) {
     for mesh in scene.mesh_iter() {
         for (i, v) in mesh.vertex_iter().enumerate() {
             let vec = (Vec3::from(v) - center) * Scalar(scale_f);
+            let ai = AiVector3D::from(vec);
             unsafe {
-                mesh.vertices.add(i).write(AiVector3D::from(vec));
+                mesh.vertices.add(i).write(ai);
             }
         }
     }
