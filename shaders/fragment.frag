@@ -8,6 +8,9 @@ uniform float pointlight_intensity;
 uniform vec3 pointlight_color;
 uniform vec3 pointlight_pos;
 uniform vec3 camera_pos;
+uniform vec3 dirlight_dir;
+uniform vec3 dirlight_color;
+uniform float dirlight_intensity;
 //uniform vec4 k_diff;
 //uniform vec4 k_spec;
 
@@ -45,6 +48,7 @@ void main()
 
     float attenuation = 1.0 / (dist/100);
 	vec3 pointlight_illum = phong(n, to_light, v, pointlight_color*pointlight_intensity, 140) * attenuation;
+	vec3 dirlight_illum = phong(n, -dirlight_dir, v, dirlight_color*dirlight_intensity, 4);
 
-	out_col = vec4(pointlight_illum, 1);
+	out_col = vec4(pointlight_illum + dirlight_illum, 1);
 }

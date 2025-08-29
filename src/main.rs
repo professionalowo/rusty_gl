@@ -62,6 +62,10 @@ fn main() {
     const POINTLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 0.58, 0.16);
     const POINTLIGHT_INTENSITY: f32 = 1.5;
 
+    const DIRLIGHT_DIR: Vec3<f32> = Vec3::new(75.0, 500.0, 500.0);
+    const DIRLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 0.97, 0.8);
+    const DIRLIGHT_INTENSITY: f32 = 1.5;
+
     gl::enable(gl::GL_DEPTH_TEST);
 
     let mut timer: Timer<60> = Timer::new();
@@ -121,6 +125,18 @@ fn main() {
                 program
                     .uniform("pointlight_intensity", POINTLIGHT_INTENSITY)
                     .expect("Failed to set pointlight intensity");
+                program
+                    .uniform("dirlight_dir", &DIRLIGHT_DIR)
+                    .expect("Failed to set dirlight direction");
+                program
+                    .uniform(
+                        "dirlight_color",
+                        &Vec3::pow(DIRLIGHT_COLOR, Vec3::new(2.2, 2.2, 2.2)),
+                    )
+                    .expect("Failed to set dirlight color");
+                program
+                    .uniform("dirlight_intensity", DIRLIGHT_INTENSITY)
+                    .expect("Failed to set dirlight intensity");
                 program
                     .uniform("camera_pos", camera.position())
                     .expect("Failed to set camera position");
