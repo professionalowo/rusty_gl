@@ -118,8 +118,10 @@ impl AString {
         let s = unsafe { &*(ptr as *const Self) };
 
         let len = s.length as usize;
-        let bytes: Vec<u8> = s.data[..len].iter().map(|&c| c as u8).collect();
+        let bytes = &s.data[..len];
 
-        String::from_utf8_lossy(&bytes).into_owned()
+        unsafe { CStr::from_ptr(bytes.as_ptr()) }
+            .to_string_lossy()
+            .into_owned()
     }
 }
