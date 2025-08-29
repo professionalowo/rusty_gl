@@ -111,7 +111,7 @@ impl Material {
         let amb = Vec3::from(mat.get_material_color(CString::new("$clr.ambient")?, 0, 0)?);
         let k_amb = amb.expand(1.0);
 
-        let mut textures = HashMap::new();
+        let mut textures = HashMap::with_capacity(3);
 
         if mat.get_texture_count(AiTextureType::Diffuse) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Diffuse)?;
