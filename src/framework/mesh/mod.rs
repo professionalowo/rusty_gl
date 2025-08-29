@@ -54,7 +54,7 @@ impl Mesh {
             dimensions,
             gl::GL_FLOAT,
             false,
-			(dimensions * 4) as i32,
+            (dimensions * 4) as i32,
             None,
         )?;
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
@@ -236,18 +236,10 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
             .ok_or_else(|| MeshLoadError::MaterialNotFound(index))?
             .clone();
 
-        let mesh = mesh.try_into()?;
+        let mesh = Mesh::from_ai_mesh(&mesh)?;
 
         let drawelement = Drawelement { material, mesh };
         drawelements.push(drawelement);
     }
     Ok(drawelements.into_boxed_slice())
-}
-
-impl TryFrom<assimp::Mesh<'_>> for Mesh {
-    type Error = MeshLoadError;
-
-    fn try_from(value: assimp::Mesh) -> Result<Self, Self::Error> {
-        Mesh::from_ai_mesh(&value)
-    }
 }
