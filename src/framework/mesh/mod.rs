@@ -15,12 +15,19 @@ use crate::{
 };
 
 #[derive(Debug, Default)]
+pub struct VboData {
+    pub vbo: VertexBufferObject,
+    pub buffer_type: gl::GLenum,
+    pub dimensions: u32,
+}
+
+#[derive(Debug, Default)]
 pub struct Mesh {
     pub vao: VertexArrayObject,
     pub ibo: VertexBufferObject,
     pub num_vertices: u32,
     pub num_indices: u32,
-    pub vbos: [Option<(VertexBufferObject, gl::GLenum, u32)>; 4],
+    pub vbos: [Option<VboData>; 4],
     pub primitive_type: gl::GLenum,
 }
 
@@ -65,7 +72,11 @@ impl Mesh {
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
         VertexBufferObject::bind_buffer(gl::GL_ARRAY_BUFFER, &VertexBufferObject::zero());
 
-        self.vbos[index] = Some((vbo, gl::GL_ARRAY_BUFFER, dimensions));
+        self.vbos[index] = Some(VboData {
+            vbo,
+            buffer_type: gl::GL_ARRAY_BUFFER,
+            dimensions,
+        });
 
         Ok(())
     }
@@ -157,6 +168,7 @@ impl Mesh {
         VertexBufferObject::buffer_data(gl::GL_ELEMENT_ARRAY_BUFFER, &indices, gl::GL_STATIC_DRAW)?;
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
         VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, &VertexBufferObject::zero());
+        dbg!(&m);
         Ok(m)
     }
 }
