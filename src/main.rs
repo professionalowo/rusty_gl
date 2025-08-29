@@ -7,6 +7,7 @@ use rusty_gl::framework::timer::Timer;
 use rusty_gl::gl;
 use rusty_gl::gl::program::Program;
 use rusty_gl::gl::shader::Shader;
+use rusty_gl::gl::vao::VertexArrayObject;
 use rusty_gl::glfw;
 use rusty_gl::glfw::input::KeyEvent;
 use rusty_gl::glfw::input::keycode::Keycode;
@@ -32,6 +33,8 @@ fn main() {
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
+    let scene = mesh::load_mesh(get_model_file_path(&entrypoint)).expect("Failed to load model");
+
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
             .expect("Failed to create vertex shader");
@@ -42,9 +45,11 @@ fn main() {
     )
     .expect("Failed to create fragment shader");
 
+    let vao = VertexArrayObject::gen_vertex_arrays();
+    VertexArrayObject::bind_vertex_array(&vao);
     let program = Program::from_shaders(&[vertex_shader, fragment_shader])
         .expect("Failed to create shader program");
-
+    VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
     let mut camera = Camera::with_defaults(
@@ -58,8 +63,6 @@ fn main() {
     const POINTLIGHT_INTENSITY: f32 = 1.5;
 
     gl::enable(gl::GL_DEPTH_TEST);
-
-    let scene = mesh::load_mesh(get_model_file_path(&entrypoint)).expect("Failed to load model");
 
     let mut timer: Timer<60> = Timer::new();
 
