@@ -85,12 +85,14 @@ impl<'a> AMaterial<'a> {
     pub fn get_material_string(
         &self,
         key: CString,
-        type_: u32,
+        property_type: u32,
         index: u32,
     ) -> Result<String, AiError> {
         let mut str = AiString::default();
 
-        match unsafe { aiGetMaterialString(self.to_raw(), key.as_ptr(), type_, index, &mut str) } {
+        match unsafe {
+            aiGetMaterialString(self.to_raw(), key.as_ptr(), property_type, index, &mut str)
+        } {
             assimp_sys::AiReturn::Success => Ok(unsafe { AString::from_ai_string(&str) }),
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),
             assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
