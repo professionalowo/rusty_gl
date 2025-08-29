@@ -6,7 +6,10 @@
 include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
 use core::fmt;
-use std::{fs::File, path::PathBuf};
+use std::{
+    fs::File,
+    path::{Path, PathBuf},
+};
 
 use memmap2::Mmap;
 
@@ -55,7 +58,7 @@ impl From<std::io::Error> for ImageError {
 }
 
 impl ImageData {
-    pub fn try_load(path: PathBuf) -> Result<Self, ImageError> {
+    pub fn try_load(path: impl AsRef<Path>) -> Result<Self, ImageError> {
         let file = &File::open(&path)?;
         let ref data = unsafe { Mmap::map(file) }?;
         if is_hdr(data) {

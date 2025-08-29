@@ -196,11 +196,15 @@ impl From<MaterialConversionError> for MeshLoadError {
 }
 
 pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
+    let base_path = path
+        .parent()
+        .ok_or_else(|| MeshLoadError::InvalidPath(path.clone()))?;
+
     let mut importer = assimp::Importer::new();
     importer.triangulate(true);
     importer.generate_normals(|_| ());
 
-    let path_str = path
+    let path_str = &path
         .to_str()
         .ok_or(MeshLoadError::InvalidPath(path.clone()))?;
     let scene = importer.read_file(path_str)?;
@@ -211,6 +215,7 @@ pub fn load_mesh(path: PathBuf) -> Result<Box<[Drawelement]>, MeshLoadError> {
     for mat in scene.material_iter() {
         let amat = AMaterial(mat);
         let rc = Rc::new(Material::from_ai_mesh(
+            base_path,
             amat.get_material_string(
                 CString::new("?mat.name").map_err(MaterialConversionError::NulError)?,
                 0,

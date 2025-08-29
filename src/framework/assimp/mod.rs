@@ -6,7 +6,7 @@ use std::{
 use assimp::Color3D;
 use assimp_sys::{
     AiColor4D, AiString, AiTextureType, aiGetMaterialColor, aiGetMaterialString,
-    aiGetMaterialTexture,
+    aiGetMaterialTexture, aiGetMaterialTextureCount,
 };
 
 pub struct AMaterial<'a>(pub assimp::Material<'a>);
@@ -75,7 +75,11 @@ impl<'a> AMaterial<'a> {
                 std::ptr::null_mut(),
             )
         } {
-            assimp_sys::AiReturn::Success => Ok(String::from(path.as_ref())),
+            assimp_sys::AiReturn::Success => Ok(unsafe {
+                CStr::from_ptr(path.data.as_ptr() as *const i8)
+                    .to_string_lossy()
+                    .into_owned()
+            }),
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),
             assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
         }
@@ -100,5 +104,10 @@ impl<'a> AMaterial<'a> {
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),
             assimp_sys::AiReturn::OutOfMemory => Err(AiError::OutOfMemory),
         }
+    }
+
+    pub fn get_texture_count(&self, texture_type: AiTextureType) -> u32 {
+        let Self(material) = self;
+        unsafe { aiGetMaterialTextureCount(material.to_raw(), texture_type) }
     }
 }

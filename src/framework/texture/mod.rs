@@ -1,4 +1,4 @@
-use std::{fmt, path::PathBuf};
+use std::{fmt, path::{Path, PathBuf}};
 
 use crate::{
     framework::texture::stbi::ImageData,
@@ -53,7 +53,7 @@ impl Texture2D {
         self.id == other.id
     }
 
-    pub fn try_from_file(path: PathBuf, mipmap: bool) -> Result<Self, TextureError> {
+    pub fn try_from_file(path: impl AsRef<Path>, mipmap: bool) -> Result<Self, TextureError> {
         let texture = Self::upload_image_data(ImageData::try_load(path)?, mipmap)?;
         Ok(texture)
     }
