@@ -31,7 +31,7 @@ void main()
 {
 		
 	float alpha = texture(alphamap, tc).r;
-	if (alpha < 0.5) {
+	if (alpha<0.1) {
 		discard;
 		return;
 	}

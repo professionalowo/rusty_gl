@@ -1,7 +1,7 @@
 use std::fmt;
 
 use crate::gl::{
-    self, GLboolean, GLint, GLsizeiptr, glBindBuffer, glBufferData, glDeleteBuffers,
+    self, GLboolean, GLint, GLsizei, GLsizeiptr, glBindBuffer, glBufferData, glDeleteBuffers,
     glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer,
 };
 
@@ -42,18 +42,19 @@ impl VertexBufferObject {
         }
     }
 
-    pub fn vertex_attrib_pointer<T>(
+    pub fn vertex_attrib_pointer(
         Location(index): &Location,
         size: impl TryInto<GLint>,
         type_: u32,
         normalized: impl TryInto<GLboolean>,
+        stride: GLsizei,
         pointer: Option<*const std::ffi::c_void>,
     ) -> Result<(), VBOError> {
         let size = match size.try_into() {
             Ok(s) => s,
             Err(_) => return Err(VBOError::CastError),
         };
-        let stride = size * std::mem::size_of::<T>() as i32;
+
         let normalized: u8 = match normalized.try_into() {
             Ok(n) => n,
             Err(_) => return Err(VBOError::CastError),
@@ -65,13 +66,12 @@ impl VertexBufferObject {
         Ok(())
     }
 
-    pub fn buffer_data<T>(
-        n: u32,
-        size: GLsizeiptr,
-        data: &[T],
-        usage: u32,
-    ) -> Result<(), VBOError> {
+    pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) -> Result<(), VBOError> {
         let pointer = data.as_ptr() as *const std::ffi::c_void;
+        let size = match GLsizeiptr::try_from(data.len() * std::mem::size_of::<T>()) {
+            Ok(s) => s,
+            Err(_) => return Err(VBOError::CastError),
+        };
         unsafe {
             glBufferData(n, size, pointer, usage);
         }
