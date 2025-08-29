@@ -108,9 +108,10 @@ fn main() {
             gl::clear_color_vec(&BACKGROUND);
             gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
-            for element in scene.iter().as_slice() {
+            let aspect_ratio = window.aspect_ratio();
+            for element in scene.iter() {
                 element
-                    .bind(&program, &camera, window.aspect_ratio())
+                    .bind(&program, &camera, aspect_ratio)
                     .expect("Failed to bind element");
 
                 program
