@@ -11,7 +11,7 @@ use crate::{
 mod stbi;
 mod upload;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Texture2D {
     id: gl::GLuint,
     width: gl::GLsizei,

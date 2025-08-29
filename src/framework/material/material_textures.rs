@@ -3,7 +3,7 @@ use crate::{
     gl::{program::Program, uniform::UniformLocationError},
 };
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct MaterialTextures {
     pub diffuse: Option<Texture2D>,
     pub specular: Option<Texture2D>,
