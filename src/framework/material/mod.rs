@@ -114,9 +114,7 @@ impl Material {
         let mut textures = HashMap::new();
 
         if mat.get_texture_count(AiTextureType::Diffuse) > 0 {
-            let tex = mat.get_texture(AiTextureType::Diffuse, 0)?;
-            let buf = PathBuf::from(base_path).join(tex);
-            let texture = Texture2D::try_from_file(buf, false)?;
+            let texture = get_texture(base_path, mat, AiTextureType::Diffuse)?;
             textures.insert("diffuse".to_string(), texture);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0) {
             let texture = Texture2D::from_data(
@@ -132,9 +130,7 @@ impl Material {
         }
 
         if mat.get_texture_count(AiTextureType::Specular) > 0 {
-            let tex = mat.get_texture(AiTextureType::Specular, 0)?;
-            let buf = PathBuf::from(base_path).join(tex);
-            let texture = Texture2D::try_from_file(buf, false)?;
+            let texture = get_texture(base_path, mat, AiTextureType::Specular)?;
             textures.insert("specular".to_string(), texture);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.specular")?, 0, 0) {
             let texture = Texture2D::from_data(
@@ -158,9 +154,7 @@ impl Material {
         }
         */
         if mat.get_texture_count(AiTextureType::Opacity) > 0 {
-            let tex = mat.get_texture(AiTextureType::Opacity, 0)?;
-            let buf = PathBuf::from(base_path).join(tex);
-            let texture = Texture2D::try_from_file(buf, false)?;
+            let texture = get_texture(base_path, mat, AiTextureType::Opacity)?;
             textures.insert("alphamap".to_string(), texture);
         }
         Ok(Self {
@@ -171,4 +165,15 @@ impl Material {
             k_spec,
         })
     }
+}
+
+fn get_texture(
+    base_path: &Path,
+    mat: &AMaterial<'_>,
+    texture_type: AiTextureType,
+) -> Result<Texture2D, MaterialConversionError> {
+    let tex = mat.get_texture(texture_type, 0)?;
+    let buf = PathBuf::from(base_path).join(tex);
+    let t = Texture2D::try_from_file(buf, false)?;
+    Ok(t)
 }
