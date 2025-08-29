@@ -156,13 +156,13 @@ impl Material {
             let texture = Texture2D::try_from_file(buf, false)?;
             textures.insert("normalmap".to_string(), texture);
         }
-
+        */
         if mat.get_texture_count(AiTextureType::Opacity) > 0 {
             let tex = mat.get_texture(AiTextureType::Opacity, 0)?;
             let buf = PathBuf::from(base_path).join(tex);
             let texture = Texture2D::try_from_file(buf, false)?;
             textures.insert("alphamap".to_string(), texture);
-        }*/
+        }
         Ok(Self {
             name,
             textures,
