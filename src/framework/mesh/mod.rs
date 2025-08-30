@@ -257,14 +257,14 @@ where
         materials.push(rc);
     }
 
-    for mesh in scene.mesh_iter() {
-        let index = mesh.material_index as usize;
+    for aimesh in scene.mesh_iter() {
+        let index = aimesh.material_index as usize;
         let material = materials
             .get(index)
             .ok_or_else(|| MeshLoadError::MaterialNotFound(index))?
             .clone();
 
-        let mesh = Mesh::from_ai_mesh(&mesh)?;
+        let mesh = Mesh::from_ai_mesh(&aimesh)?;
 
         let drawelement = Drawelement { material, mesh };
         drawelements.push(drawelement);
