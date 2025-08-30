@@ -89,9 +89,9 @@ impl Material {
     }
 
     pub fn from_ai_mesh(
-        base_path: &Path,
-        name: String,
         mat: &AMaterial,
+        name: String,
+        base_path: &Path,
     ) -> Result<Self, MaterialConversionError> {
         let diff = Vec3::from(mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0)?);
         let k_diff = diff.expand(1.0);

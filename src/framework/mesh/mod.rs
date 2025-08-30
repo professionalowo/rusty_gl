@@ -253,14 +253,14 @@ where
                 0,
             )
             .map_err(MaterialConversionError::AiError)?;
-        let rc = Rc::new(Material::from_ai_mesh(base_path, name, &mat)?);
+        let rc = Rc::new(Material::from_ai_mesh(&mat, name, base_path)?);
         materials.push(rc);
     }
 
     for mesh in scene.mesh_iter() {
         let index = mesh.material_index as usize;
         let material = materials
-            .get_mut(index)
+            .get(index)
             .ok_or_else(|| MeshLoadError::MaterialNotFound(index))?
             .clone();
 
