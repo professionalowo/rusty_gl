@@ -1,7 +1,7 @@
 use crate::gl;
 use std::{
     fmt,
-    path::{Path, PathBuf},
+    path::Path,
 };
 
 pub struct Shader(u32);
