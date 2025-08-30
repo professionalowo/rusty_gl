@@ -30,3 +30,37 @@ impl Uniform for &Vec4<f32> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_vec4_rgba() {
+        let color = Vec4::rgba(1.0, 0.0, 0.0, 1.0);
+        assert_eq!(color.x, 1.0);
+        assert_eq!(color.y, 0.0);
+        assert_eq!(color.z, 0.0);
+        assert_eq!(color.w, 1.0);
+    }
+
+    #[test]
+    fn test_vec4_from_color4d() {
+        let color = assimp::Color4D::new(1.0, 0.0, 0.0, 1.0);
+        let vec4: Vec4<f32> = color.into();
+        assert_eq!(vec4.x, 1.0);
+        assert_eq!(vec4.y, 0.0);
+        assert_eq!(vec4.z, 0.0);
+        assert_eq!(vec4.w, 1.0);
+    }
+
+    #[test]
+    fn test_vec4_to_color4d() {
+        let vec4 = Vec4::rgba(1.0, 0.0, 0.0, 1.0);
+        let color: assimp::Color4D = vec4.into();
+        assert_eq!(color.r, 1.0);
+        assert_eq!(color.g, 0.0);
+        assert_eq!(color.b, 0.0);
+        assert_eq!(color.a, 1.0);
+    }
+}

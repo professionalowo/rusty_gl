@@ -1,12 +1,6 @@
 use std::ops::{Add, AddAssign, Mul, Neg, Sub, SubAssign};
 
-use crate::{
-    gl::{
-        self,
-        uniform::{UniformLocation, uniform_trait::Uniform},
-    },
-    math::Scalar,
-};
+use crate::{math::Scalar};
 
 pub mod f32;
 
