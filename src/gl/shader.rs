@@ -1,5 +1,8 @@
 use crate::gl;
-use std::{fmt, path::PathBuf};
+use std::{
+    fmt,
+    path::{Path, PathBuf},
+};
 
 pub struct Shader(u32);
 
@@ -33,7 +36,10 @@ impl fmt::Display for ShaderError {
 }
 
 impl Shader {
-    pub fn try_from_path(shader_type: u32, path: PathBuf) -> Result<Self, ShaderError> {
+    pub fn try_from_path<P>(shader_type: u32, path: P) -> Result<Self, ShaderError>
+    where
+        P: AsRef<Path>,
+    {
         let source = std::fs::read_to_string(path)?;
         Self::try_from_str(shader_type, &source)
     }

@@ -1,4 +1,9 @@
-use std::{ffi::CString, fmt, path::PathBuf, rc::Rc};
+use std::{
+    ffi::CString,
+    fmt,
+    path::{Path, PathBuf},
+    rc::Rc,
+};
 
 use assimp::Scene;
 use assimp_sys::AiVector3D;
@@ -215,10 +220,14 @@ impl From<MaterialConversionError> for MeshLoadError {
     }
 }
 
-pub fn load_mesh(path: PathBuf, normalize: bool) -> Result<Box<[Drawelement]>, MeshLoadError> {
+pub fn load_mesh<P>(path: P, normalize: bool) -> Result<Box<[Drawelement]>, MeshLoadError>
+where
+    P: AsRef<Path>,
+{
+    let path = path.as_ref();
     let base_path = path
         .parent()
-        .ok_or_else(|| MeshLoadError::InvalidPath(path.clone()))?;
+        .ok_or_else(|| MeshLoadError::InvalidPath(path.to_path_buf()))?;
 
     let mut importer = assimp::Importer::new();
     importer.triangulate(true);
@@ -226,7 +235,7 @@ pub fn load_mesh(path: PathBuf, normalize: bool) -> Result<Box<[Drawelement]>, M
 
     let path_str = &path
         .to_str()
-        .ok_or(MeshLoadError::InvalidPath(path.clone()))?;
+        .ok_or_else(|| MeshLoadError::InvalidPath(path.to_path_buf()))?;
     let mut scene = importer.read_file(path_str)?;
 
     if normalize {

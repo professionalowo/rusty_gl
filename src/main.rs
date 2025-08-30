@@ -21,7 +21,9 @@ const BACKGROUND: Vec3<f32> = Vec3::rgb(0.12, 0.12, 0.12);
 
 fn main() {
     let mut args = std::env::args();
-    let entrypoint = args.nth(1).expect("No object specified, please pass an obj file as the first argument");
+    let entrypoint = args
+        .nth(1)
+        .expect("No object specified, please pass an obj file as the first argument");
 
     glfw::init().expect("Failed to initialize GLFW");
 
@@ -171,9 +173,7 @@ fn main() {
 #[allow(dead_code)]
 fn get_model_file_path(filename: &str) -> PathBuf {
     let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
-    PathBuf::from(manifest_dir)
-        .join("render-data")
-        .join(filename)
+    PathBuf::from(manifest_dir).join(filename)
 }
 
 #[allow(dead_code)]
