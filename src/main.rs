@@ -21,7 +21,7 @@ const BACKGROUND: Vec3<f32> = Vec3::rgb(0.12, 0.12, 0.12);
 
 fn main() {
     let mut args = std::env::args();
-    let entrypoint = args.nth(1).expect("No object specified");
+    let entrypoint = args.nth(1).expect("No object specified, please pass an obj file as the first argument");
 
     glfw::init().expect("Failed to initialize GLFW");
 
