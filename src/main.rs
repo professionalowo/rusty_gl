@@ -111,7 +111,7 @@ fn main() {
             gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
             let aspect_ratio = window.aspect_ratio();
-            for element in scene.iter() {
+            for element in &scene {
                 element
                     .bind(&program, &camera, aspect_ratio)
                     .expect("Failed to bind element");
