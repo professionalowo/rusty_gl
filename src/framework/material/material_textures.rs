@@ -24,7 +24,7 @@ impl MaterialTextures {
     }
 
     pub fn has_texture(&self, texture_type: MaterialTextureType) -> bool {
-		self[texture_type].is_some()
+        self[texture_type].is_some()
     }
 
     pub fn bind(&self, program: &Program) -> Result<(), UniformLocationError> {

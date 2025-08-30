@@ -1,8 +1,5 @@
 use crate::gl;
-use std::{
-    fmt,
-    path::Path,
-};
+use std::{fmt, path::Path};
 
 pub struct Shader(u32);
 
