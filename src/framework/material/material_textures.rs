@@ -1,3 +1,5 @@
+use std::ops::Index;
+
 use crate::{
     framework::texture::Texture2D,
     gl::{program::Program, uniform::UniformLocationError},
@@ -21,13 +23,8 @@ impl MaterialTextures {
         }
     }
 
-    pub const fn has_texture(&self, texture_type: MaterialTextureType) -> bool {
-        match texture_type {
-            MaterialTextureType::Diffuse => self.diffuse.is_some(),
-            MaterialTextureType::Specular => self.specular.is_some(),
-            MaterialTextureType::NormalMap => self.normalmap.is_some(),
-            MaterialTextureType::AlphaMap => self.alphamap.is_some(),
-        }
+    pub fn has_texture(&self, texture_type: MaterialTextureType) -> bool {
+		self[texture_type].is_some()
     }
 
     pub fn bind(&self, program: &Program) -> Result<(), UniformLocationError> {
@@ -62,6 +59,18 @@ impl MaterialTextures {
         let _ = &self.specular.as_ref().inspect(|t| t.unbind());
         let _ = &self.normalmap.as_ref().inspect(|t| t.unbind());
         let _ = &self.alphamap.as_ref().inspect(|t| t.unbind());
+    }
+}
+
+impl Index<MaterialTextureType> for MaterialTextures {
+    type Output = Option<Texture2D>;
+    fn index(&self, index: MaterialTextureType) -> &Self::Output {
+        match index {
+            MaterialTextureType::AlphaMap => &self.alphamap,
+            MaterialTextureType::Diffuse => &self.diffuse,
+            MaterialTextureType::NormalMap => &self.normalmap,
+            MaterialTextureType::Specular => &self.specular,
+        }
     }
 }
 
