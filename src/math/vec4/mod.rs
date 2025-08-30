@@ -8,6 +8,8 @@ use crate::{
     math::Scalar,
 };
 
+pub mod f32;
+
 #[repr(C)]
 #[derive(Clone, Default, Copy, Debug, PartialEq, Eq)]
 pub struct Vec4<T: Copy> {
@@ -133,14 +135,5 @@ impl<T: Copy> From<(T, T, T, T)> for Vec4<T> {
 impl<T: Copy> From<[T; 4]> for Vec4<T> {
     fn from([x, y, z, w]: [T; 4]) -> Self {
         Self::new(x, y, z, w)
-    }
-}
-
-impl Uniform for &Vec4<f32> {
-    type Options = ();
-    fn set(&self, _options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
-        unsafe {
-            gl::glUniform4f(*location, self.x, self.y, self.z, self.w);
-        }
     }
 }
