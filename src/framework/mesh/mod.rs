@@ -22,7 +22,7 @@ use crate::{
     math::{Scalar, vec2::Vec2, vec3::Vec3},
 };
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct VboData {
     pub vbo: VertexBufferObject,
     pub buffer_type: gl::GLenum,
@@ -46,7 +46,7 @@ impl Mesh {
             ibo: VertexBufferObject::gen_buffers(),
             num_vertices: 0,
             num_indices: 0,
-            vbos: [None, None, None, None],
+            vbos: Default::default(),
             primitive_type: gl::GL_TRIANGLES,
         }
     }
