@@ -17,7 +17,7 @@ use rusty_gl::glfw::window::Window;
 use rusty_gl::math::mat4::Mat4;
 use rusty_gl::math::vec3::Vec3;
 
-const BACKGROUND: Vec3<f32> = Vec3::rgb(0.12, 0.12, 0.12);
+const BACKGROUND: Vec3<f32> = Vec3::rgb(0.0, 0.1, 0.333);
 
 fn main() {
     let mut args = std::env::args();
