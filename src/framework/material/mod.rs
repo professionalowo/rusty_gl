@@ -4,6 +4,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use assimp::Color3D;
 use assimp_sys::AiTextureType;
 
 use crate::{
@@ -102,38 +103,20 @@ impl Material {
         let amb = Vec3::from(mat.get_material_color(CString::new("$clr.ambient")?, 0, 0)?);
         let k_amb = amb.expand(1.0);
 
-        let mut textures = MaterialTextures::new();
+        let mut textures = MaterialTextures::default();
 
         if mat.get_texture_count(AiTextureType::Diffuse) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Diffuse)?;
             textures.diffuse = Some(texture);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0) {
-            let texture = Texture2D::from_data(
-                1,
-                1,
-                gl::GL_RGB32F as i32,
-                gl::GL_RGB,
-                gl::GL_FLOAT,
-                &[col.r],
-                false,
-            )?;
-            textures.specular = Some(texture);
+            textures.specular = Some(get_color(col)?);
         }
 
         if mat.get_texture_count(AiTextureType::Specular) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Specular)?;
             textures.specular = Some(texture);
         } else if let Ok(col) = mat.get_material_color(CString::new("$clr.specular")?, 0, 0) {
-            let texture = Texture2D::from_data(
-                1,
-                1,
-                gl::GL_RGB32F as i32,
-                gl::GL_RGB,
-                gl::GL_FLOAT,
-                &[col.r],
-                false,
-            )?;
-            textures.specular = Some(texture);
+            textures.specular = Some(get_color(col)?);
         }
 
         /*
@@ -156,6 +139,18 @@ impl Material {
             k_spec,
         })
     }
+}
+
+fn get_color(col: Color3D) -> Result<Texture2D, TextureError> {
+    Texture2D::from_data(
+        1,
+        1,
+        gl::GL_RGB32F as i32,
+        gl::GL_RGB,
+        gl::GL_FLOAT,
+        &[col.r],
+        false,
+    )
 }
 
 fn get_texture(

@@ -14,15 +14,6 @@ pub struct MaterialTextures {
 }
 
 impl MaterialTextures {
-    pub const fn new() -> Self {
-        Self {
-            diffuse: None,
-            specular: None,
-            normalmap: None,
-            alphamap: None,
-        }
-    }
-
     pub fn has_texture(&self, texture_type: MaterialTextureType) -> bool {
         self[texture_type].is_some()
     }
