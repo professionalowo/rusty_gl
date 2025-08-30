@@ -4,14 +4,15 @@ use crate::gl::{
     uniform::{UniformLocation, uniform_trait::Uniform},
 };
 
+impl Vec4<f32> {
+    pub const fn rgba(r: f32, g: f32, b: f32, a: f32) -> Self {
+        Self::new(r, g, b, a)
+    }
+}
+
 impl From<assimp::Color4D> for Vec4<f32> {
-    fn from(color: assimp::Color4D) -> Self {
-        Self {
-            x: color.r,
-            y: color.g,
-            z: color.b,
-            w: color.a,
-        }
+    fn from(c: assimp::Color4D) -> Self {
+        Self::rgba(c.r, c.g, c.b, c.a)
     }
 }
 
