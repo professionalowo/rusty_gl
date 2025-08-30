@@ -258,16 +258,15 @@ where
     }
 
     for aimesh in scene.mesh_iter() {
+        let mesh = Mesh::from_ai_mesh(&aimesh)?;
+
         let index = aimesh.material_index as usize;
         let material = materials
             .get(index)
             .ok_or_else(|| MeshLoadError::MaterialNotFound(index))?
             .clone();
 
-        let mesh = Mesh::from_ai_mesh(&aimesh)?;
-
-        let drawelement = Drawelement { material, mesh };
-        drawelements.push(drawelement);
+        drawelements.push(Drawelement { material, mesh });
     }
     Ok(drawelements.into_boxed_slice())
 }
@@ -277,9 +276,8 @@ fn normalize_scene(scene: &mut Scene<'_>) {
     let mut bb_max = Vec3::scalar(f32::MIN);
 
     for mesh in scene.mesh_iter() {
-        for v in mesh.vertex_iter() {
-            bb_min = Vec3::min(bb_min, v.into());
-            bb_max = Vec3::max(bb_max, v.into());
+        for v in mesh.vertex_iter().map(Vec3::from) {
+            (bb_min, bb_max) = bb(bb_min, bb_max, v);
         }
     }
 
@@ -291,12 +289,16 @@ fn normalize_scene(scene: &mut Scene<'_>) {
     let scale_f = scale_v.x.min(scale_v.y).min(scale_v.z);
 
     for mesh in scene.mesh_iter() {
-        for (i, v) in mesh.vertex_iter().enumerate() {
-            let vec = (Vec3::from(v) - center) * Scalar(scale_f);
+        for (index, vector) in mesh.vertex_iter().enumerate() {
+            let vec = (Vec3::from(vector) - center) * Scalar(scale_f);
             let ai = AiVector3D::from(vec);
             unsafe {
-                mesh.vertices.add(i).write(ai);
+                mesh.vertices.add(index).write(ai);
             }
         }
     }
+}
+
+const fn bb(min: Vec3<f32>, max: Vec3<f32>, v: Vec3<f32>) -> (Vec3<f32>, Vec3<f32>) {
+    (Vec3::min(min, v), Vec3::max(max, v))
 }

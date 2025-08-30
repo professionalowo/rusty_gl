@@ -199,4 +199,18 @@ mod tests {
         let vec: Vec3<f32> = Vec3::from(assimp_vec);
         assert_eq!(vec, Vec3::new(1.0, 2.0, 3.0));
     }
+
+    #[test]
+    fn test_vec3_max() {
+        let a = Vec3::new(1.0, 2.0, 3.0);
+        let b = Vec3::new(4.0, 5.0, 6.0);
+        assert_eq!(Vec3::max(a, b), Vec3::new(4.0, 5.0, 6.0));
+    }
+
+    #[test]
+    fn test_vec3_min() {
+        let a = Vec3::new(1.0, 2.0, 3.0);
+        let b = Vec3::new(4.0, 5.0, 6.0);
+        assert_eq!(Vec3::min(a, b), Vec3::new(1.0, 2.0, 3.0));
+    }
 }
