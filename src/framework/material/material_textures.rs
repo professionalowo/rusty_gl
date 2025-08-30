@@ -98,10 +98,10 @@ pub enum MaterialTextureType {
 impl AsRef<str> for MaterialTextureType {
     fn as_ref(&self) -> &str {
         match self {
-            MaterialTextureType::Diffuse => "diffuse",
-            MaterialTextureType::Specular => "specular",
-            MaterialTextureType::NormalMap => "normalmap",
-            MaterialTextureType::AlphaMap => "alphamap",
+            Self::Diffuse => "diffuse",
+            Self::Specular => "specular",
+            Self::NormalMap => "normalmap",
+            Self::AlphaMap => "alphamap",
         }
     }
 }
