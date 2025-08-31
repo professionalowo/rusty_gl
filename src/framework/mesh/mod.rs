@@ -217,7 +217,10 @@ impl From<MaterialConversionError> for MeshLoadError {
     }
 }
 
-pub fn load_mesh<P>(path: P, normalize: NormalizeOptions) -> Result<Box<[Drawelement]>, MeshLoadError>
+pub fn load_mesh<P>(
+    path: P,
+    normalize: NormalizeOptions,
+) -> Result<Box<[Drawelement]>, MeshLoadError>
 where
     P: AsRef<Path>,
 {
@@ -280,22 +283,46 @@ impl NormalizeOptions {
     }
 }
 
+#[derive(Debug)]
+struct BoundingBox {
+    pub min: Vec3<f32>,
+    pub max: Vec3<f32>,
+}
+
+impl BoundingBox {
+    const fn infinity() -> Self {
+        Self {
+            min: Vec3::scalar(f32::MAX),
+            max: Vec3::scalar(f32::MIN),
+        }
+    }
+
+    const fn bb(&mut self, v: Vec3<f32>) {
+        (self.min, self.max) = (Vec3::min(self.min, v), Vec3::max(self.max, v))
+    }
+
+    fn center(&self) -> Vec3<f32> {
+        Scalar(0.5) * (self.min + self.max)
+    }
+}
+
 fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
-    let mut bb_min = Vec3::scalar(f32::MAX);
-    let mut bb_max = Vec3::scalar(f32::MIN);
+    let mut bbox = BoundingBox::infinity();
 
     for mesh in scene.mesh_iter() {
         for v in mesh.vertex_iter().map(Vec3::from) {
-            (bb_min, bb_max) = bb(bb_min, bb_max, v);
+            bbox.bb(v);
         }
     }
-	let s = scale as f32;
-    let center = Scalar(0.5) * (bb_min + bb_max);
+    let s = scale as f32;
+
     let min = Vec3::scalar(-s);
     let max = Vec3::scalar(s);
 
-    let scale_v = (max - min) / (bb_max - bb_min);
-    let scale_f = scale_v.x.min(scale_v.y).min(scale_v.z);
+    let scale_v = (max - min) / (max - min);
+    let scale_f = Vec3::cmin(scale_v);
+
+    let center = bbox.center();
 
     for mesh in scene.mesh_iter() {
         for (index, vector) in mesh.vertex_iter().enumerate() {
@@ -306,8 +333,4 @@ fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
             }
         }
     }
-}
-
-const fn bb(min: Vec3<f32>, max: Vec3<f32>, v: Vec3<f32>) -> (Vec3<f32>, Vec3<f32>) {
-    (Vec3::min(min, v), Vec3::max(max, v))
 }

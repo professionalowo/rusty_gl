@@ -104,6 +104,14 @@ impl Vec3<f32> {
     pub fn pow(Self { x, y, z }: Self, b: Self) -> Self {
         Self::new(x.powf(b.x), y.powf(b.y), z.powf(b.z))
     }
+
+    pub const fn cmin(Self { x, y, z }: Self) -> f32 {
+        x.min(y).min(z)
+    }
+
+    pub const fn cmax(Self { x, y, z }: Self) -> f32 {
+        x.max(y).max(z)
+    }
 }
 
 impl Div<f32> for Vec3<f32> {
