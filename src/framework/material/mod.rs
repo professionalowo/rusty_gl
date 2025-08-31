@@ -11,7 +11,7 @@ use assimp_sys::AiTextureType;
 use crate::{
     framework::{
         assimp::{AMaterial, AiError},
-        material::material_textures::MaterialTextures,
+        material::{material_color::MaterialKey, material_textures::MaterialTextures},
         texture::TextureError,
     },
     gl::{self, program::Program, uniform::UniformLocationError},
@@ -96,11 +96,11 @@ impl Material {
         name: String,
         base_path: &Path,
     ) -> Result<Self, MaterialConversionError> {
-        let k_diff = Vec3::from(material_color(mat, AiTextureType::Diffuse)?).expand(1.0);
+        let k_diff = get_plain_color(mat, AiTextureType::Diffuse)?;
 
-        let k_spec = Vec3::from(material_color(mat, AiTextureType::Specular)?).expand(1.0);
+        let k_spec = get_plain_color(mat, AiTextureType::Specular)?;
 
-        let k_amb = Vec3::from(material_color(mat, AiTextureType::Ambient)?).expand(1.0);
+        let k_amb = get_plain_color(mat, AiTextureType::Ambient)?;
 
         let diffuse = get_texture_option(AiTextureType::Diffuse, mat, base_path)?;
 
@@ -150,6 +150,13 @@ fn get_color(col: Color3D) -> Result<Texture2D, TextureError> {
         &[col.r],
         false,
     )
+}
+
+fn get_plain_color<K>(mat: &AMaterial<'_>, key: K) -> Result<Vec4<f32>, MaterialConversionError>
+where
+    K: MaterialKey,
+{
+    Ok(Vec3::from(material_color(mat, key)?).expand(1.0))
 }
 
 fn get_texture_option(
