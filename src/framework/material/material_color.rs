@@ -35,10 +35,7 @@ pub(super) fn material_color<K>(
 where
     K: MaterialKey,
 {
-    mat.get_material_color(
-        key.c_string().map_err(MaterialConversionError::NulError)?,
-        0,
-        0,
-    )
-    .map_err(MaterialConversionError::AiError)
+    let cstring = key.c_string().map_err(MaterialConversionError::NulError)?;
+    mat.get_material_color(cstring, 0, 0)
+        .map_err(MaterialConversionError::AiError)
 }

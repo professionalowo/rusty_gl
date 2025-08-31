@@ -58,7 +58,7 @@ impl fmt::Display for MaterialConversionError {
     }
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Material {
     pub name: String,
     pub textures: MaterialTextures,
@@ -102,23 +102,34 @@ impl Material {
 
         let k_amb = Vec3::from(material_color(mat, AiTextureType::Ambient)?).expand(1.0);
 
-        let mut textures = MaterialTextures::default();
+        let diffuse = get_texture_option(AiTextureType::Diffuse, mat, base_path)?;
 
-        textures.diffuse = get_texture_option(AiTextureType::Diffuse, mat, base_path)?;
+        let specular = get_texture_option(AiTextureType::Specular, mat, base_path)?;
 
-        textures.specular = get_texture_option(AiTextureType::Specular, mat, base_path)?;
-
+        let normalmap = None;
         /*
-        if mat.get_texture_count(AiTextureType::Height) > 0 {
+        let normalmap = if mat.get_texture_count(AiTextureType::Height) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Height)?;
-            textures.normalmap = Some(texture);
-        }
+            Some(texture)
+        } else {
+            None
+        };
         */
 
-        if mat.get_texture_count(AiTextureType::Opacity) > 0 {
+        let alphamap = if mat.get_texture_count(AiTextureType::Opacity) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Opacity)?;
-            textures.alphamap = Some(texture);
-        }
+            Some(texture)
+        } else {
+            None
+        };
+
+        let textures = MaterialTextures {
+            diffuse,
+            alphamap,
+            normalmap,
+            specular,
+        };
+
         Ok(Self {
             name,
             textures,
