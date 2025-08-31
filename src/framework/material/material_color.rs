@@ -23,7 +23,7 @@ impl MaterialKey for AiTextureType {
             Self::Diffuse => "$clr.diffuse",
             Self::Ambient => "$clr.ambient",
             Self::Specular => "$clr.specular",
-            _ => "",
+            x => todo!("MaterialKey for {:?} is not implemented", x),
         }
     }
 }
