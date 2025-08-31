@@ -64,8 +64,8 @@ fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
     let center = bbox.center();
 
     for mesh in scene.mesh_iter() {
-        for (index, vector) in mesh.vertex_iter().enumerate() {
-            let vec = scale_f * (Vec3::from(vector) - center);
+        for (index, vector) in mesh.vertex_iter().map(Vec3::from).enumerate() {
+            let vec = scale_f * (vector - center);
             let ai = AiVector3D::from(vec);
             unsafe {
                 mesh.vertices.add(index).write(ai);
