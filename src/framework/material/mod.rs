@@ -1,8 +1,9 @@
 use std::{
-    ffi::CString,
     fmt,
     path::{Path, PathBuf},
 };
+
+use material_color::material_color;
 
 use assimp::Color3D;
 use assimp_sys::AiTextureType;
@@ -19,6 +20,7 @@ use crate::{
 
 use super::texture::Texture2D;
 
+mod material_color;
 pub mod material_textures;
 
 #[derive(Debug)]
@@ -94,28 +96,25 @@ impl Material {
         name: String,
         base_path: &Path,
     ) -> Result<Self, MaterialConversionError> {
-        let diff = Vec3::from(mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0)?);
-        let k_diff = diff.expand(1.0);
+        let k_diff = Vec3::from(material_color(mat, AiTextureType::Diffuse)?).expand(1.0);
 
-        let spec = Vec3::from(mat.get_material_color(CString::new("$clr.specular")?, 0, 0)?);
-        let k_spec = spec.expand(1.0);
+        let k_spec = Vec3::from(material_color(mat, AiTextureType::Specular)?).expand(1.0);
 
-        let amb = Vec3::from(mat.get_material_color(CString::new("$clr.ambient")?, 0, 0)?);
-        let k_amb = amb.expand(1.0);
+        let k_amb = Vec3::from(material_color(mat, AiTextureType::Ambient)?).expand(1.0);
 
         let mut textures = MaterialTextures::default();
 
         if mat.get_texture_count(AiTextureType::Diffuse) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Diffuse)?;
             textures.diffuse = Some(texture);
-        } else if let Ok(col) = mat.get_material_color(CString::new("$clr.diffuse")?, 0, 0) {
+        } else if let Ok(col) = material_color(mat, AiTextureType::Diffuse) {
             textures.specular = Some(get_color(col)?);
         }
 
         if mat.get_texture_count(AiTextureType::Specular) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Specular)?;
             textures.specular = Some(texture);
-        } else if let Ok(col) = mat.get_material_color(CString::new("$clr.specular")?, 0, 0) {
+        } else if let Ok(col) = material_color(mat, AiTextureType::Specular) {
             textures.specular = Some(get_color(col)?);
         }
 
