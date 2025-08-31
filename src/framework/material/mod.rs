@@ -104,28 +104,17 @@ impl Material {
 
         let mut textures = MaterialTextures::default();
 
-        if mat.get_texture_count(AiTextureType::Diffuse) > 0 {
-            let texture = get_texture(base_path, mat, AiTextureType::Diffuse)?;
-            textures.diffuse = Some(texture);
-        } else if let Ok(col) = material_color(mat, AiTextureType::Diffuse) {
-            textures.specular = Some(get_color(col)?);
-        }
+        textures.diffuse = get_texture_option(AiTextureType::Diffuse, mat, base_path)?;
 
-        if mat.get_texture_count(AiTextureType::Specular) > 0 {
-            let texture = get_texture(base_path, mat, AiTextureType::Specular)?;
-            textures.specular = Some(texture);
-        } else if let Ok(col) = material_color(mat, AiTextureType::Specular) {
-            textures.specular = Some(get_color(col)?);
-        }
+        textures.specular = get_texture_option(AiTextureType::Specular, mat, base_path)?;
 
         /*
         if mat.get_texture_count(AiTextureType::Height) > 0 {
-            let tex = mat.get_texture(AiTextureType::Height, 0)?;
-            let buf = PathBuf::from(base_path).join(tex);
-            let texture = Texture2D::try_from_file(buf, false)?;
-            textures.insert("normalmap".to_string(), texture);
+            let texture = get_texture(base_path, mat, AiTextureType::Height)?;
+            textures.normalmap = Some(texture);
         }
         */
+
         if mat.get_texture_count(AiTextureType::Opacity) > 0 {
             let texture = get_texture(base_path, mat, AiTextureType::Opacity)?;
             textures.alphamap = Some(texture);
@@ -150,6 +139,22 @@ fn get_color(col: Color3D) -> Result<Texture2D, TextureError> {
         &[col.r],
         false,
     )
+}
+
+fn get_texture_option(
+    texture_type: AiTextureType,
+    mat: &AMaterial<'_>,
+    base_path: &Path,
+) -> Result<Option<Texture2D>, MaterialConversionError> {
+    let text = if mat.get_texture_count(texture_type) > 0 {
+        let texture = get_texture(base_path, mat, texture_type)?;
+        Some(texture)
+    } else if let Ok(col) = material_color(mat, texture_type) {
+        Some(get_color(col)?)
+    } else {
+        None
+    };
+    Ok(text)
 }
 
 fn get_texture(
