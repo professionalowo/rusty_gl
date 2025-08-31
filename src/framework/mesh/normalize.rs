@@ -6,14 +6,16 @@ use crate::math::{Scalar, vec3::Vec3};
 #[derive(Debug)]
 pub enum NormalizeOptions {
     Scale(u32),
+    One,
     None,
 }
 
 impl NormalizeOptions {
     pub fn normalize_scene(&self, scene: &mut Scene<'_>) {
         match self {
-            Self::None => {}
+            Self::One => normalize_scene(scene, 1),
             Self::Scale(scale) => normalize_scene(scene, *scale),
+            Self::None => {}
         }
     }
 }
@@ -54,15 +56,15 @@ fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
     let min = Vec3::scalar(-s);
     let max = Vec3::scalar(s);
 
-    let span = max - min;
+    let scale_v = (max - min) / (bbox.max - bbox.min);
 
-    let scale_f = Vec3::cmin(span / span);
+    let scale_f = Scalar(Vec3::cmin(scale_v));
 
     let center = bbox.center();
 
     for mesh in scene.mesh_iter() {
         for (index, vector) in mesh.vertex_iter().enumerate() {
-            let vec = (Vec3::from(vector) - center) * Scalar(scale_f);
+            let vec = scale_f * (Vec3::from(vector) - center);
             let ai = AiVector3D::from(vec);
             unsafe {
                 mesh.vertices.add(index).write(ai);
