@@ -54,8 +54,9 @@ fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
     let min = Vec3::scalar(-s);
     let max = Vec3::scalar(s);
 
-    let scale_v = (max - min) / (max - min);
-    let scale_f = Vec3::cmin(scale_v);
+    let span = max - min;
+
+    let scale_f = Vec3::cmin(span / span);
 
     let center = bbox.center();
 
