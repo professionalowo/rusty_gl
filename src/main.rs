@@ -3,7 +3,8 @@ use std::path::PathBuf;
 
 use rusty_gl::framework::camera::Camera;
 use rusty_gl::framework::material::material_textures::MaterialTextureType;
-use rusty_gl::framework::mesh::{self, NormalizeOptions};
+use rusty_gl::framework::mesh;
+use rusty_gl::framework::mesh::normalize::NormalizeOptions;
 use rusty_gl::framework::timer::Timer;
 use rusty_gl::gl;
 use rusty_gl::gl::program::Program;
