@@ -27,10 +27,10 @@ struct BoundingBox {
 }
 
 impl BoundingBox {
-    const fn infinity() -> Self {
+    const fn new(min: f32, max: f32) -> Self {
         Self {
-            min: Vec3::scalar(f32::MAX),
-            max: Vec3::scalar(f32::MIN),
+            min: Vec3::scalar(min),
+            max: Vec3::scalar(max),
         }
     }
 
@@ -48,7 +48,7 @@ impl BoundingBox {
 }
 
 fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
-    let mut bbox = BoundingBox::infinity();
+    let mut bbox = BoundingBox::new(f32::MAX, f32::MIN);
 
     for mesh in scene.mesh_iter() {
         for v in mesh.vertex_iter().map(Vec3::from) {
