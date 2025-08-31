@@ -38,6 +38,10 @@ impl BoundingBox {
         (self.min, self.max) = (Vec3::min(self.min, v), Vec3::max(self.max, v))
     }
 
+    fn distance(&self) -> Vec3<f32> {
+        self.max - self.min
+    }
+
     fn center(&self) -> Vec3<f32> {
         Scalar(0.5) * (self.min + self.max)
     }
@@ -51,12 +55,9 @@ fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
             bbox.bb(v);
         }
     }
-    let s = scale as f32;
+    let s = (2 * scale) as f32;
 
-    let min = Vec3::scalar(-s);
-    let max = Vec3::scalar(s);
-
-    let scale_v = (max - min) / (bbox.max - bbox.min);
+    let scale_v = Vec3::scalar(s) / bbox.distance();
 
     let scale_f = Scalar(Vec3::cmin(scale_v));
 
