@@ -3,7 +3,7 @@ use std::path::PathBuf;
 
 use rusty_gl::framework::camera::Camera;
 use rusty_gl::framework::material::material_textures::MaterialTextureType;
-use rusty_gl::framework::mesh;
+use rusty_gl::framework::mesh::{self, NormalizeOptions};
 use rusty_gl::framework::timer::Timer;
 use rusty_gl::gl;
 use rusty_gl::gl::program::Program;
@@ -36,8 +36,8 @@ fn main() {
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
-    let scene =
-        mesh::load_mesh(get_model_file_path(&entrypoint), false).expect("Failed to load model");
+    let scene = mesh::load_mesh(get_model_file_path(&entrypoint), NormalizeOptions::False)
+        .expect("Failed to load model");
 
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))

@@ -217,7 +217,7 @@ impl From<MaterialConversionError> for MeshLoadError {
     }
 }
 
-pub fn load_mesh<P>(path: P, normalize: bool) -> Result<Box<[Drawelement]>, MeshLoadError>
+pub fn load_mesh<P>(path: P, normalize: NormalizeOptions) -> Result<Box<[Drawelement]>, MeshLoadError>
 where
     P: AsRef<Path>,
 {
@@ -235,9 +235,7 @@ where
         .ok_or_else(|| MeshLoadError::InvalidPath(path.to_path_buf()))?;
     let mut scene = importer.read_file(path_str)?;
 
-    if normalize {
-        normalize_scene(&mut scene);
-    }
+    normalize.normalize_scene(&mut scene);
 
     let mut drawelements: Vec<Drawelement> = Vec::with_capacity(scene.num_meshes() as usize);
     let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as usize);
@@ -268,7 +266,21 @@ where
     Ok(drawelements.into_boxed_slice())
 }
 
-fn normalize_scene(scene: &mut Scene<'_>) {
+pub enum NormalizeOptions {
+    False,
+    True(u32),
+}
+
+impl NormalizeOptions {
+    fn normalize_scene(&self, scene: &mut Scene<'_>) {
+        match self {
+            Self::False => {}
+            Self::True(scale) => normalize_scene(scene, *scale),
+        }
+    }
+}
+
+fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
     let mut bb_min = Vec3::scalar(f32::MAX);
     let mut bb_max = Vec3::scalar(f32::MIN);
 
@@ -277,10 +289,10 @@ fn normalize_scene(scene: &mut Scene<'_>) {
             (bb_min, bb_max) = bb(bb_min, bb_max, v);
         }
     }
-
+	let s = scale as f32;
     let center = Scalar(0.5) * (bb_min + bb_max);
-    let min = Vec3::scalar(-1.0);
-    let max = Vec3::scalar(1.0);
+    let min = Vec3::scalar(-s);
+    let max = Vec3::scalar(s);
 
     let scale_v = (max - min) / (bb_max - bb_min);
     let scale_f = scale_v.x.min(scale_v.y).min(scale_v.z);
