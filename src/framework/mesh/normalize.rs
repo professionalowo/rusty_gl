@@ -5,15 +5,15 @@ use crate::math::{Scalar, vec3::Vec3};
 
 #[derive(Debug)]
 pub enum NormalizeOptions {
-    False,
-    True(u32),
+    Scale(u32),
+    None,
 }
 
 impl NormalizeOptions {
     pub fn normalize_scene(&self, scene: &mut Scene<'_>) {
         match self {
-            Self::False => {}
-            Self::True(scale) => normalize_scene(scene, *scale),
+            Self::None => {}
+            Self::Scale(scale) => normalize_scene(scene, *scale),
         }
     }
 }

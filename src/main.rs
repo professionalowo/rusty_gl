@@ -37,7 +37,7 @@ fn main() {
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
-    let scene = mesh::load_mesh(get_model_file_path(&entrypoint), NormalizeOptions::False)
+    let scene = mesh::load_mesh(get_model_file_path(&entrypoint), NormalizeOptions::None)
         .expect("Failed to load model");
 
     let vertex_shader =
