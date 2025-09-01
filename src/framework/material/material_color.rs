@@ -4,21 +4,21 @@ use crate::framework::material::{AMaterial, MaterialConversionError};
 use assimp::Color3D;
 use assimp_sys::AiTextureType;
 pub(super) trait MaterialKey {
-    fn get_key(&self) -> &'static str;
+    fn get_key(&self) -> &str;
 
     fn c_string(&self) -> Result<CString, NulError> {
         CString::new(self.get_key())
     }
 }
 
-impl MaterialKey for &'static str {
-    fn get_key(&self) -> &'static str {
+impl MaterialKey for &str {
+    fn get_key(&self) -> &str {
         self
     }
 }
 
 impl MaterialKey for AiTextureType {
-    fn get_key(&self) -> &'static str {
+    fn get_key(&self) -> &str {
         match self {
             Self::Diffuse => "$clr.diffuse",
             Self::Ambient => "$clr.ambient",
