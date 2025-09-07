@@ -231,7 +231,7 @@ where
 
     let mut importer = assimp::Importer::new();
     importer.triangulate(true);
-    importer.generate_normals(|_| ());
+    importer.generate_normals(|opt| opt.smooth = true);
 
     let path_str = &path
         .to_str()
