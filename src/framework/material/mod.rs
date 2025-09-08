@@ -11,7 +11,8 @@ use assimp_sys::AiTextureType;
 use crate::{
     framework::{
         assimp::{AMaterial, AiError},
-        material::{material_color::MaterialKey, material_textures::MaterialTextures},
+        material::material_textures::MaterialTextures,
+        material_key::MaterialKey,
         texture::TextureError,
     },
     gl::{self, program::Program, uniform::UniformLocationError},

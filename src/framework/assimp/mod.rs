@@ -1,5 +1,5 @@
 use std::{
-    ffi::{CStr, CString, c_char, c_uint},
+    ffi::{CStr, NulError, c_char, c_uint},
     fmt,
     ops::Deref,
 };
@@ -9,6 +9,8 @@ use assimp_sys::{
     AiColor4D, AiString, AiTextureType, aiGetMaterialColor, aiGetMaterialString,
     aiGetMaterialTexture, aiGetMaterialTextureCount,
 };
+
+use crate::framework::material_key::MaterialKey;
 
 pub struct AMaterial<'a>(pub assimp::Material<'a>);
 
@@ -24,6 +26,13 @@ impl<'a> Deref for AMaterial<'a> {
 pub enum AiError {
     Failure,
     OutOfMemory,
+    NulError(NulError),
+}
+
+impl From<std::ffi::NulError> for AiError {
+    fn from(value: std::ffi::NulError) -> Self {
+        Self::NulError(value)
+    }
 }
 
 impl fmt::Display for AiError {
@@ -31,17 +40,21 @@ impl fmt::Display for AiError {
         match self {
             Self::Failure => writeln!(f, "Failure"),
             Self::OutOfMemory => writeln!(f, "Out of memory"),
+            Self::NulError(e) => fmt::Display::fmt(e, f),
         }
     }
 }
 
 impl<'a> AMaterial<'a> {
-    pub fn get_material_color(
+    pub fn get_material_color<K>(
         &self,
-        key: CString,
+        key: K,
         property_type: c_uint,
         index: c_uint,
-    ) -> Result<Color3D, AiError> {
+    ) -> Result<Color3D, AiError>
+    where
+        K: MaterialKey,
+    {
         let mut c = AiColor4D {
             r: 0.0,
             g: 0.0,
@@ -49,7 +62,13 @@ impl<'a> AMaterial<'a> {
             a: 0.0,
         };
         match unsafe {
-            aiGetMaterialColor(self.to_raw(), key.as_ptr(), property_type, index, &mut c)
+            aiGetMaterialColor(
+                self.to_raw(),
+                key.c_string()?.as_ptr(),
+                property_type,
+                index,
+                &mut c,
+            )
         } {
             assimp_sys::AiReturn::Success => {
                 let AiColor4D { r, g, b, .. } = c;
@@ -82,16 +101,25 @@ impl<'a> AMaterial<'a> {
         }
     }
 
-    pub fn get_material_string(
+    pub fn get_material_string<K>(
         &self,
-        key: CString,
+        key: K,
         property_type: u32,
         index: u32,
-    ) -> Result<String, AiError> {
+    ) -> Result<String, AiError>
+    where
+        K: MaterialKey,
+    {
         let mut str = AiString::default();
 
         match unsafe {
-            aiGetMaterialString(self.to_raw(), key.as_ptr(), property_type, index, &mut str)
+            aiGetMaterialString(
+                self.to_raw(),
+                key.c_string()?.as_ptr(),
+                property_type,
+                index,
+                &mut str,
+            )
         } {
             assimp_sys::AiReturn::Success => Ok(unsafe { AString::from_ai_string(&str) }),
             assimp_sys::AiReturn::Failure => Err(AiError::Failure),

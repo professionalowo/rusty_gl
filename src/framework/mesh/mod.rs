@@ -1,5 +1,4 @@
 use std::{
-    ffi::CString,
     fmt,
     path::{Path, PathBuf},
     rc::Rc,
@@ -10,6 +9,7 @@ use crate::{
         assimp::AMaterial,
         drawelement::Drawelement,
         material::{Material, MaterialConversionError},
+        material_key::MaterialKey,
         mesh::normalize::NormalizeOptions,
     },
     gl::{
@@ -217,6 +217,18 @@ impl From<MaterialConversionError> for MeshLoadError {
     }
 }
 
+enum MaterialProperty {
+    Name,
+}
+
+impl MaterialKey for MaterialProperty {
+    fn get_key(&self) -> &str {
+        match self {
+            Self::Name => "?mat.name",
+        }
+    }
+}
+
 pub fn load_mesh<P>(
     path: P,
     normalize: NormalizeOptions,
@@ -245,11 +257,7 @@ where
 
     for mat in scene.material_iter().map(AMaterial) {
         let name = mat
-            .get_material_string(
-                CString::new("?mat.name").map_err(MaterialConversionError::NulError)?,
-                0,
-                0,
-            )
+            .get_material_string(MaterialProperty::Name, 0, 0)
             .map_err(MaterialConversionError::AiError)?;
         let rc = Rc::new(Material::from_ai_mesh(&mat, name, base_path)?);
         materials.push(rc);

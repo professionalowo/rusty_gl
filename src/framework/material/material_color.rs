@@ -1,21 +1,9 @@
-use std::ffi::{CString, NulError};
-
-use crate::framework::material::{AMaterial, MaterialConversionError};
+use crate::framework::{
+    material::{AMaterial, MaterialConversionError},
+    material_key::MaterialKey,
+};
 use assimp::Color3D;
 use assimp_sys::AiTextureType;
-pub(super) trait MaterialKey {
-    fn get_key(&self) -> &str;
-
-    fn c_string(&self) -> Result<CString, NulError> {
-        CString::new(self.get_key())
-    }
-}
-
-impl MaterialKey for &str {
-    fn get_key(&self) -> &str {
-        self
-    }
-}
 
 impl MaterialKey for AiTextureType {
     fn get_key(&self) -> &str {
@@ -35,7 +23,6 @@ pub(super) fn material_color<K>(
 where
     K: MaterialKey,
 {
-    let cstring = key.c_string()?;
-    mat.get_material_color(cstring, 0, 0)
+    mat.get_material_color(key, 0, 0)
         .map_err(MaterialConversionError::AiError)
 }
