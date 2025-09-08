@@ -6,9 +6,7 @@
 include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
 use core::fmt;
-use std::{fs::File, path::Path};
-
-use memmap2::Mmap;
+use std::{fs::File, io::Read, path::Path};
 
 use crate::gl;
 
@@ -56,8 +54,11 @@ impl From<std::io::Error> for ImageError {
 
 impl ImageData {
     pub fn try_load(path: impl AsRef<Path>) -> Result<Self, ImageError> {
-        let file = &File::open(&path)?;
-        let ref data = unsafe { Mmap::map(file) }?;
+        let mut file = File::open(&path)?;
+        let metadata = file.metadata()?;
+        let mut buffer = Vec::with_capacity(metadata.len() as usize);
+        _ = file.read(&mut buffer)?;
+        let data = &buffer;
         if is_hdr(data) {
             load::try_loadf(data)
         } else {
