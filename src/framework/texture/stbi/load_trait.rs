@@ -25,7 +25,7 @@ pub(super) trait Load {
         width: &mut i32,
         height: &mut i32,
         channels: &mut i32,
-    ) -> *mut u8 {
+    ) -> *const u8 {
         let buffer = bytes.as_ref();
         unsafe {
             Self::load_from_memory(
@@ -36,6 +36,7 @@ pub(super) trait Load {
                 channels,
                 0,
             )
+            .cast_const()
         }
     }
 

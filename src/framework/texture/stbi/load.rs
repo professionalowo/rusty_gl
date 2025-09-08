@@ -1,3 +1,5 @@
+use std::slice;
+
 use super::{load_trait::*, *};
 
 pub(super) fn is_hdr(bytes: &[u8]) -> bool {
@@ -31,7 +33,7 @@ where
         width,
         height,
         format,
-        data,
+        data: Box::from(data),
         type_: L::TYPE.data(),
         internal_format,
     })
@@ -47,14 +49,15 @@ fn format_from_channels(channels: i32) -> gl::GLenum {
     }
 }
 
-struct LoadData {
+#[derive(Debug)]
+struct LoadData<'a> {
     width: i32,
     height: i32,
     channels: i32,
-    data: Box<[u8]>,
+    data: &'a [u8],
 }
 
-fn load<L>(bytes: impl AsRef<[u8]>) -> Result<LoadData, ImageError>
+fn load<'a, L>(bytes: &'a [u8]) -> Result<LoadData<'a>, ImageError>
 where
     L: Load,
 {
@@ -65,13 +68,10 @@ where
         let ptr = L::load(bytes, &mut width, &mut height, &mut channels);
         if ptr.is_null() {
             return Err(ImageError::StbiError(
-                failure_reason().unwrap_or_else(|| "Unknown error".to_string()),
+                failure_reason().unwrap_or_else(|| String::from("Unknown error")),
             ));
         }
-        Box::from_raw(std::slice::from_raw_parts_mut(
-            ptr,
-            (width * height * channels).try_into()?,
-        ))
+        slice::from_raw_parts(ptr, (width * height * channels).try_into()?)
     };
     Ok(LoadData {
         width,
