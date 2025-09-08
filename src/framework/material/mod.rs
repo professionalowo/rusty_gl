@@ -3,11 +3,11 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use material_color::material_color;
-
 use assimp::Color3D;
 use assimp_sys::AiTextureType;
+use material_color::material_color;
 
+use super::texture::Texture2D;
 use crate::{
     framework::{
         assimp::{AMaterial, AiError},
@@ -18,8 +18,6 @@ use crate::{
     gl::{self, program::Program, uniform::UniformLocationError},
     math::{vec3::Vec3, vec4::Vec4},
 };
-
-use super::texture::Texture2D;
 
 mod material_color;
 pub mod material_textures;

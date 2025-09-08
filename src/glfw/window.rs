@@ -1,13 +1,16 @@
-use std::cell::RefCell;
-use std::ffi::{CStr, CString, NulError, c_int, c_void};
-use std::rc::Rc;
+use std::{
+    cell::RefCell,
+    ffi::{CStr, CString, NulError, c_int, c_void},
+    rc::Rc,
+};
 
-use crate::glfw;
-use crate::glfw::GLFWError;
-use crate::glfw::input::KeyEvent;
-use crate::glfw::input::action::Action;
-use crate::glfw::input::keycode::Keycode;
-use crate::glfw::input::modifier::Modifier;
+use crate::{
+    glfw,
+    glfw::{
+        GLFWError,
+        input::{KeyEvent, action::Action, keycode::Keycode, modifier::Modifier},
+    },
+};
 pub struct Window {
     handle: *mut glfw::GLFWwindow,
     last_event: Rc<RefCell<Option<KeyEvent>>>,

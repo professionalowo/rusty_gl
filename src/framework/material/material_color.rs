@@ -1,9 +1,10 @@
+use assimp::Color3D;
+use assimp_sys::AiTextureType;
+
 use crate::framework::{
     material::{AMaterial, MaterialConversionError},
     material_key::MaterialKey,
 };
-use assimp::Color3D;
-use assimp_sys::AiTextureType;
 
 impl MaterialKey for AiTextureType {
     fn get_key(&self) -> &str {

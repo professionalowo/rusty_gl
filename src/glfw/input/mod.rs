@@ -1,6 +1,4 @@
-use self::action::Action;
-use self::keycode::Keycode;
-use self::modifier::Modifier;
+use self::{action::Action, keycode::Keycode, modifier::Modifier};
 
 pub mod action;
 pub mod keycode;

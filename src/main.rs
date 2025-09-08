@@ -1,23 +1,19 @@
-use std::f32::consts::PI;
-use std::path::PathBuf;
-use std::process::ExitCode;
+use std::{f32::consts::PI, path::PathBuf, process::ExitCode};
 
-use rusty_gl::framework::camera::Camera;
-use rusty_gl::framework::material::material_textures::MaterialTextureType;
-use rusty_gl::framework::mesh;
-use rusty_gl::framework::mesh::normalize::NormalizeOptions;
-use rusty_gl::framework::timer::Timer;
-use rusty_gl::gl;
-use rusty_gl::gl::program::Program;
-use rusty_gl::gl::shader::Shader;
-use rusty_gl::gl::vao::VertexArrayObject;
-use rusty_gl::glfw;
-use rusty_gl::glfw::input::KeyEvent;
-use rusty_gl::glfw::input::keycode::Keycode;
-use rusty_gl::glfw::input::modifier::Modifier;
-use rusty_gl::glfw::window::Window;
-use rusty_gl::math::mat4::Mat4;
-use rusty_gl::math::vec3::Vec3;
+use rusty_gl::{
+    framework::{
+        camera::Camera, material::material_textures::MaterialTextureType, mesh,
+        mesh::normalize::NormalizeOptions, timer::Timer,
+    },
+    gl,
+    gl::{program::Program, shader::Shader, vao::VertexArrayObject},
+    glfw,
+    glfw::{
+        input::{KeyEvent, keycode::Keycode, modifier::Modifier},
+        window::Window,
+    },
+    math::{mat4::Mat4, vec3::Vec3},
+};
 
 const BACKGROUND: Vec3<f32> = Vec3::rgb(0.0, 0.1, 0.333);
 

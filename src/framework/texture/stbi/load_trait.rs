@@ -1,6 +1,7 @@
+use std::ffi::c_int;
+
 use self::stbi_uc;
 use super::*;
-use std::ffi::c_int;
 pub(super) enum GlType {
     FLOAT,
     UNSIGNED_BYTE,
