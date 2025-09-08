@@ -52,14 +52,14 @@ impl From<std::io::Error> for ImageError {
     }
 }
 
-pub type StbiResult = std::result::Result<GlImageData, ImageError>;
+pub type ImageResult<T> = std::result::Result<T, ImageError>;
 
 impl GlImageData {
-    pub fn try_load(path: impl AsRef<Path>) -> StbiResult {
+    pub fn try_load(path: impl AsRef<Path>) -> ImageResult<Self> {
         fs::read(path).map(Self::try_load_from_memory)?
     }
 
-    pub fn try_load_from_memory(data: impl AsRef<[u8]>) -> StbiResult {
+    pub fn try_load_from_memory(data: impl AsRef<[u8]>) -> ImageResult<Self> {
         let bytes = data.as_ref();
         if load::is_hdr(bytes) {
             load::try_loadf(bytes)

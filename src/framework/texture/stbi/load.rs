@@ -6,15 +6,15 @@ pub(super) fn is_hdr(bytes: &[u8]) -> bool {
     unsafe { stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as i32) != 0 }
 }
 
-pub(super) fn try_loadf(bytes: &[u8]) -> StbiResult {
+pub(super) fn try_loadf(bytes: &[u8]) -> ImageResult<GlImageData> {
     try_load_opt::<LoadFloat>(bytes)
 }
 
-pub(super) fn try_load(bytes: &[u8]) -> StbiResult {
+pub(super) fn try_load(bytes: &[u8]) -> ImageResult<GlImageData> {
     try_load_opt::<LoadInt>(bytes)
 }
 
-fn try_load_opt<L>(bytes: &[u8]) -> StbiResult
+fn try_load_opt<L>(bytes: &[u8]) -> ImageResult<GlImageData>
 where
     L: Load,
 {
@@ -57,7 +57,7 @@ struct LoadData<'a> {
     data: &'a [u8],
 }
 
-fn load<'a, L>(bytes: &'a [u8]) -> Result<LoadData<'a>, ImageError>
+fn load<'a, L>(bytes: &'a [u8]) -> ImageResult<LoadData<'a>>
 where
     L: Load,
 {
