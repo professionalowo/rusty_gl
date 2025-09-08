@@ -39,8 +39,11 @@ fn main() -> ExitCode {
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
-    let scene = mesh::load_mesh(get_model_file_path(&entrypoint), NormalizeOptions::None)
-        .expect("Failed to load model");
+    let scene = mesh::load_mesh(
+        get_model_file_path(&entrypoint),
+        NormalizeOptions::Scale(200),
+    )
+    .expect("Failed to load model");
 
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
@@ -60,12 +63,12 @@ fn main() -> ExitCode {
     const MODEL_MATRIX: Mat4<f32> = Mat4::identity();
 
     let mut camera = Camera::with_defaults(
-        Vec3::new(-516.0, 584.0, -138.0),
+        Vec3::new(0.5, 2.00, 0.0),
         Vec3::new(1.0, 0.0, 0.0),
         Vec3::new(0.0, 1.0, 0.0),
     );
 
-    const POINTLIGHT_POS: Vec3<f32> = Vec3::new(75.0, 500.0, 500.0);
+    const POINTLIGHT_POS: Vec3<f32> = Vec3::new(75.0, 100.0, -50.0);
     const POINTLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 0.58, 0.16);
     const POINTLIGHT_INTENSITY: f32 = 1.5;
 
@@ -81,7 +84,7 @@ fn main() -> ExitCode {
         window.poll_events();
 
         const TURN_ANGLE: f32 = PI / 2.0;
-        const MOVE_DISTANCE: f32 = 15.0;
+        const MOVE_DISTANCE: f32 = 0.8;
 
         if let Some(event) = window.pump_event() {
             match event {
