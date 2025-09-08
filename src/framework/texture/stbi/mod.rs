@@ -56,15 +56,15 @@ pub type StbiResult = std::result::Result<ImageData, ImageError>;
 
 impl ImageData {
     pub fn try_load(path: impl AsRef<Path>) -> StbiResult {
-        fn inner(data: &[u8]) -> StbiResult {
+        fn inner(data: impl AsRef<[u8]>) -> StbiResult {
+            let data = data.as_ref();
             if is_hdr(data) {
                 load::try_loadf(data)
             } else {
                 load::try_load(data)
             }
         }
-
-        inner(&fs::read(path)?)
+        fs::read(path).map(inner)?
     }
 }
 
