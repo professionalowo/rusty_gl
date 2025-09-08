@@ -57,7 +57,7 @@ struct LoadData<'a> {
     data: &'a [u8],
 }
 
-fn load<'a, L>(bytes: &'a [u8]) -> ImageResult<LoadData<'a>>
+fn load<L>(bytes: &[u8]) -> ImageResult<LoadData<'_>>
 where
     L: Load,
 {
