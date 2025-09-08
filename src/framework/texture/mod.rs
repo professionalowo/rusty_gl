@@ -67,7 +67,7 @@ impl Texture2D {
         data: &[T],
         mipmap: bool,
     ) -> Result<Self, TextureError> {
-        let mut s: Texture2D = Self {
+        let mut s = Self {
             id: 0,
             width,
             height,
@@ -176,15 +176,17 @@ impl Texture2D {
         Ok(())
     }
 
-    fn upload_image_data(data: GlImageData, mipmap: bool) -> Result<Self, gl::GLError> {
-        let GlImageData {
+    fn upload_image_data(
+        GlImageData {
             width,
             height,
             format,
             internal_format,
             type_,
             ref data,
-        } = data;
+        }: GlImageData,
+        mipmap: bool,
+    ) -> Result<Self, gl::GLError> {
         let mut texture = Self {
             id: 0,
             width,
