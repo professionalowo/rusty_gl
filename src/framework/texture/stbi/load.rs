@@ -82,14 +82,15 @@ where
 }
 
 pub fn failure_reason() -> Option<String> {
-    use std::ffi::CStr;
+    let ptr = unsafe { stbi_failure_reason() };
 
-    unsafe {
-        let ptr = stbi_failure_reason();
-        if ptr.is_null() {
-            None
-        } else {
-            Some(CStr::from_ptr(ptr).to_string_lossy().into_owned())
-        }
+    if ptr.is_null() {
+        None
+    } else {
+        Some(
+            unsafe { std::ffi::CStr::from_ptr(ptr) }
+                .to_string_lossy()
+                .into_owned(),
+        )
     }
 }
