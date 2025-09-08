@@ -6,7 +6,7 @@
 include!(concat!(env!("OUT_DIR"), "/stbi_bindings.rs"));
 
 use core::fmt;
-use std::{fs::File, io::Read, path::Path};
+use std::{fs, path::Path};
 
 use crate::gl;
 
@@ -52,18 +52,19 @@ impl From<std::io::Error> for ImageError {
     }
 }
 
+pub type StbiResult = std::result::Result<ImageData, ImageError>;
+
 impl ImageData {
-    pub fn try_load(path: impl AsRef<Path>) -> Result<Self, ImageError> {
-        let mut file = File::open(&path)?;
-        let metadata = file.metadata()?;
-        let mut buffer = Vec::with_capacity(metadata.len() as usize);
-        _ = file.read(&mut buffer)?;
-        let data = &buffer;
-        if is_hdr(data) {
-            load::try_loadf(data)
-        } else {
-            load::try_load(data)
+    pub fn try_load(path: impl AsRef<Path>) -> StbiResult {
+        fn inner(data: &[u8]) -> StbiResult {
+            if is_hdr(data) {
+                load::try_loadf(data)
+            } else {
+                load::try_load(data)
+            }
         }
+
+        inner(&fs::read(path)?)
     }
 }
 
