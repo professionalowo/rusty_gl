@@ -1,5 +1,9 @@
 use super::{load_trait::*, *};
 
+pub(super) fn is_hdr(bytes: &[u8]) -> bool {
+    unsafe { stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as i32) != 0 }
+}
+
 pub(super) fn try_loadf(bytes: &[u8]) -> StbiResult {
     try_load_opt::<LoadFloat>(bytes)
 }

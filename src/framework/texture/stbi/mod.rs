@@ -61,14 +61,10 @@ impl ImageData {
 
     pub fn try_load_from_memory(data: impl AsRef<[u8]>) -> StbiResult {
         let bytes = data.as_ref();
-        if is_hdr(bytes) {
+        if load::is_hdr(bytes) {
             load::try_loadf(bytes)
         } else {
             load::try_load(bytes)
         }
     }
-}
-
-pub fn is_hdr(bytes: &[u8]) -> bool {
-    unsafe { stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as i32) != 0 }
 }
