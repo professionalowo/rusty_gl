@@ -13,7 +13,7 @@ use crate::gl;
 mod load;
 mod load_trait;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub(super) struct ImageData {
     pub width: gl::GLsizei,
     pub height: gl::GLsizei,
