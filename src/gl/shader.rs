@@ -74,7 +74,7 @@ fn get_info_log(id: u32) -> String {
     unsafe {
         gl::glGetShaderiv(id, gl::GL_INFO_LOG_LENGTH, &mut log_length);
     }
-    let mut info_log: Vec<u8> = vec![0; log_length as usize];
+    let mut info_log: Vec<u8> = Vec::with_capacity(log_length as usize);
     unsafe {
         gl::glGetShaderInfoLog(
             id,
