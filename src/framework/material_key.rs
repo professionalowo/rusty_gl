@@ -8,8 +8,11 @@ pub trait MaterialKey {
     }
 }
 
-impl MaterialKey for &str {
+#[derive(Debug, Clone)]
+pub struct MatKey<'a>(pub &'a str);
+
+impl MaterialKey for MatKey<'_> {
     fn get_key(&self) -> &str {
-        self
+        self.0
     }
 }
