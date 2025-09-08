@@ -1,6 +1,7 @@
 use crate::gl;
 use std::{fmt, path::Path};
 
+#[derive(Debug)]
 pub struct Shader(u32);
 
 #[derive(Debug)]
