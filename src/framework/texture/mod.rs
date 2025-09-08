@@ -1,7 +1,7 @@
 use std::{fmt, path::Path};
 
 use crate::{
-    framework::texture::stbi::ImageData,
+    framework::texture::stbi::GlImageData,
     gl::{
         self,
         uniform::{UniformLocation, UniformLocationError, uniform_trait::Uniform},
@@ -54,7 +54,7 @@ impl Texture2D {
     }
 
     pub fn try_from_file(path: impl AsRef<Path>, mipmap: bool) -> Result<Self, TextureError> {
-        let texture = Self::upload_image_data(ImageData::try_load(path)?, mipmap)?;
+        let texture = Self::upload_image_data(GlImageData::try_load(path)?, mipmap)?;
         Ok(texture)
     }
 
@@ -176,8 +176,8 @@ impl Texture2D {
         Ok(())
     }
 
-    fn upload_image_data(data: ImageData, mipmap: bool) -> Result<Self, gl::GLError> {
-        let ImageData {
+    fn upload_image_data(data: GlImageData, mipmap: bool) -> Result<Self, gl::GLError> {
+        let GlImageData {
             width,
             height,
             format,

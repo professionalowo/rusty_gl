@@ -29,7 +29,7 @@ where
     } = load::<L>(bytes)?;
     let internal_format = i32::try_from(L::map_channels(channels))?;
     let format = format_from_channels(channels);
-    Ok(ImageData {
+    Ok(GlImageData {
         width,
         height,
         format,

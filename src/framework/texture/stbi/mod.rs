@@ -14,7 +14,7 @@ mod load;
 mod load_trait;
 
 #[derive(Debug, PartialEq)]
-pub(super) struct ImageData {
+pub(super) struct GlImageData {
     pub width: gl::GLsizei,
     pub height: gl::GLsizei,
     pub format: gl::GLenum,
@@ -52,15 +52,15 @@ impl From<std::io::Error> for ImageError {
     }
 }
 
-pub type StbiResult = std::result::Result<ImageData, ImageError>;
+pub type StbiResult = std::result::Result<GlImageData, ImageError>;
 
-impl ImageData {
+impl GlImageData {
     pub fn try_load(path: impl AsRef<Path>) -> StbiResult {
         fs::read(path).map(Self::try_load_from_memory)?
     }
 
     pub fn try_load_from_memory(data: impl AsRef<[u8]>) -> StbiResult {
-        let bytes = data.as_ref();
+        let bytes: &[u8] = data.as_ref();
         if load::is_hdr(bytes) {
             load::try_loadf(bytes)
         } else {
@@ -68,3 +68,6 @@ impl ImageData {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {}
