@@ -40,7 +40,7 @@ where
 }
 
 #[inline]
-fn format_from_channels(channels: i32) -> gl::GLenum {
+const fn format_from_channels(channels: i32) -> gl::GLenum {
     match channels {
         4 => gl::GL_RGBA,
         3 => gl::GL_RGB,
