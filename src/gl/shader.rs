@@ -74,18 +74,13 @@ fn get_info_log(id: u32) -> String {
     unsafe {
         gl::glGetShaderiv(id, gl::GL_INFO_LOG_LENGTH, &mut log_length);
     }
-    let mut info_log: Vec<u8> = Vec::with_capacity(log_length as usize);
+    let mut info_log: Vec<i8> = Vec::with_capacity(log_length as usize);
     unsafe {
-        gl::glGetShaderInfoLog(
-            id,
-            log_length,
-            std::ptr::null_mut(),
-            info_log.as_mut_ptr() as *mut i8,
-        );
+        gl::glGetShaderInfoLog(id, log_length, std::ptr::null_mut(), info_log.as_mut_ptr());
     }
 
     unsafe {
-        std::ffi::CStr::from_ptr(info_log.as_ptr() as *const i8)
+        std::ffi::CStr::from_ptr(info_log.as_ptr())
             .to_string_lossy()
             .into_owned()
     }
