@@ -21,14 +21,15 @@ use rusty_gl::math::vec3::Vec3;
 
 const BACKGROUND: Vec3<f32> = Vec3::rgb(0.0, 0.1, 0.333);
 
+fn usage() -> ExitCode {
+    eprintln!("Usage: rusty_gl <path_to_obj_file>");
+    ExitCode::FAILURE
+}
+
 fn main() -> ExitCode {
-    let mut args = std::env::args();
-    let entrypoint = match args.nth(1) {
+    let entrypoint = match std::env::args().nth(1) {
         Some(s) => s,
-        None => {
-            eprintln!("Usage: rusty_gl <path_to_obj_file>");
-            return ExitCode::FAILURE;
-        }
+        None => return usage(),
     };
 
     glfw::init().expect("Failed to initialize GLFW");
