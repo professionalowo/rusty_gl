@@ -1,5 +1,6 @@
 use std::f32::consts::PI;
 use std::path::PathBuf;
+use std::process::ExitCode;
 
 use rusty_gl::framework::camera::Camera;
 use rusty_gl::framework::material::material_textures::MaterialTextureType;
@@ -20,11 +21,15 @@ use rusty_gl::math::vec3::Vec3;
 
 const BACKGROUND: Vec3<f32> = Vec3::rgb(0.0, 0.1, 0.333);
 
-fn main() {
+fn main() -> ExitCode {
     let mut args = std::env::args();
-    let entrypoint = args
-        .nth(1)
-        .expect("No object specified, please pass an obj file as the first argument");
+    let entrypoint = match args.nth(1) {
+        Some(s) => s,
+        None => {
+            eprintln!("Usage: rusty_gl <path_to_obj_file>");
+            return ExitCode::FAILURE;
+        }
+    };
 
     glfw::init().expect("Failed to initialize GLFW");
 
@@ -169,6 +174,7 @@ fn main() {
         }
     }
     glfw::terminate();
+    ExitCode::SUCCESS
 }
 
 #[allow(dead_code)]
