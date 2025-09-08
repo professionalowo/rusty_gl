@@ -1,15 +1,14 @@
-use self::load_trait::*;
-use super::*;
+use super::{load_trait::*, *};
 
-pub(super) fn try_loadf(bytes: &[u8]) -> Result<ImageData, ImageError> {
+pub(super) fn try_loadf(bytes: &[u8]) -> StbiResult {
     try_load_opt::<LoadFloat>(bytes)
 }
 
-pub(super) fn try_load(bytes: &[u8]) -> Result<ImageData, ImageError> {
+pub(super) fn try_load(bytes: &[u8]) -> StbiResult {
     try_load_opt::<LoadInt>(bytes)
 }
 
-fn try_load_opt<L>(bytes: &[u8]) -> Result<ImageData, ImageError>
+fn try_load_opt<L>(bytes: &[u8]) -> StbiResult
 where
     L: Load,
 {
@@ -51,7 +50,7 @@ struct LoadData {
     data: Box<[u8]>,
 }
 
-fn load<L>(bytes: &[u8]) -> Result<LoadData, ImageError>
+fn load<L>(bytes: impl AsRef<[u8]>) -> Result<LoadData, ImageError>
 where
     L: Load,
 {
@@ -59,14 +58,7 @@ where
     let mut height = 0;
     let mut channels = 0;
     let data = unsafe {
-        let ptr = L::load_from_memory(
-            bytes.as_ptr(),
-            bytes.len() as i32,
-            &mut width,
-            &mut height,
-            &mut channels,
-            0,
-        );
+        let ptr = L::load(bytes, &mut width, &mut height, &mut channels);
         if ptr.is_null() {
             return Err(ImageError::StbiError(
                 failure_reason().unwrap_or_else(|| "Unknown error".to_string()),

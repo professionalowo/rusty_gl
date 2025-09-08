@@ -19,6 +19,26 @@ pub(super) trait Load {
     const TYPE: GlType;
 
     fn map_channels(channels: i32) -> u32;
+
+    unsafe fn load(
+        bytes: impl AsRef<[u8]>,
+        width: &mut i32,
+        height: &mut i32,
+        channels: &mut i32,
+    ) -> *mut u8 {
+        let buffer = bytes.as_ref();
+        unsafe {
+            Self::load_from_memory(
+                buffer.as_ptr(),
+                buffer.len() as i32,
+                width,
+                height,
+                channels,
+                0,
+            )
+        }
+    }
+
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
         len: c_int,
