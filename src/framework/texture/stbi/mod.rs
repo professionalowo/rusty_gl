@@ -57,17 +57,18 @@ pub type StbiResult = std::result::Result<ImageData, ImageError>;
 impl ImageData {
     pub fn try_load(path: impl AsRef<Path>) -> StbiResult {
         fn inner(data: impl AsRef<[u8]>) -> StbiResult {
-            let data = data.as_ref();
-            if is_hdr(data) {
-                load::try_loadf(data)
+            let bytes = data.as_ref();
+            if is_hdr(bytes) {
+                load::try_loadf(bytes)
             } else {
-                load::try_load(data)
+                load::try_load(bytes)
             }
         }
+
         fs::read(path).map(inner)?
     }
 }
 
-pub fn is_hdr(data: &[u8]) -> bool {
-    unsafe { stbi_is_hdr_from_memory(data.as_ptr(), data.len() as i32) != 0 }
+pub fn is_hdr(bytes: &[u8]) -> bool {
+    unsafe { stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as i32) != 0 }
 }

@@ -29,7 +29,7 @@ where
         height,
         format,
         data,
-        type_: L::TYPE,
+        type_: L::TYPE.data(),
         internal_format,
     })
 }
