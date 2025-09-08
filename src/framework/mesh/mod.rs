@@ -85,27 +85,26 @@ impl Mesh {
             });
 
         for i in 0..mesh.num_vertices() {
-            positions.push(Vec3::from(
-                mesh.get_vertex(i)
-                    .ok_or(MeshLoadError::MeshConversionFailed)?,
-            ));
+            positions.push(Vec3::from(mesh.get_vertex(i).ok_or(
+                MeshLoadError::MeshConversionFailed(format!("Could not get vertex[{i}]")),
+            )?));
             if mesh.has_normals() {
-                normals.push(Vec3::from(
-                    mesh.get_normal(i)
-                        .ok_or(MeshLoadError::MeshConversionFailed)?,
-                ));
+                normals.push(Vec3::from(mesh.get_normal(i).ok_or(
+                    MeshLoadError::MeshConversionFailed(format!("Could not get normal[{i}]")),
+                )?));
             }
             if mesh.has_texture_coords(0) {
                 let v = mesh
                     .get_texture_coord(0, i)
-                    .ok_or(MeshLoadError::MeshConversionFailed)?;
+                    .ok_or(MeshLoadError::MeshConversionFailed(format!(
+                        "Could not get texture_coord[{i}]"
+                    )))?;
                 texcoords.push(Vec2::new(v.x, v.y))
             }
             if mesh.has_tangents_and_bitangents() {
-                tangents.push(Vec3::from(
-                    mesh.get_tangent(i)
-                        .ok_or(MeshLoadError::MeshConversionFailed)?,
-                ));
+                tangents.push(Vec3::from(mesh.get_tangent(i).ok_or(
+                    MeshLoadError::MeshConversionFailed(format!("Could not get tangent[{i}]")),
+                )?));
             }
         }
 
@@ -142,7 +141,10 @@ impl Mesh {
         data: &[T],
     ) -> Result<(), MeshLoadError> {
         if self.num_vertices != 0 && self.num_vertices != data.len() as u32 {
-            return Err(MeshLoadError::MeshConversionFailed);
+            return Err(MeshLoadError::UnequalNumberOfVertices {
+                expected: self.num_indices,
+                actual: data.len() as u32,
+            });
         }
         self.num_vertices = data.len() as u32;
 
@@ -180,9 +182,11 @@ impl Mesh {
 pub enum MeshLoadError {
     LoadFailed(String),
     InvalidPath(PathBuf),
+    InvalidParent(PathBuf),
     MaterialNotFound(usize),
     MaterialConversionFailed(MaterialConversionError),
-    MeshConversionFailed,
+    MeshConversionFailed(String),
+    UnequalNumberOfVertices { expected: u32, actual: u32 },
     VboError(VBOError),
 }
 
@@ -191,10 +195,15 @@ impl fmt::Display for MeshLoadError {
         match self {
             Self::LoadFailed(s) => write!(f, "Failed to load mesh: {}", s),
             Self::InvalidPath(p) => write!(f, "Invalid path: {:?}", p),
+            Self::InvalidParent(p) => write!(f, "Invalid parent: {:?}", p),
             Self::MaterialNotFound(index) => write!(f, "Material not found: {}", index),
             Self::MaterialConversionFailed(e) => fmt::Display::fmt(e, f),
-            Self::MeshConversionFailed => write!(f, "Mesh conversion failed"),
+            Self::MeshConversionFailed(reason) => write!(f, "Mesh conversion failed: {:?}", reason),
             Self::VboError(e) => fmt::Display::fmt(e, f),
+            Self::UnequalNumberOfVertices {
+                expected: e,
+                actual: a,
+            } => write!(f, "Expected {e} but got {a} vertices"),
         }
     }
 }
@@ -239,7 +248,7 @@ where
     let path = path.as_ref();
     let base_path = path
         .parent()
-        .ok_or_else(|| MeshLoadError::InvalidPath(path.to_path_buf()))?;
+        .ok_or_else(|| MeshLoadError::InvalidParent(path.to_path_buf()))?;
 
     let mut importer = assimp::Importer::new();
     importer.triangulate(true);
