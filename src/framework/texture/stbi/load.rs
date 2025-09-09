@@ -1,3 +1,5 @@
+use crate::framework::texture::stbi::format::Channels;
+
 use self::format::Format;
 use std::slice;
 
@@ -31,7 +33,7 @@ where
     let Format {
         format,
         internal_format,
-    } = Format::try_from_load::<L>(channels)?;
+    } = Format::try_from_load::<L>(Channels(channels))?;
     Ok(GlImageData {
         width,
         height,

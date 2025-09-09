@@ -1,7 +1,7 @@
+use self::stbi_uc;
+use super::{format::Channels, *};
 use std::ffi::c_int;
 
-use self::stbi_uc;
-use super::*;
 pub(super) enum GlType {
     FLOAT,
     UNSIGNED_BYTE,
@@ -19,7 +19,7 @@ impl GlType {
 pub(super) trait Load {
     const TYPE: GlType;
 
-    fn map_channels(channels: i32) -> u32;
+    fn map_channels(channels: &Channels) -> u32;
 
     unsafe fn load(
         bytes: impl AsRef<[u8]>,
@@ -57,7 +57,7 @@ impl Load for LoadFloat {
     const TYPE: GlType = GlType::FLOAT;
 
     #[inline]
-    fn map_channels(channels: i32) -> u32 {
+    fn map_channels(Channels(channels): &Channels) -> u32 {
         match channels {
             4 => gl::GL_RGBA32F,
             3 => gl::GL_RGB32F,
@@ -86,7 +86,7 @@ pub(super) struct LoadInt;
 impl Load for LoadInt {
     const TYPE: GlType = GlType::UNSIGNED_BYTE;
     #[inline]
-    fn map_channels(channels: i32) -> u32 {
+    fn map_channels(Channels(channels): &Channels) -> u32 {
         match channels {
             1 => gl::GL_RED,
             2 => gl::GL_RG,
