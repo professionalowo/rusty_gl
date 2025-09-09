@@ -25,13 +25,13 @@ where
     let LoadData {
         width,
         height,
-        channels,
+        ref channels,
         data,
     } = load::<L>(bytes)?;
     let Format {
         format,
         internal_format,
-    } = Format::try_from_load::<L>(&Channels(channels))?;
+    } = Format::try_from_load::<L>(channels)?;
     Ok(GlImageData {
         width,
         height,
@@ -46,7 +46,7 @@ where
 pub struct LoadData<'a> {
     width: i32,
     height: i32,
-    channels: i32,
+    channels: Channels,
     data: &'a [u8],
 }
 
@@ -56,15 +56,15 @@ where
 {
     let mut width = 0;
     let mut height = 0;
-    let mut channels = 0;
+    let mut channels = Channels(0);
     let data = unsafe {
-        let ptr = L::load(bytes, &mut width, &mut height, &mut channels);
+        let ptr = L::load(bytes, &mut width, &mut height, &mut channels.0);
         if ptr.is_null() {
             return Err(ImageError::StbiError(
                 failure_reason().unwrap_or_else(|| String::from("Unknown error")),
             ));
         }
-        slice::from_raw_parts(ptr, (width * height * channels).try_into()?)
+        slice::from_raw_parts(ptr, (width * height * channels.0).try_into()?)
     };
     Ok(LoadData {
         width,
