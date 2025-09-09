@@ -1,5 +1,4 @@
-use super::gl;
-use super::load_trait::Load;
+use super::{gl, load_trait::Load};
 use std::num::TryFromIntError;
 
 #[derive(Debug)]
