@@ -10,10 +10,16 @@ pub struct Format {
 #[derive(Debug)]
 pub struct Channels(pub i32);
 
+impl From<i32> for Channels {
+    fn from(value: i32) -> Self {
+        Channels(value)
+    }
+}
+
 impl Format {
-    pub fn try_from_load<L: Load>(channels: Channels) -> Result<Self, TryFromIntError> {
-        let internal_format = i32::try_from(L::map_channels(&channels))?;
-        let format = format_from_channels(&channels);
+    pub fn try_from_load<L: Load>(channels: &Channels) -> Result<Self, TryFromIntError> {
+        let internal_format = i32::try_from(L::map_channels(channels))?;
+        let format = format_from_channels(channels);
         Ok(Self {
             format,
             internal_format,
