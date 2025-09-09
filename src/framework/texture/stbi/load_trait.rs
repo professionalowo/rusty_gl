@@ -1,3 +1,5 @@
+use crate::framework::texture::stbi::load::Dimensions;
+
 use self::stbi_uc;
 use super::{format::Channels, *};
 use std::ffi::c_int;
@@ -23,9 +25,8 @@ pub(super) trait Load {
 
     unsafe fn load(
         bytes: impl AsRef<[u8]>,
-        width: &mut i32,
-        height: &mut i32,
-        channels: &mut i32,
+        Dimensions(width, height): &mut Dimensions,
+        Channels(channels): &mut Channels,
     ) -> *const u8 {
         let buffer = bytes.as_ref();
         unsafe {

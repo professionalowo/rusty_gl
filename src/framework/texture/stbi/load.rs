@@ -23,8 +23,7 @@ where
         stbi_set_flip_vertically_on_load(1);
     }
     let LoadData {
-        width,
-        height,
+        dimensions: Dimensions(width, height),
         ref channels,
         data,
     } = load::<L>(bytes)?;
@@ -44,31 +43,41 @@ where
 
 #[derive(Debug)]
 pub struct LoadData<'a> {
-    width: i32,
-    height: i32,
+    dimensions: Dimensions,
     channels: Channels,
     data: &'a [u8],
+}
+#[derive(Debug, Default)]
+pub struct Dimensions(pub i32, pub i32);
+
+impl Dimensions {
+    pub const fn space(&self) -> i32 {
+        let Self(w, h) = *self;
+        w * h
+    }
+
+    pub const fn space_with_channels(&self, Channels(channels): &Channels) -> i32 {
+        *channels * self.space()
+    }
 }
 
 fn load<L>(bytes: &[u8]) -> ImageResult<LoadData<'_>>
 where
     L: Load,
 {
-    let mut width = 0;
-    let mut height = 0;
-    let mut channels = Channels::default();
+    let mut dimensions = Dimensions(0, 0);
+    let mut channels = Channels(0);
     let data = unsafe {
-        let ptr = L::load(bytes, &mut width, &mut height, &mut channels.0);
+        let ptr = L::load(bytes, &mut dimensions, &mut channels);
         if ptr.is_null() {
             return Err(ImageError::StbiError(
                 failure_reason().unwrap_or_else(|| String::from("Unknown error")),
             ));
         }
-        slice::from_raw_parts(ptr, (width * height * channels.0).try_into()?)
+        slice::from_raw_parts(ptr, dimensions.space_with_channels(&channels).try_into()?)
     };
     Ok(LoadData {
-        width,
-        height,
+        dimensions,
         channels,
         data,
     })
