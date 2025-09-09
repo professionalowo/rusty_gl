@@ -1,3 +1,4 @@
+use self::format::Format;
 use std::slice;
 
 use super::{load_trait::*, *};
@@ -27,8 +28,10 @@ where
         channels,
         data,
     } = load::<L>(bytes)?;
-    let internal_format = i32::try_from(L::map_channels(channels))?;
-    let format = format_from_channels(channels);
+    let Format {
+        format,
+        internal_format,
+    } = Format::try_from_load::<L>(channels)?;
     Ok(GlImageData {
         width,
         height,
@@ -39,18 +42,8 @@ where
     })
 }
 
-#[inline]
-const fn format_from_channels(channels: i32) -> gl::GLenum {
-    match channels {
-        4 => gl::GL_RGBA,
-        3 => gl::GL_RGB,
-        2 => gl::GL_RG,
-        1 | _ => gl::GL_RED,
-    }
-}
-
 #[derive(Debug)]
-struct LoadData<'a> {
+pub struct LoadData<'a> {
     width: i32,
     height: i32,
     channels: i32,
