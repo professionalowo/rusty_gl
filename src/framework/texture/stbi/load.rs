@@ -56,7 +56,7 @@ where
 {
     let mut width = 0;
     let mut height = 0;
-    let mut channels = Channels(0);
+    let mut channels = Channels::default();
     let data = unsafe {
         let ptr = L::load(bytes, &mut width, &mut height, &mut channels.0);
         if ptr.is_null() {

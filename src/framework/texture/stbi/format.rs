@@ -1,7 +1,7 @@
 use super::{gl, load_trait::Load};
 use std::num::TryFromIntError;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Channels(pub i32);
 
 impl Channels {
