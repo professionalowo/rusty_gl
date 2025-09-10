@@ -23,7 +23,7 @@ where
         stbi_set_flip_vertically_on_load(1);
     }
     let LoadData {
-        dimensions: Dimensions(width, height),
+        dimensions: Dimensions { width, height },
         ref channels,
         data,
     } = load::<L>(bytes)?;
@@ -48,12 +48,15 @@ pub struct LoadData<'a> {
     data: &'a [u8],
 }
 #[derive(Debug, Default)]
-pub struct Dimensions(pub i32, pub i32);
+pub struct Dimensions {
+    pub width: i32,
+    pub height: i32,
+}
 
 impl Dimensions {
     pub const fn space(&self) -> i32 {
-        let Self(w, h) = *self;
-        w * h
+        let Self { width, height } = *self;
+        width * height
     }
 
     pub const fn space_with_channels(&self, Channels(channels): &Channels) -> i32 {
@@ -65,7 +68,10 @@ fn load<L>(bytes: &[u8]) -> ImageResult<LoadData<'_>>
 where
     L: Load,
 {
-    let mut dimensions = Dimensions(0, 0);
+    let mut dimensions = Dimensions {
+        width: 0,
+        height: 0,
+    };
     let mut channels = Channels(0);
     let data = unsafe {
         let ptr = L::load(bytes, &mut dimensions, &mut channels);
