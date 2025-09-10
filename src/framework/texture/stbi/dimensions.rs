@@ -15,3 +15,28 @@ impl Dimensions {
         *channels * self.area()
     }
 }
+
+impl From<(i32, i32)> for Dimensions {
+    fn from((width, height): (i32, i32)) -> Self {
+        Self { width, height }
+    }
+}
+
+impl Into<(i32, i32)> for Dimensions {
+    fn into(self) -> (i32, i32) {
+        (self.width, self.height)
+    }
+}
+
+
+impl From<[i32; 2]> for Dimensions {
+    fn from([width, height]: [i32; 2]) -> Self {
+        Self { width, height }
+    }
+}
+
+impl Into<[i32; 2]> for Dimensions {
+    fn into(self) -> [i32; 2] {
+        [self.width, self.height]
+    }
+}
