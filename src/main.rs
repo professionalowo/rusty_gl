@@ -5,10 +5,9 @@ use rusty_gl::{
         camera::Camera, material::material_textures::MaterialTextureType, mesh,
         mesh::normalize::NormalizeOptions, timer::Timer,
     },
-    gl,
-    gl::{program::Program, shader::Shader, vao::VertexArrayObject},
-    glfw,
+    gl::{self, program::Program, shader::Shader, vao::VertexArrayObject},
     glfw::{
+        self,
         input::{KeyEvent, keycode::Keycode, modifier::Modifier},
         window::Window,
     },
