@@ -1,7 +1,7 @@
 use super::{gl, load_trait::Load};
 use std::num::TryFromIntError;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Channels(pub i32);
 
 impl Channels {
@@ -19,6 +19,12 @@ impl Channels {
 impl From<i32> for Channels {
     fn from(value: i32) -> Self {
         Self(value)
+    }
+}
+
+impl Into<i32> for Channels {
+    fn into(self) -> i32 {
+        self.0
     }
 }
 

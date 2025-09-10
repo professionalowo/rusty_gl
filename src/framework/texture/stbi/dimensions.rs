@@ -58,16 +58,20 @@ mod tests {
     #[test]
     fn test_dimensions_volume_with_channels() {
         let ch = Channels(4);
-        assert_eq!(24, DIM.volume_with_channels(&ch))
+        assert_eq!(24, DIM.volume_with_channels(&ch));
     }
 
     #[test]
     fn test_dimensions_from_tuple() {
-        assert_eq!(DIM, Dimensions::from((2, 3)))
+        const TUP: (i32, i32) = (2, 3);
+        assert_eq!(DIM, Dimensions::from(TUP));
+        assert_eq!(DIM, TUP.into());
     }
 
     #[test]
     fn test_dimensions_from_array() {
-        assert_eq!(DIM, Dimensions::from([2, 3]))
+        const ARR: [i32; 2] = [2, 3];
+        assert_eq!(DIM, Dimensions::from(ARR));
+        assert_eq!(DIM, ARR.into())
     }
 }
