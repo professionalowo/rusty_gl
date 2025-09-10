@@ -10,6 +10,7 @@ use std::{fs, path::Path};
 
 use crate::gl;
 
+mod dimensions;
 mod format;
 mod load;
 mod load_trait;

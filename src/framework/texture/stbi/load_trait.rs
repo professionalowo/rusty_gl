@@ -1,9 +1,6 @@
-use crate::framework::texture::stbi::load::Dimensions;
-
-use self::stbi_uc;
+use self::{dimensions::Dimensions, stbi_uc};
 use super::{format::Channels, *};
 use std::ffi::c_int;
-
 pub(super) enum GlType {
     FLOAT,
     UNSIGNED_BYTE,
@@ -25,7 +22,7 @@ pub(super) trait Load {
 
     unsafe fn load(
         bytes: impl AsRef<[u8]>,
-        Dimensions(width, height): &mut Dimensions,
+        Dimensions { width, height }: &mut Dimensions,
         Channels(channels): &mut Channels,
     ) -> *const u8 {
         let buffer = bytes.as_ref();

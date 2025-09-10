@@ -1,4 +1,7 @@
-use self::format::{Channels, Format};
+use self::{
+    dimensions::Dimensions,
+    format::{Channels, Format},
+};
 use std::slice;
 
 use super::{load_trait::*, *};
@@ -47,32 +50,13 @@ pub struct LoadData<'a> {
     channels: Channels,
     data: &'a [u8],
 }
-#[derive(Debug, Default)]
-pub struct Dimensions {
-    pub width: i32,
-    pub height: i32,
-}
-
-impl Dimensions {
-    pub const fn space(&self) -> i32 {
-        let Self { width, height } = *self;
-        width * height
-    }
-
-    pub const fn space_with_channels(&self, Channels(channels): &Channels) -> i32 {
-        *channels * self.space()
-    }
-}
 
 fn load<L>(bytes: &[u8]) -> ImageResult<LoadData<'_>>
 where
     L: Load,
 {
-    let mut dimensions = Dimensions {
-        width: 0,
-        height: 0,
-    };
-    let mut channels = Channels(0);
+    let mut dimensions = Dimensions::default();
+    let mut channels = Channels::default();
     let data = unsafe {
         let ptr = L::load(bytes, &mut dimensions, &mut channels);
         if ptr.is_null() {
@@ -80,7 +64,7 @@ where
                 failure_reason().unwrap_or_else(|| String::from("Unknown error")),
             ));
         }
-        slice::from_raw_parts(ptr, dimensions.space_with_channels(&channels).try_into()?)
+        slice::from_raw_parts(ptr, dimensions.volume_with_channels(&channels).try_into()?)
     };
     Ok(LoadData {
         dimensions,
