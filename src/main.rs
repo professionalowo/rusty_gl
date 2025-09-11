@@ -189,7 +189,11 @@ fn get_texture_file_path(filename: &str) -> PathBuf {
     get_asset(["textures", filename])
 }
 
-fn get_asset(paths: impl IntoIterator<Item = impl AsRef<Path>>) -> PathBuf {
+fn get_asset<P, I>(paths: I) -> PathBuf
+where
+    P: AsRef<Path>,
+    I: IntoIterator<Item = P>,
+{
     let mut pb = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     pb.extend(paths);
     pb
