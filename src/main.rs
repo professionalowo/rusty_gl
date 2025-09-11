@@ -1,4 +1,8 @@
-use std::{f32::consts::PI, path::PathBuf, process::ExitCode};
+use std::{
+    f32::consts::PI,
+    path::{Path, PathBuf},
+    process::ExitCode,
+};
 
 use rusty_gl::{
     framework::{
@@ -40,11 +44,8 @@ fn main() -> ExitCode {
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
-    let scene = mesh::load_mesh(
-        get_model_file_path(&entrypoint),
-        NormalizeOptions::Scale(200),
-    )
-    .expect("Failed to load model");
+    let scene = mesh::load_mesh(get_asset([entrypoint]), NormalizeOptions::Scale(200))
+        .expect("Failed to load model");
 
     let vertex_shader =
         Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
@@ -179,19 +180,17 @@ fn main() -> ExitCode {
 }
 
 #[allow(dead_code)]
-fn get_model_file_path(filename: &str) -> PathBuf {
-    let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
-    PathBuf::from(manifest_dir).join(filename)
-}
-
-#[allow(dead_code)]
 fn get_shader_file_path(filename: &str) -> PathBuf {
-    let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
-    PathBuf::from(manifest_dir).join("shaders").join(filename)
+    get_asset(["shaders", filename])
 }
 
 #[allow(dead_code)]
 fn get_texture_file_path(filename: &str) -> PathBuf {
-    let manifest_dir = env!("CARGO_MANIFEST_DIR"); // project root
-    PathBuf::from(manifest_dir).join("textures").join(filename)
+    get_asset(["textures", filename])
+}
+
+fn get_asset(paths: impl IntoIterator<Item = impl AsRef<Path>>) -> PathBuf {
+    let mut pb = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    pb.extend(paths);
+    pb
 }
