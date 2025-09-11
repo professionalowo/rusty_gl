@@ -2,8 +2,10 @@ use std::{f32::consts::PI, path::PathBuf, process::ExitCode};
 
 use rusty_gl::{
     framework::{
-        camera::Camera, material::material_textures::MaterialTextureType, mesh,
-        mesh::normalize::NormalizeOptions, timer::Timer,
+        camera::Camera,
+        material::material_textures::MaterialTextureType,
+        mesh::{self, normalize::NormalizeOptions},
+        timer::Timer,
     },
     gl::{self, program::Program, shader::Shader, vao::VertexArrayObject},
     glfw::{
