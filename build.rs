@@ -1,7 +1,7 @@
 extern crate bindgen;
 
 use std::{
-    env,
+    env, fs,
     path::{Path, PathBuf},
     process::Command,
 };
@@ -129,16 +129,14 @@ fn write_bindings_if_changed(
     bindings: bindgen::Bindings,
     out_path: PathBuf,
 ) -> std::io::Result<()> {
+    let existing_contents = fs::read_to_string(&out_path)?;
     let new_contents = bindings.to_string();
 
     // Check if the file already exists
-    if let Ok(existing_contents) = std::fs::read_to_string(&out_path) {
-        if existing_contents == new_contents {
-            // No change, skip writing
-            return Ok(());
-        }
+    if existing_contents == new_contents {
+        return Ok(());
     }
 
     // Write new contents
-    std::fs::write(out_path, new_contents)
+    fs::write(out_path, new_contents)
 }
