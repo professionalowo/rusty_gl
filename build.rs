@@ -68,13 +68,15 @@ where
         .define("STB_IMAGE_IMPLEMENTATION", None)
         .define("STBI_NO_STDIO", None) // enable implementation
         .flag_if_supported("-Wno-unused-parameter")
-        .flag_if_supported("-Wno-unused-function")
-        .flag_if_supported("-march=native");
+        .flag_if_supported("-Wno-unused-function");
 
-    if cfg!(all(target_arch = "aarch64", target_feature = "neon")) {
-        build
-            .define("STBI_NEON", None)
-            .flag_if_supported("-mfpu=neon");
+    // SIMD flags based on target architecture
+    if cfg!(target_arch = "x86_64") {
+        build.define("STBI_SSE2", None);
+        // optional: build.flag_if_supported("-msse2");
+    } else if cfg!(all(target_arch = "aarch64", target_feature = "neon")) {
+        build.define("STBI_NEON", None);
+        build.flag_if_supported("-mfpu=neon"); // harmless on Apple Silicon
     }
     build.compile("stb_image"); // produces libstb_image.a
 
