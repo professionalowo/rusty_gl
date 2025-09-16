@@ -73,7 +73,7 @@ where
     // Enable SIMD depending on target
     if cfg!(any(target_arch = "x86", target_arch = "x86_64")) {
         build.flag_if_supported("-msse2");
-    } else if cfg!(target_arch = "aarch64") || cfg!(target_arch = "arm") {
+    } else if cfg!(any(target_arch = "aarch64", target_arch = "arm")) {
         build
             .define("STBI_NEON", None)
             .flag_if_supported("-mfpu=neon");
