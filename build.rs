@@ -129,11 +129,12 @@ fn write_bindings_if_changed(
     bindings: bindgen::Bindings,
     out_path: impl AsRef<Path>,
 ) -> std::io::Result<()> {
-    let existing_contents = fs::read_to_string(&out_path)?;
     let new_contents = bindings.to_string();
 
     // Check if the file already exists
-    if existing_contents == new_contents {
+    if let Ok(existing_contents) = fs::read_to_string(&out_path)
+        && existing_contents == new_contents
+    {
         Ok(())
     } else {
         fs::write(out_path, new_contents)
