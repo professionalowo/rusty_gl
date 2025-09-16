@@ -34,25 +34,25 @@ impl From<ColorRGB> for Vec3<f32> {
 }
 
 impl From<(f32, f32, f32)> for ColorRGB {
-    fn from((r, g, b): (f32, f32, f32)) -> Self {
-        Self::new(r, g, b)
+    fn from(t: (f32, f32, f32)) -> Self {
+        Self(t.into())
     }
 }
 
 impl From<ColorRGB> for (f32, f32, f32) {
-    fn from(v: ColorRGB) -> Self {
-        (v.r(), v.g(), v.b())
+    fn from(ColorRGB(v): ColorRGB) -> Self {
+        (v.x, v.y, v.z)
     }
 }
 
 impl From<[f32; 3]> for ColorRGB {
-    fn from([r, g, b]: [f32; 3]) -> Self {
-        Self::new(r, g, b)
+    fn from(a: [f32; 3]) -> Self {
+        Self(a.into())
     }
 }
 
 impl From<ColorRGB> for [f32; 3] {
-    fn from(v: ColorRGB) -> Self {
-        [v.r(), v.g(), v.b()]
+    fn from(ColorRGB(v): ColorRGB) -> Self {
+        [v.x, v.y, v.z]
     }
 }
