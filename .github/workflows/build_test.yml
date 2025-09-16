@@ -4,6 +4,7 @@ on: push
 
 env:
     CARGO_TERM_COLOR: always
+    CMAKE_POLICY_VERSION_MINIMUM: 3.5
 
 jobs:
     build:
@@ -14,9 +15,7 @@ jobs:
                     - os: ubuntu-latest
                       install: sudo apt-get update && sudo apt-get install -qy libglfw3-dev libgl1-mesa-dev
                     - os: macos-latest
-                      install: |
-                        brew install cmake glfw
-                        echo "/opt/homebrew/bin" >> $GITHUB_PATH
+                      install: brew install glfw
         steps:
             - name: Install Dependencies
               run: ${{ matrix.install }}
