@@ -23,13 +23,15 @@ jobs:
             - name: Install Dependencies
               run: ${{ matrix.install }}
 
-            - name: Cache build artifacts #make sure target doesn't have to be rebuilt every time
-              uses: actions/cache@v3
+            - uses: actions/cache@v4
               with:
-                path: target
-                key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-                restore-keys: |
-                  ${{ runner.os }}-cargo-
+                path: |
+                  ~/.cargo/bin/
+                  ~/.cargo/registry/index/
+                  ~/.cargo/registry/cache/
+                  ~/.cargo/git/db/
+                  target/
+                key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }} 
 
             - name: Check
               run: cargo check --verbose
