@@ -68,12 +68,10 @@ where
         .define("STB_IMAGE_IMPLEMENTATION", None)
         .define("STBI_NO_STDIO", None) // enable implementation
         .flag_if_supported("-Wno-unused-parameter")
-        .flag_if_supported("-Wno-unused-function");
+        .flag_if_supported("-Wno-unused-function")
+        .flag_if_supported("-march=native");
 
-    // Enable SIMD depending on target
-    if cfg!(any(target_arch = "x86", target_arch = "x86_64")) {
-        build.flag_if_supported("-msse2");
-    } else if cfg!(any(target_arch = "aarch64", target_arch = "arm")) {
+    if cfg!(all(target_arch = "aarch64", target_feature = "neon")) {
         build
             .define("STBI_NEON", None)
             .flag_if_supported("-mfpu=neon");
