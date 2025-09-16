@@ -79,6 +79,8 @@ fn main() -> ExitCode {
     const DIRLIGHT_COLOR: ColorRGB = ColorRGB::new(1.0, 0.97, 0.8);
     const DIRLIGHT_INTENSITY: f32 = 1.5;
 
+    const COLOR_EXP: ColorRGB = ColorRGB::new(2.2, 2.2, 2.2);
+
     gl::enable(gl::GL_DEPTH_TEST);
     let mut timer: Timer<60> = Timer::new();
     while let Ok(false) = window.should_close() {
@@ -129,10 +131,7 @@ fn main() -> ExitCode {
                     .uniform("pointlight_pos", &POINTLIGHT_POS)
                     .expect("Failed to set pointlight position");
                 program
-                    .uniform(
-                        "pointlight_color",
-                        &Vec3::pow(POINTLIGHT_COLOR, Vec3::new(2.2, 2.2, 2.2)),
-                    )
+                    .uniform("pointlight_color", &Vec3::pow(POINTLIGHT_COLOR, COLOR_EXP))
                     .expect("Failed to set pointlight color");
                 program
                     .uniform("pointlight_intensity", POINTLIGHT_INTENSITY)
@@ -141,10 +140,7 @@ fn main() -> ExitCode {
                     .uniform("dirlight_dir", &DIRLIGHT_DIR)
                     .expect("Failed to set dirlight direction");
                 program
-                    .uniform(
-                        "dirlight_color",
-                        &Vec3::pow(DIRLIGHT_COLOR, Vec3::new(2.2, 2.2, 2.2)),
-                    )
+                    .uniform("dirlight_color", &Vec3::pow(DIRLIGHT_COLOR, COLOR_EXP))
                     .expect("Failed to set dirlight color");
                 program
                     .uniform("dirlight_intensity", DIRLIGHT_INTENSITY)
