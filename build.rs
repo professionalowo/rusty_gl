@@ -31,22 +31,24 @@ fn build_gl<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
 where
     P: AsRef<Path>,
 {
-    opengl_builder()
+    let bindings = opengl_builder()
         .header("c/glwrapper.h")
         .generate()
-        .expect("Unable to generate bindings")
-        .write_to_file(out_path.join(bindings_file))
+        .expect("Unable to generate bindings");
+
+    write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
 fn build_glfw<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
 where
     P: AsRef<Path>,
 {
-    opengl_builder()
+    let bindings = opengl_builder()
         .header("c/glfwwrapper.h")
         .generate()
-        .expect("Unable to generate GLFW bindings")
-        .write_to_file(out_path.join(bindings_file))
+        .expect("Unable to generate GLFW bindings");
+
+    write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
 fn build_stbi<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
@@ -59,7 +61,7 @@ where
         .flag_if_supported("-Wno-unused-function")
         .compile("stb_image");
 
-    bindgen::Builder::default()
+    let bindings = bindgen::Builder::default()
         .header("c/stb_image.h")
         .allowlist_function("stbi_loadf_from_memory")
         .allowlist_function("stbi_load_from_memory")
@@ -69,8 +71,9 @@ where
         .clang_arg("-DSTB_IMAGE_IMPLEMENTATION")
         .clang_arg("-DSTBI_ONLY_PNG")
         .generate()
-        .expect("Unable to generate bindings")
-        .write_to_file(out_path.join(bindings_file))
+        .expect("Unable to generate bindings");
+
+    write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
 fn opengl_builder() -> bindgen::Builder {
@@ -100,4 +103,22 @@ fn opengl_builder() -> bindgen::Builder {
     } else {
         builder
     }
+}
+
+fn write_bindings_if_changed(
+    bindings: bindgen::Bindings,
+    out_path: PathBuf,
+) -> std::io::Result<()> {
+    let new_contents = bindings.to_string();
+
+    // Check if the file already exists
+    if let Ok(existing_contents) = std::fs::read_to_string(&out_path) {
+        if existing_contents == new_contents {
+            // No change, skip writing
+            return Ok(());
+        }
+    }
+
+    // Write new contents
+    std::fs::write(out_path, new_contents)
 }
