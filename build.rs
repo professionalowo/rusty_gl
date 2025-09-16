@@ -127,7 +127,7 @@ fn opengl_builder() -> bindgen::Builder {
 
 fn write_bindings_if_changed(
     bindings: bindgen::Bindings,
-    out_path: PathBuf,
+    out_path: impl AsRef<Path>,
 ) -> std::io::Result<()> {
     let existing_contents = fs::read_to_string(&out_path)?;
     let new_contents = bindings.to_string();
