@@ -281,6 +281,7 @@ dependencies = [
  "bindgen",
  "cc",
  "derive_more",
+ "glob",
 ]
 
 [[package]]

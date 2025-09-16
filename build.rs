@@ -7,6 +7,12 @@ use std::{
 };
 
 fn main() {
+    println!("cargo:rerun-if-changed=build.rs");
+    for entry in glob::glob("c/**/*").expect("Failed to read glob pattern") {
+        let path = entry.expect("Failed to read file path");
+        println!("cargo:rerun-if-changed={}", path.display());
+    }
+
     if cfg!(target_os = "macos") {
         println!("cargo:rustc-link-lib=framework=OpenGL");
         println!("cargo:rustc-link-search=native=/opt/homebrew/lib");
