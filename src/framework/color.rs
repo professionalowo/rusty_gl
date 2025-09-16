@@ -1,6 +1,8 @@
+use derive_more::{Add, AddAssign, Neg, Sub, SubAssign};
+
 use crate::math::vec3::Vec3;
 
-#[derive(Debug, Clone, Default, PartialEq)]
+#[derive(Debug, Clone, Default, PartialEq, Add, AddAssign, Sub, SubAssign, Neg)]
 pub struct ColorRGB(Vec3<f32>);
 
 impl ColorRGB {
