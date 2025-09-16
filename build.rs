@@ -60,15 +60,25 @@ fn build_stbi<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
 where
     P: AsRef<Path>,
 {
-    cc::Build::new()
+    let mut build = cc::Build::new();
+    build
         .file("c/stb_image.h") // header only
         .flag("-x") // next argument specifies language
         .flag("c") // treat as C
         .define("STB_IMAGE_IMPLEMENTATION", None)
         .define("STBI_NO_STDIO", None) // enable implementation
         .flag_if_supported("-Wno-unused-parameter")
-        .flag_if_supported("-Wno-unused-function")
-        .compile("stb_image"); // produces libstb_image.a
+        .flag_if_supported("-Wno-unused-function");
+
+    // Enable SIMD depending on target
+    if cfg!(any(target_arch = "x86", target_arch = "x86_64")) {
+        build.flag_if_supported("-msse2");
+    } else if cfg!(target_arch = "aarch64") || cfg!(target_arch = "arm") {
+        build
+            .define("STBI_NEON", None)
+            .flag_if_supported("-mfpu=neon");
+    }
+    build.compile("stb_image"); // produces libstb_image.a
 
     let bindings = bindgen::Builder::default()
         .header("c/stb_image.h")
