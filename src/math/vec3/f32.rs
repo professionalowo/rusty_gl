@@ -111,11 +111,11 @@ impl Vec3<f32> {
         Self::new(x.powf(b.x), y.powf(b.y), z.powf(b.z))
     }
 
-    pub const fn cmin(Self { x, y, z }: Self) -> f32 {
+    pub const fn cminf32(Self { x, y, z }: Self) -> f32 {
         x.min(y).min(z)
     }
 
-    pub const fn cmax(Self { x, y, z }: Self) -> f32 {
+    pub const fn cmaxf32(Self { x, y, z }: Self) -> f32 {
         x.max(y).max(z)
     }
 }

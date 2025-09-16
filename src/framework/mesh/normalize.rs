@@ -59,7 +59,7 @@ fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
 
     let scale_v = Vec3::scalar(s) / bbox.distance();
 
-    let scale_f = Scalar(Vec3::cmin(scale_v));
+    let scale_f = Scalar(Vec3::cminf32(scale_v));
 
     let center = bbox.center();
 

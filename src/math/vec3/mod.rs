@@ -69,6 +69,20 @@ where
     pub unsafe fn from_raw(ptr: *const T) -> Self {
         unsafe { [ptr.read(), ptr.add(1).read(), ptr.add(2).read()] }.into()
     }
+
+    pub fn cmin(&self) -> T
+    where
+        T: Ord,
+    {
+        self.x.min(self.y).min(self.z)
+    }
+
+    pub fn cmax(&self) -> T
+    where
+        T: Ord,
+    {
+        self.x.max(self.y).max(self.z)
+    }
 }
 
 impl<T> Neg for Vec3<T>
