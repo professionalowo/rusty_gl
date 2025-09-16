@@ -56,10 +56,13 @@ where
     P: AsRef<Path>,
 {
     cc::Build::new()
-        .file("c/stb_image_impl.c")
+        .file("c/stb_image.h")        // header only
+        .flag("-x")                    // next argument specifies language
+        .flag("c")                     // treat as C
+        .define("STB_IMAGE_IMPLEMENTATION", None) // enable implementation
         .flag_if_supported("-Wno-unused-parameter")
         .flag_if_supported("-Wno-unused-function")
-        .compile("stb_image");
+        .compile("stb_image");         // produces libstb_image.a
 
     let bindings = bindgen::Builder::default()
         .header("c/stb_image.h")
