@@ -1,4 +1,4 @@
-name: Build and Test
+name: Check and Test
 
 on: push
 
@@ -22,7 +22,7 @@ jobs:
             - name: Install Dependencies
               run: ${{ matrix.install }}
 
-            - name: Cache build artifacts
+            - name: Cache build artifacts #make sure target doesn't have to be rebuilt every time
               uses: actions/cache@v3
               with:
                 path: target
