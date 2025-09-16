@@ -33,8 +33,8 @@ where
 {
     let bindings = opengl_builder()
         .header("c/glwrapper.h")
-		.allowlist_var("GL_.*")
-		.allowlist_function("gl.*")
+        .allowlist_var("GL_.*")
+        .allowlist_function("gl.*")
         .generate()
         .expect("Unable to generate bindings");
 
@@ -47,9 +47,9 @@ where
 {
     let bindings = opengl_builder()
         .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
-		.allowlist_var("GLFW_.*")
-		.allowlist_function("gl.*")
-		.allowlist_type("GLFW.*")
+        .allowlist_var("GLFW_.*")
+        .allowlist_function("gl.*")
+        .allowlist_type("GLFW.*")
         .generate()
         .expect("Unable to generate GLFW bindings");
 
@@ -64,7 +64,8 @@ where
         .file("c/stb_image.h") // header only
         .flag("-x") // next argument specifies language
         .flag("c") // treat as C
-        .define("STB_IMAGE_IMPLEMENTATION", None) // enable implementation
+        .define("STB_IMAGE_IMPLEMENTATION", None)
+        .define("STBI_NO_STDIO", None) // enable implementation
         .flag_if_supported("-Wno-unused-parameter")
         .flag_if_supported("-Wno-unused-function")
         .compile("stb_image"); // produces libstb_image.a
@@ -76,8 +77,6 @@ where
         .allowlist_function("stbi_set_flip_vertically_on_load")
         .allowlist_function("stbi_is_hdr_from_memory")
         .allowlist_function("stbi_failure_reason")
-        .clang_arg("-DSTB_IMAGE_IMPLEMENTATION")
-        .clang_arg("-DSTBI_ONLY_PNG")
         .generate()
         .expect("Unable to generate bindings");
 
