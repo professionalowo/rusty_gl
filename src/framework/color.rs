@@ -41,7 +41,7 @@ impl From<(f32, f32, f32)> for ColorRGB {
 
 impl From<ColorRGB> for (f32, f32, f32) {
     fn from(v: ColorRGB) -> Self {
-        (v.r(), v.g(), v.g())
+        (v.r(), v.g(), v.b())
     }
 }
 
@@ -53,6 +53,6 @@ impl From<[f32; 3]> for ColorRGB {
 
 impl From<ColorRGB> for [f32; 3] {
     fn from(v: ColorRGB) -> Self {
-        [v.r(), v.g(), v.g()]
+        [v.r(), v.g(), v.b()]
     }
 }
