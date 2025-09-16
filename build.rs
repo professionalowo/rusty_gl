@@ -44,7 +44,7 @@ where
     P: AsRef<Path>,
 {
     let bindings = opengl_builder()
-        .header("c/glfwwrapper.h")
+        .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
         .generate()
         .expect("Unable to generate GLFW bindings");
 
@@ -56,13 +56,13 @@ where
     P: AsRef<Path>,
 {
     cc::Build::new()
-        .file("c/stb_image.h")        // header only
-        .flag("-x")                    // next argument specifies language
-        .flag("c")                     // treat as C
+        .file("c/stb_image.h") // header only
+        .flag("-x") // next argument specifies language
+        .flag("c") // treat as C
         .define("STB_IMAGE_IMPLEMENTATION", None) // enable implementation
         .flag_if_supported("-Wno-unused-parameter")
         .flag_if_supported("-Wno-unused-function")
-        .compile("stb_image");         // produces libstb_image.a
+        .compile("stb_image"); // produces libstb_image.a
 
     let bindings = bindgen::Builder::default()
         .header("c/stb_image.h")
