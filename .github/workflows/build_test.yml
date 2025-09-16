@@ -14,7 +14,9 @@ jobs:
                     - os: ubuntu-latest
                       install: sudo apt-get update && sudo apt-get install -qy libglfw3-dev libgl1-mesa-dev
                     - os: macos-latest
-                      install: brew install glfw
+                      install: |
+                        brew install cmake glfw
+                        echo "/opt/homebrew/bin" >> $GITHUB_PATH
         steps:
             - name: Install Dependencies
               run: ${{ matrix.install }}
