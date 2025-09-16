@@ -33,6 +33,8 @@ where
 {
     let bindings = opengl_builder()
         .header("c/glwrapper.h")
+		.allowlist_var("GL_.*")
+		.allowlist_function("gl.*")
         .generate()
         .expect("Unable to generate bindings");
 
@@ -45,6 +47,9 @@ where
 {
     let bindings = opengl_builder()
         .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
+		.allowlist_var("GLFW_.*")
+		.allowlist_function("gl.*")
+		.allowlist_type("GLFW.*")
         .generate()
         .expect("Unable to generate GLFW bindings");
 
