@@ -73,7 +73,7 @@ where
     // SIMD flags based on target architecture
     if cfg!(target_arch = "x86_64") {
         build.define("STBI_SSE2", None);
-        // optional: build.flag_if_supported("-msse2");
+        build.flag_if_supported("-msse2");
     } else if cfg!(all(target_arch = "aarch64", target_feature = "neon")) {
         build.define("STBI_NEON", None);
         build.flag_if_supported("-mfpu=neon"); // harmless on Apple Silicon
