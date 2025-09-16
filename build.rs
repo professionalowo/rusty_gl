@@ -134,9 +134,8 @@ fn write_bindings_if_changed(
 
     // Check if the file already exists
     if existing_contents == new_contents {
-        return Ok(());
+        Ok(())
+    } else {
+        fs::write(out_path, new_contents)
     }
-
-    // Write new contents
-    fs::write(out_path, new_contents)
 }
