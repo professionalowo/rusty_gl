@@ -101,7 +101,13 @@ impl Vec3<f32> {
         Self::new(x.max(ox), y.max(oy), z.max(oz))
     }
 
-    pub fn pow(Self { x, y, z }: Self, b: Self) -> Self {
+    pub fn pow<A, B>(a: A, b: B) -> Self
+    where
+        A: Into<Self>,
+        B: Into<Self>,
+    {
+        let Self { x, y, z }: Self = a.into();
+        let b: Self = b.into();
         Self::new(x.powf(b.x), y.powf(b.y), z.powf(b.z))
     }
 

@@ -7,6 +7,7 @@ use std::{
 use rusty_gl::{
     framework::{
         camera::Camera,
+        color::ColorRGB,
         material::material_textures::MaterialTextureType,
         mesh::{self, normalize::NormalizeOptions},
         timer::Timer,
@@ -20,7 +21,7 @@ use rusty_gl::{
     math::{mat4::Mat4, vec3::Vec3},
 };
 
-const BACKGROUND: Vec3<f32> = Vec3::rgb(0.0, 0.1, 0.333);
+const BACKGROUND: ColorRGB = ColorRGB::new(0.0, 0.1, 0.333);
 
 fn usage() -> ExitCode {
     eprintln!("Usage: rusty_gl <path_to_obj_file>");
@@ -71,11 +72,11 @@ fn main() -> ExitCode {
     );
 
     const POINTLIGHT_POS: Vec3<f32> = Vec3::new(75.0, 100.0, -50.0);
-    const POINTLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 0.58, 0.16);
+    const POINTLIGHT_COLOR: ColorRGB = ColorRGB::new(1.0, 0.58, 0.16);
     const POINTLIGHT_INTENSITY: f32 = 1.5;
 
     const DIRLIGHT_DIR: Vec3<f32> = Vec3::new(0.25, -0.93, -0.25);
-    const DIRLIGHT_COLOR: Vec3<f32> = Vec3::rgb(1.0, 0.97, 0.8);
+    const DIRLIGHT_COLOR: ColorRGB = ColorRGB::new(1.0, 0.97, 0.8);
     const DIRLIGHT_INTENSITY: f32 = 1.5;
 
     gl::enable(gl::GL_DEPTH_TEST);
@@ -115,7 +116,7 @@ fn main() -> ExitCode {
             }
         }
         if timer.should_render() {
-            gl::clear_color_vec(&BACKGROUND);
+            gl::clear_color_vec(&BACKGROUND.into());
             gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
 
             let aspect_ratio = window.aspect_ratio();
