@@ -54,16 +54,15 @@ impl Shader {
     where
         P: AsRef<Path>,
     {
-        let source = fs::read_to_string(path)?;
-        Self::try_from_str(shader_type, &source)
+        Self::try_from_bytes(shader_type, fs::read(path)?)
     }
 
-    pub fn try_from_str<R>(shader_type: ShaderType, source: R) -> Result<Self, ShaderError>
+    pub fn try_from_bytes<B>(shader_type: ShaderType, source: B) -> Result<Self, ShaderError>
     where
-        R: AsRef<str>,
+        Vec<u8>: From<B>,
     {
         let id = unsafe { gl::glCreateShader(shader_type.key()) };
-        let c_str = ffi::CString::new(source.as_ref())?;
+        let c_str = ffi::CString::new(source)?;
         let c_str_ptr = c_str.as_ptr();
         unsafe {
             gl::glShaderSource(id, 1, &c_str_ptr, ptr::null());
