@@ -1,16 +1,16 @@
-use self::{dimensions::Dimensions, stbi_uc};
+use self::{bindings::*, dimensions::Dimensions};
 use super::{format::Channels, *};
 use std::ffi::c_int;
 pub(super) enum GlType {
-    FLOAT,
-    UNSIGNED_BYTE,
+    Float,
+    UnsignedByte,
 }
 
 impl GlType {
     pub const fn data(&self) -> u32 {
         match self {
-            Self::FLOAT => gl::GL_FLOAT,
-            Self::UNSIGNED_BYTE => gl::GL_UNSIGNED_BYTE,
+            Self::Float => gl::GL_FLOAT,
+            Self::UnsignedByte => gl::GL_UNSIGNED_BYTE,
         }
     }
 }
@@ -52,7 +52,7 @@ pub(super) trait Load {
 pub(super) struct LoadFloat;
 
 impl Load for LoadFloat {
-    const TYPE: GlType = GlType::FLOAT;
+    const TYPE: GlType = GlType::Float;
 
     #[inline]
     fn map_channels(Channels(channels): &Channels) -> u32 {
@@ -82,7 +82,7 @@ impl Load for LoadFloat {
 pub(super) struct LoadInt;
 
 impl Load for LoadInt {
-    const TYPE: GlType = GlType::UNSIGNED_BYTE;
+    const TYPE: GlType = GlType::UnsignedByte;
     #[inline]
     fn map_channels(Channels(channels): &Channels) -> u32 {
         match channels {

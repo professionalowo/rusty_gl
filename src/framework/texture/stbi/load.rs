@@ -1,10 +1,11 @@
-use self::{
+use super::{
+    GlImageData, ImageError, ImageResult,
+    bindings::*,
     dimensions::Dimensions,
     format::{Channels, Format},
+    load_trait::*,
 };
 use std::slice;
-
-use super::{load_trait::*, *};
 
 pub(super) fn is_hdr(bytes: &[u8]) -> bool {
     unsafe { stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as i32) != 0 }
