@@ -9,12 +9,8 @@ use material_color::material_color;
 
 use super::texture::Texture2D;
 use crate::{
-    framework::{
-        assimp::{AMaterial, AiError},
-        material::material_textures::MaterialTextures,
-        material_key::MaterialKey,
-        texture::TextureError,
-    },
+    assimp::{AMaterial, AiError, material_key::MaterialKey},
+    framework::{material::material_textures::MaterialTextures, texture::TextureError},
     gl::{self, program::Program, uniform::UniformLocationError},
     math::{vec3::Vec3, vec4::Vec4},
 };

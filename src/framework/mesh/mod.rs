@@ -5,11 +5,10 @@ use std::{
 };
 
 use crate::{
+    assimp::{AMaterial, material_key::MaterialKey},
     framework::{
-        assimp::AMaterial,
         drawelement::Drawelement,
         material::{Material, MaterialConversionError},
-        material_key::MaterialKey,
         mesh::normalize::NormalizeOptions,
     },
     gl::{

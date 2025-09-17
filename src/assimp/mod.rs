@@ -10,7 +10,9 @@ use assimp_sys::{
     aiGetMaterialTexture, aiGetMaterialTextureCount,
 };
 
-use crate::framework::material_key::MaterialKey;
+use self::material_key::MaterialKey;
+
+pub mod material_key;
 
 pub struct AMaterial<'a>(pub assimp::Material<'a>);
 

@@ -1,9 +1,9 @@
 use assimp::Color3D;
 use assimp_sys::AiTextureType;
 
-use crate::framework::{
-    material::{AMaterial, MaterialConversionError},
-    material_key::MaterialKey,
+use crate::{
+    assimp::material_key::MaterialKey,
+    framework::material::{AMaterial, MaterialConversionError},
 };
 
 impl MaterialKey for AiTextureType {
