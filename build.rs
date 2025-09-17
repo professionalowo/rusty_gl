@@ -111,7 +111,6 @@ fn opengl_builder() -> bindgen::Builder {
 
         builder
             .clang_arg("-I/opt/homebrew/include")
-            .clang_arg("-I/opt/homebrew/opt/glfw/include")
             .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path.trim())) // For frameworks themselves
     } else {
         builder
