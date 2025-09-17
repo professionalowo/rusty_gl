@@ -7,7 +7,7 @@ use std::{
 use rusty_gl::{
     framework::{
         camera::Camera,
-        color::ColorRGB,
+        color::rgb::ColorRGB,
         material::material_textures::MaterialTextureType,
         mesh::{self, normalize::NormalizeOptions},
         timer::Timer,

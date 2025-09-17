@@ -19,6 +19,14 @@ impl ColorRGB {
     pub const fn b(&self) -> f32 {
         self.0.z
     }
+
+    pub fn blend(ratio: f32, Self(a): Self, Self(b): Self) -> Self {
+        a.map_with(b, |a, b| blend_color(ratio, a, b)).into()
+    }
+}
+
+const fn blend_color(ratio: f32, a: f32, b: f32) -> f32 {
+    (1.0 - ratio) * a + ratio * b
 }
 
 impl From<Vec3<f32>> for ColorRGB {
