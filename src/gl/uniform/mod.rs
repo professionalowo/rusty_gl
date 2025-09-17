@@ -8,7 +8,7 @@ pub mod uniform_trait;
 use crate::gl::{self, program::Program, uniform::uniform_trait::Uniform};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
-pub struct UniformLocation(pub i32);
+pub struct UniformLocation(pub gl::GLint);
 
 impl UniformLocation {
     pub fn try_for_program<S>(Program(id): &Program, name: S) -> Result<Self, UniformLocationError>
