@@ -21,13 +21,13 @@ fn main() {
         println!("cargo:rustc-link-lib=glfw");
         println!("cargo:rustc-link-lib=GL");
     }
-    let out_path = PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR not set"));
-    build_gl(&out_path, "gl_bindings.rs").expect("Failed to build OpenGL bindings");
-    build_glfw(&out_path, "glfw_bindings.rs").expect("Failed to build GLFW bindings");
-    build_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
+    let out_path = env::var("OUT_DIR").expect("OUT_DIR not set").into();
+    bind_gl(&out_path, "gl_bindings.rs").expect("Failed to build OpenGL bindings");
+    bind_glfw(&out_path, "glfw_bindings.rs").expect("Failed to build GLFW bindings");
+    bind_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
 }
 
-fn build_gl<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
+fn bind_gl<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -35,13 +35,14 @@ where
         .header("c/glwrapper.h")
         .allowlist_var("GL_.*")
         .allowlist_function("gl.*")
+        .clang_arg("-DGL_GLEXT_PROTOTYPES")
         .generate()
         .expect("Unable to generate bindings");
 
     write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
-fn build_glfw<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
+fn bind_glfw<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -56,34 +57,31 @@ where
     write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
-fn build_stbi<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
+fn bind_stbi<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
-    {
-        let mut build = cc::Build::new();
-        build
-            .file("c/stb_image.h") // header only
-            .flag("-x") // next argument specifies language
-            .flag("c") // treat as C
-            .define("STB_IMAGE_IMPLEMENTATION", None)
-            .define("STBI_NO_STDIO", None) // enable implementation
-            .flag_if_supported("-Wno-unused-parameter")
-            .flag_if_supported("-Wno-unused-function");
-
-        // SIMD flags based on target architecture
+    fn with_simd(mut build: cc::Build) -> cc::Build {
         if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
             build.flag_if_supported("-msse2");
         } else if cfg!(all(target_arch = "aarch64", target_feature = "neon")) {
             build.define("STBI_NEON", None);
-            build.flag_if_supported("-mfpu=neon"); // harmless on Apple Silicon
+            build.flag_if_supported("-mfpu=neon");
         }
-
         build
     }
-    .compile("stb_image"); // produces libstb_image.a
 
-    let bindings = bindgen::Builder::default()
+    with_simd(cc::Build::new())
+        .file("c/stb_image.h")
+        .flag("-x")
+        .flag("c")
+        .define("STB_IMAGE_IMPLEMENTATION", None)
+        .define("STBI_NO_STDIO", None)
+        .flag_if_supported("-Wno-unused-parameter")
+        .flag_if_supported("-Wno-unused-function")
+        .compile("stb_image");
+
+    let bindings = bindgen::builder()
         .header("c/stb_image.h")
         .allowlist_function("stbi_loadf_from_memory")
         .allowlist_function("stbi_load_from_memory")
@@ -97,7 +95,7 @@ where
 }
 
 fn opengl_builder() -> bindgen::Builder {
-    let builder = bindgen::Builder::default().clang_arg("-DGL_GLEXT_PROTOTYPES");
+    let builder = bindgen::builder();
     if cfg!(target_os = "macos") {
         let sdk_path_output = Command::new("xcrun")
             .arg("--sdk")
