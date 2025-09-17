@@ -1,4 +1,5 @@
 use std::{
+    env,
     f32::consts::PI,
     path::{Path, PathBuf},
     process::ExitCode,
@@ -34,7 +35,7 @@ fn usage() -> ExitCode {
 }
 
 fn main() -> ExitCode {
-    let entrypoint = match std::env::args().nth(1) {
+    let entrypoint = match env::args().nth(1) {
         Some(s) => s,
         None => return usage(),
     };
