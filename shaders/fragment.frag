@@ -1,4 +1,4 @@
-#version 330 core
+#version 410 core
 
 in vec3 n_ws;
 in vec3 pos_ws;

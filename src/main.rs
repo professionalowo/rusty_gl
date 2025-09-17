@@ -42,8 +42,8 @@ fn main() -> ExitCode {
 
     glfw::init().expect("Failed to initialize GLFW");
 
-    glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MAJOR, 3).expect("Failed to set window hint");
-    glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MINOR, 3).expect("Failed to set window hint");
+    glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MAJOR, 4).expect("Failed to set window hint");
+    glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MINOR, 1).expect("Failed to set window hint");
     glfw::window_hint(glfw::GLFW_OPENGL_PROFILE, glfw::GLFW_OPENGL_CORE_PROFILE)
         .expect("Failed to set window hint");
     glfw::window_hint(glfw::GLFW_OPENGL_FORWARD_COMPAT, glfw::GLFW_TRUE)
