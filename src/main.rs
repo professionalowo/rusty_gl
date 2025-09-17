@@ -182,14 +182,8 @@ fn main() -> ExitCode {
     ExitCode::SUCCESS
 }
 
-#[allow(dead_code)]
-fn get_shader_file_path(filename: &str) -> PathBuf {
-    get_asset(["shaders", filename])
-}
-
-#[allow(dead_code)]
-fn get_texture_file_path(filename: &str) -> PathBuf {
-    get_asset(["textures", filename])
+fn get_shader_file_path<S: AsRef<str>>(filename: S) -> PathBuf {
+    get_asset(["shaders", filename.as_ref()])
 }
 
 fn get_asset<P, I>(paths: I) -> PathBuf
