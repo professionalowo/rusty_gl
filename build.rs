@@ -1,7 +1,7 @@
 extern crate bindgen;
 
 use std::{
-    env, fs,
+    env, fs, io,
     path::{Path, PathBuf},
     process::Command,
 };
@@ -27,7 +27,7 @@ fn main() {
     build_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
 }
 
-fn build_gl<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
+fn build_gl<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -41,7 +41,7 @@ where
     write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
-fn build_glfw<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
+fn build_glfw<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -56,7 +56,7 @@ where
     write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
-fn build_stbi<P>(out_path: &PathBuf, bindings_file: P) -> std::io::Result<()>
+fn build_stbi<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -128,7 +128,7 @@ fn opengl_builder() -> bindgen::Builder {
 fn write_bindings_if_changed(
     bindings: bindgen::Bindings,
     out_path: impl AsRef<Path>,
-) -> std::io::Result<()> {
+) -> io::Result<()> {
     let new_contents = bindings.to_string();
 
     // Check if the file already exists
