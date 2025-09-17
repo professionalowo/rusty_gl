@@ -98,17 +98,6 @@ pub fn get_shader_iv(shader: gl::GLuint, pname: gl::GLenum) -> i32 {
         gl::glGetShaderiv(shader, pname, &mut params);
     }
     params
-    }
-    .to_string_lossy()
-    .into_owned()
-}
-
-pub fn get_shader_iv(shader: gl::GLuint, pname: gl::GLenum) -> i32 {
-    let mut params = 0;
-    unsafe {
-        gl::glGetShaderiv(shader, pname, &mut params);
-    }
-    params
 }
 
 impl Drop for Shader {
