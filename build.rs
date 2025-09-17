@@ -107,15 +107,12 @@ fn opengl_builder() -> bindgen::Builder {
             .expect("Failed to execute xcrun to get SDK path");
 
         let sdk_path = String::from_utf8(sdk_path_output.stdout)
-            .expect("Failed to parse xcrun output as UTF-8")
-            .trim()
-            .to_string();
+            .expect("Failed to parse xcrun output as UTF-8");
 
-        // Add the SDK include path
         builder
             .clang_arg("-I/opt/homebrew/include")
             .clang_arg("-I/opt/homebrew/opt/glfw/include")
-            .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path)) // For frameworks themselves
+            .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path.trim())) // For frameworks themselves
     } else {
         builder
     }
