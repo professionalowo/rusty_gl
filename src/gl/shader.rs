@@ -69,11 +69,7 @@ impl Shader {
             gl::glCompileShader(id);
         }
 
-        let mut status = 0;
-        unsafe {
-            gl::glGetShaderiv(id, gl::GL_COMPILE_STATUS, &mut status);
-        }
-        if status == 0 {
+        if get_shader_iv(id, gl::GL_COMPILE_STATUS) == 0 {
             return Err(ShaderError::CompilationError(get_info_log(id)));
         }
 
@@ -85,17 +81,23 @@ impl Shader {
     }
 }
 
-fn get_info_log(id: u32) -> String {
-    let mut log_length = 0;
-    unsafe {
-        gl::glGetShaderiv(id, gl::GL_INFO_LOG_LENGTH, &mut log_length);
-    }
+fn get_info_log(id: gl::GLuint) -> String {
+    let log_length = get_shader_iv(id, gl::GL_INFO_LOG_LENGTH);
     let mut info_log = Vec::with_capacity(log_length as usize);
-    let cstr = unsafe {
+    unsafe {
         gl::glGetShaderInfoLog(id, log_length, ptr::null_mut(), info_log.as_mut_ptr());
         ffi::CStr::from_ptr(info_log.as_ptr())
-    };
-    cstr.to_string_lossy().into_owned()
+    }
+    .to_string_lossy()
+    .into_owned()
+}
+
+pub fn get_shader_iv(shader: gl::GLuint, pname: gl::GLenum) -> i32 {
+    let mut params = 0;
+    unsafe {
+        gl::glGetShaderiv(shader, pname, &mut params);
+    }
+    params
 }
 
 impl Drop for Shader {
