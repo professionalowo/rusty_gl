@@ -20,11 +20,11 @@ pub struct Window {
 type KeyCallback = dyn FnMut(KeyEvent);
 
 impl Window {
-    pub fn try_new<S>(width: u32, height: u32, title: S) -> Result<Self, NulError>
+    pub fn try_new<B>(width: u32, height: u32, title: B) -> Result<Self, NulError>
     where
-        S: AsRef<str>,
+        Vec<u8>: From<B>,
     {
-        let title_cstr = CString::new(title.as_ref())?;
+        let title_cstr = CString::new(title)?;
         let handle = create_window(width, height, &title_cstr, None, None);
         let last_event = Rc::new(RefCell::new(None));
         set_key_callback(handle, {
