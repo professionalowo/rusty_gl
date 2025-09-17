@@ -3,9 +3,6 @@ use std::{ffi, fmt, fs, io, path::Path, ptr};
 use crate::gl;
 
 #[derive(Debug)]
-pub struct Shader(u32);
-
-#[derive(Debug)]
 pub enum ShaderError {
     FileSystemError(io::Error),
     FFIError(ffi::NulError),
@@ -48,6 +45,9 @@ impl fmt::Display for ShaderError {
         }
     }
 }
+
+#[derive(Debug)]
+pub struct Shader(u32);
 
 impl Shader {
     pub fn try_from_path<P>(shader_type: ShaderType, path: P) -> Result<Self, ShaderError>
