@@ -7,10 +7,6 @@ pub struct Dimensions {
 }
 
 impl Dimensions {
-    pub const fn new(width: i32, height: i32) -> Self {
-        Self { width, height }
-    }
-
     pub const fn area(&self) -> i32 {
         self.width * self.height
     }
@@ -48,7 +44,10 @@ impl Into<[i32; 2]> for Dimensions {
 mod tests {
     use super::*;
 
-    const DIM: Dimensions = Dimensions::new(2, 3);
+    const DIM: Dimensions = Dimensions {
+        width: 2,
+        height: 3,
+    };
 
     #[test]
     fn test_dimensions_area() {

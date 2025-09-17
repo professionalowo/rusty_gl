@@ -1,5 +1,3 @@
-extern crate bindgen;
-
 use std::{
     env, fs, io,
     path::{Path, PathBuf},
