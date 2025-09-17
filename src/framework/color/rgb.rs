@@ -20,7 +20,7 @@ impl ColorRGB {
         self.0.z
     }
 
-    pub fn blend(ratio: f32, Self(a): Self, Self(b): Self) -> Self {
+    pub fn blend(ratio: f32, Self(a): &Self, Self(b): &Self) -> Self {
         a.map_with(b, |a, b| blend_color(ratio, a, b)).into()
     }
 }

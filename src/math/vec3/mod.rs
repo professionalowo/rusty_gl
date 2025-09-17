@@ -40,7 +40,7 @@ where
         Vec3::<U>::new(f(x), f(y), f(z))
     }
 
-    pub fn map_with<U, F>(&self, o: Self, f: F) -> Vec3<U>
+    pub fn map_with<U, F>(&self, o: &Self, f: F) -> Vec3<U>
     where
         F: Fn(T, T) -> U,
         U: Copy,
