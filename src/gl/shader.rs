@@ -1,4 +1,4 @@
-use std::{fmt, path::Path};
+use std::{ffi, fmt, fs, io, path::Path, ptr};
 
 use crate::gl;
 
@@ -7,19 +7,34 @@ pub struct Shader(u32);
 
 #[derive(Debug)]
 pub enum ShaderError {
-    FileSystemError(std::io::Error),
-    FFIError(std::ffi::NulError),
+    FileSystemError(io::Error),
+    FFIError(ffi::NulError),
     CompilationError(String),
 }
 
-impl From<std::io::Error> for ShaderError {
-    fn from(value: std::io::Error) -> Self {
+#[derive(Debug)]
+pub enum ShaderType {
+    Fragment,
+    Vertex,
+}
+
+impl ShaderType {
+    pub const fn key(&self) -> gl::GLenum {
+        match self {
+            Self::Fragment => gl::GL_FRAGMENT_SHADER,
+            Self::Vertex => gl::GL_VERTEX_SHADER,
+        }
+    }
+}
+
+impl From<io::Error> for ShaderError {
+    fn from(value: io::Error) -> Self {
         Self::FileSystemError(value)
     }
 }
 
-impl From<std::ffi::NulError> for ShaderError {
-    fn from(value: std::ffi::NulError) -> Self {
+impl From<ffi::NulError> for ShaderError {
+    fn from(value: ffi::NulError) -> Self {
         Self::FFIError(value)
     }
 }
@@ -35,23 +50,23 @@ impl fmt::Display for ShaderError {
 }
 
 impl Shader {
-    pub fn try_from_path<P>(shader_type: u32, path: P) -> Result<Self, ShaderError>
+    pub fn try_from_path<P>(shader_type: ShaderType, path: P) -> Result<Self, ShaderError>
     where
         P: AsRef<Path>,
     {
-        let source = std::fs::read_to_string(path)?;
+        let source = fs::read_to_string(path)?;
         Self::try_from_str(shader_type, &source)
     }
 
-    pub fn try_from_str<R>(shader_type: u32, source: R) -> Result<Self, ShaderError>
+    pub fn try_from_str<R>(shader_type: ShaderType, source: R) -> Result<Self, ShaderError>
     where
         R: AsRef<str>,
     {
-        let id = unsafe { gl::glCreateShader(shader_type) };
-        let c_str = std::ffi::CString::new(source.as_ref())?;
+        let id = unsafe { gl::glCreateShader(shader_type.key()) };
+        let c_str = ffi::CString::new(source.as_ref())?;
         let c_str_ptr = c_str.as_ptr();
         unsafe {
-            gl::glShaderSource(id, 1, &c_str_ptr, std::ptr::null());
+            gl::glShaderSource(id, 1, &c_str_ptr, ptr::null());
             gl::glCompileShader(id);
         }
 
@@ -78,8 +93,8 @@ fn get_info_log(id: u32) -> String {
     }
     let mut info_log = Vec::with_capacity(log_length as usize);
     let cstr = unsafe {
-        gl::glGetShaderInfoLog(id, log_length, std::ptr::null_mut(), info_log.as_mut_ptr());
-        std::ffi::CStr::from_ptr(info_log.as_ptr())
+        gl::glGetShaderInfoLog(id, log_length, ptr::null_mut(), info_log.as_mut_ptr());
+        ffi::CStr::from_ptr(info_log.as_ptr())
     };
     cstr.to_string_lossy().into_owned()
 }

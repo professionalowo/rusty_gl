@@ -12,7 +12,12 @@ use rusty_gl::{
         mesh::{self, normalize::NormalizeOptions},
         timer::Timer,
     },
-    gl::{self, program::Program, shader::Shader, vao::VertexArrayObject},
+    gl::{
+        self,
+        program::Program,
+        shader::{Shader, ShaderType},
+        vao::VertexArrayObject,
+    },
     glfw::{
         self,
         input::{KeyEvent, keycode::Keycode, modifier::Modifier},
@@ -49,14 +54,12 @@ fn main() -> ExitCode {
         .expect("Failed to load model");
 
     let vertex_shader =
-        Shader::try_from_path(gl::GL_VERTEX_SHADER, get_shader_file_path("vertex.vert"))
+        Shader::try_from_path(ShaderType::Vertex, get_shader_file_path("vertex.vert"))
             .expect("Failed to create vertex shader");
 
-    let fragment_shader = Shader::try_from_path(
-        gl::GL_FRAGMENT_SHADER,
-        get_shader_file_path("fragment.frag"),
-    )
-    .expect("Failed to create fragment shader");
+    let fragment_shader =
+        Shader::try_from_path(ShaderType::Fragment, get_shader_file_path("fragment.frag"))
+            .expect("Failed to create fragment shader");
 
     let vao = VertexArrayObject::gen_vertex_arrays();
     VertexArrayObject::bind_vertex_array(&vao);
