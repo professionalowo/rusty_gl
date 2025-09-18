@@ -127,18 +127,10 @@ impl Texture2D {
             gl::GL_TEXTURE_WRAP_R,
             gl::GL_REPEAT as gl::GLint,
         );
-        let depth = self.internal_format == gl::GL_DEPTH_COMPONENT as i32
-            || self.internal_format == gl::GL_DEPTH_COMPONENT16 as i32
-            || self.internal_format == gl::GL_DEPTH_COMPONENT24 as i32
-            || self.internal_format == gl::GL_DEPTH_COMPONENT32 as i32;
         upload::tex_parameteri(
             gl::GL_TEXTURE_2D,
             gl::GL_TEXTURE_MAG_FILTER,
-            if depth {
-                gl::GL_NEAREST as gl::GLint
-            } else {
-                gl::GL_LINEAR as gl::GLint
-            },
+            gl::GL_NEAREST as gl::GLint,
         );
 
         upload::tex_parameteri(
@@ -146,8 +138,6 @@ impl Texture2D {
             gl::GL_TEXTURE_MIN_FILTER,
             if mipmap {
                 gl::GL_LINEAR_MIPMAP_LINEAR as gl::GLint
-            } else if depth {
-                gl::GL_NEAREST as gl::GLint
             } else {
                 gl::GL_LINEAR as gl::GLint
             },

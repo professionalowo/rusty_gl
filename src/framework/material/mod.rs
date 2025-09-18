@@ -3,7 +3,6 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use assimp::Color3D;
 use assimp_sys::AiTextureType;
 use material_color::material_color;
 
@@ -135,14 +134,14 @@ impl Material {
     }
 }
 
-fn get_color(col: Color3D) -> Result<Texture2D, TextureError> {
+fn get_color(col: Vec3<f32>) -> Result<Texture2D, TextureError> {
     Texture2D::from_data(
         1,
         1,
         gl::GL_RGB32F as i32,
         gl::GL_RGB,
         gl::GL_FLOAT,
-        &[col.r],
+        &[col],
         false,
     )
 }
@@ -163,7 +162,7 @@ fn get_texture_option(
         let texture = get_texture(base_path, mat, texture_type)?;
         Some(texture)
     } else if let Ok(col) = material_color(mat, texture_type) {
-        Some(get_color(col)?)
+        Some(get_color(col.into())?)
     } else {
         None
     };
