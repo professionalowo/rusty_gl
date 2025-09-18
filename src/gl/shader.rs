@@ -84,9 +84,10 @@ impl Shader {
 fn get_info_log(shader: gl::GLuint) -> String {
     let log_length = get_shader_iv(shader, gl::GL_INFO_LOG_LENGTH);
     let mut info_log = Vec::with_capacity(log_length as usize);
+    let ptr = info_log.as_mut_ptr();
     unsafe {
-        gl::glGetShaderInfoLog(shader, log_length, ptr::null_mut(), info_log.as_mut_ptr());
-        ffi::CStr::from_ptr(info_log.as_ptr())
+        gl::glGetShaderInfoLog(shader, log_length, ptr::null_mut(), ptr);
+        ffi::CStr::from_ptr(ptr)
     }
     .to_string_lossy()
     .into_owned()
