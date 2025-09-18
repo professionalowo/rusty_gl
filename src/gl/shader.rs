@@ -73,7 +73,7 @@ impl Shader {
             return Err(ShaderError::CompilationError(get_info_log(shader)));
         }
 
-        Ok(Shader(shader))
+        Ok(Self(shader))
     }
 
     pub const fn id(&self) -> u32 {
