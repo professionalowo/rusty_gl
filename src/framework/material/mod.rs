@@ -134,14 +134,17 @@ impl Material {
     }
 }
 
-fn get_color(col: Vec3<f32>) -> Result<Texture2D, TextureError> {
+fn get_color<C>(col: C) -> Result<Texture2D, TextureError>
+where
+    Vec3<f32>: From<C>,
+{
     Texture2D::from_data(
         1,
         1,
         gl::GL_RGB32F as i32,
         gl::GL_RGB,
         gl::GL_FLOAT,
-        &[col],
+        &[Vec3::from(col)],
         false,
     )
 }
@@ -162,7 +165,7 @@ fn get_texture_option(
         let texture = get_texture(base_path, mat, texture_type)?;
         Some(texture)
     } else if let Ok(col) = material_color(mat, texture_type) {
-        Some(get_color(col.into())?)
+        Some(get_color(col)?)
     } else {
         None
     };
