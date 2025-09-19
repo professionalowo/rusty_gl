@@ -1,5 +1,5 @@
 use std::{
-    env, fmt, fs, io,
+    env, fs, io,
     path::{Path, PathBuf},
 };
 
@@ -7,7 +7,7 @@ fn main() {
     print_build_flags();
 
     let out_path = env::var("OUT_DIR").expect("OUT_DIR not set").into();
-    
+
     let opengl_builder = opengl_builder();
 
     bind_gl(opengl_builder.clone(), &out_path, "gl_bindings.rs")
@@ -27,7 +27,7 @@ where
         .allowlist_function("gl.*")
         .clang_arg("-DGL_GLEXT_PROTOTYPES")
         .generate()
-        .expect("Unable to generate bindings");
+        .expect("Unable to generate OpenGL bindings");
 
     LazyBindings(bindings).write_if_changed(out_path.join(bindings_file))
 }
@@ -61,23 +61,26 @@ where
         build
     }
 
+    const HEADER: &'static str = "c/stb_image.h";
+
     with_simd(cc::Build::new())
-        .file("c/stb_image.h")
+        .file(HEADER)
         .flags(["-x", "c"])
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
         .define("STB_IMAGE_IMPLEMENTATION", None)
         .define("STBI_NO_STDIO", None)
-        .compile("stb_image");
+        .try_compile("stb_image")
+        .expect("Could not compile STBI header");
 
     let bindings = bindgen::builder()
-        .header("c/stb_image.h")
+        .header(HEADER)
         .allowlist_function("stbi_loadf_from_memory")
         .allowlist_function("stbi_load_from_memory")
         .allowlist_function("stbi_set_flip_vertically_on_load")
         .allowlist_function("stbi_is_hdr_from_memory")
         .allowlist_function("stbi_failure_reason")
         .generate()
-        .expect("Unable to generate bindings");
+        .expect("Unable to generate STBI bindings");
 
     LazyBindings(bindings).write_if_changed(out_path.join(bindings_file))
 }
@@ -134,7 +137,7 @@ impl LazyBindings {
     where
         P: AsRef<Path>,
     {
-        let new_contents = self.to_string();
+        let new_contents = self.0.to_string();
 
         // Check if the file already exists
         if let Ok(existing_contents) = fs::read_to_string(&out_path)
@@ -144,11 +147,5 @@ impl LazyBindings {
         } else {
             fs::write(&out_path, new_contents.as_str())
         }
-    }
-}
-
-impl fmt::Display for LazyBindings {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.0, f)
     }
 }
