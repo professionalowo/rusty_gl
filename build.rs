@@ -6,23 +6,20 @@ use std::{
 fn main() {
     print_build_flags();
 
-    let out_path = env::var("OUT_DIR").expect("OUT_DIR not set").into();
+    let out_path = env::var("OUT_DIR")
+        .map(PathBuf::from)
+        .expect("OUT_DIR not set");
 
     let opengl_builder = opengl_builder();
 
-    bind_gl(opengl_builder.clone(), &out_path, "gl_bindings.rs")
+    bind_gl(opengl_builder.clone(), &out_path.join("gl_bindings.rs"))
         .expect("Failed to build OpenGL bindings");
-    bind_glfw(opengl_builder, &out_path, "glfw_bindings.rs")
+    bind_glfw(opengl_builder, &out_path.join("glfw_bindings.rs"))
         .expect("Failed to build GLFW bindings");
-    bind_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
+    bind_stbi(&out_path.join("stbi_bindings.rs")).expect("Failed to build STBI bindings");
 }
 
-fn bind_gl<P>(builder: bindgen::Builder, out_path: &PathBuf, bindings_file: P) -> io::Result<()>
-where
-    P: AsRef<Path>,
-{
-    let out = out_path.join(bindings_file);
-
+fn bind_gl(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
     builder
         .header("c/glwrapper.h")
         .allowlist_var("GL_.*")
@@ -31,15 +28,10 @@ where
         .generate()
         .map(LazyBindings)
         .expect("Unable to generate OpenGL bindings")
-        .write_if_changed(out)
+        .write_if_changed(out_path)
 }
 
-fn bind_glfw<P>(builder: bindgen::Builder, out_path: &PathBuf, bindings_file: P) -> io::Result<()>
-where
-    P: AsRef<Path>,
-{
-    let out = out_path.join(bindings_file);
-
+fn bind_glfw(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
     builder
         .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
         .allowlist_var("GLFW_.*")
@@ -48,13 +40,10 @@ where
         .generate()
         .map(LazyBindings)
         .expect("Unable to generate GLFW bindings")
-        .write_if_changed(out)
+        .write_if_changed(out_path)
 }
 
-fn bind_stbi<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
-where
-    P: AsRef<Path>,
-{
+fn bind_stbi(out_path: &PathBuf) -> io::Result<()> {
     fn with_simd(mut build: cc::Build) -> cc::Build {
         if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
             build.flag_if_supported("-msse2");
@@ -76,8 +65,6 @@ where
         .try_compile("stb_image")
         .expect("Could not compile STBI header");
 
-    let out = out_path.join(bindings_file);
-
     bindgen::builder()
         .header(HEADER)
         .allowlist_function("stbi_loadf_from_memory")
@@ -88,7 +75,7 @@ where
         .generate()
         .map(LazyBindings)
         .expect("Unable to generate STBI bindings")
-        .write_if_changed(out)
+        .write_if_changed(out_path)
 }
 
 #[cfg(target_os = "macos")]
