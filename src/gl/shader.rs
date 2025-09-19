@@ -54,7 +54,7 @@ impl Shader {
     where
         P: AsRef<Path>,
     {
-        Self::try_from_bytes(shader_type, fs::read(path)?)
+        fs::read(path).map(|source| Self::try_from_bytes(shader_type, source))?
     }
 
     pub fn try_from_bytes<B>(shader_type: ShaderType, source: B) -> Result<Self, ShaderError>
