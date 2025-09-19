@@ -1,7 +1,6 @@
 use std::{
     env, fmt, fs, io,
     path::{Path, PathBuf},
-    process::{Command, Output},
 };
 
 fn main() {
@@ -97,6 +96,8 @@ where
 
 #[cfg(target_os = "macos")]
 fn opengl_builder() -> bindgen::Builder {
+    use std::process::{Command, Output};
+
     let Output { ref stdout, .. } = Command::new("xcrun")
         .args(["--sdk", "macosx", "--show-sdk-path"])
         .output()
