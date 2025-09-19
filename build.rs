@@ -20,16 +20,21 @@ fn main() {
         println!("cargo:rustc-link-lib=GL");
     }
     let out_path = env::var("OUT_DIR").expect("OUT_DIR not set").into();
-    bind_gl(&out_path, "gl_bindings.rs").expect("Failed to build OpenGL bindings");
-    bind_glfw(&out_path, "glfw_bindings.rs").expect("Failed to build GLFW bindings");
+
+    let opengl_builder = opengl_builder();
+
+    bind_gl(opengl_builder.clone(), &out_path, "gl_bindings.rs")
+        .expect("Failed to build OpenGL bindings");
+    bind_glfw(opengl_builder, &out_path, "glfw_bindings.rs")
+        .expect("Failed to build GLFW bindings");
     bind_stbi(&out_path, "stbi_bindings.rs").expect("Failed to build STBI bindings");
 }
 
-fn bind_gl<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
+fn bind_gl<P>(builder: bindgen::Builder, out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
-    let bindings = opengl_builder()
+    let bindings = builder
         .header("c/glwrapper.h")
         .allowlist_var("GL_.*")
         .allowlist_function("gl.*")
@@ -40,11 +45,11 @@ where
     write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
-fn bind_glfw<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
+fn bind_glfw<P>(builder: bindgen::Builder, out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
-    let bindings = opengl_builder()
+    let bindings = builder
         .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
         .allowlist_var("GLFW_.*")
         .allowlist_function("gl.*")
@@ -92,26 +97,27 @@ where
     write_bindings_if_changed(bindings, out_path.join(bindings_file))
 }
 
+#[cfg(target_os = "macos")]
 fn opengl_builder() -> bindgen::Builder {
-    let builder = bindgen::builder();
-    if cfg!(target_os = "macos") {
-        let Output { ref stdout, .. } = Command::new("xcrun")
-            .arg("--sdk")
-            .arg("macosx")
-            .arg("--show-sdk-path")
-            .output()
-            .expect("Failed to execute xcrun to get SDK path");
+    let Output { ref stdout, .. } = Command::new("xcrun")
+        .arg("--sdk")
+        .arg("macosx")
+        .arg("--show-sdk-path")
+        .output()
+        .expect("Failed to execute xcrun to get SDK path");
 
-        let sdk_path = str::from_utf8(stdout)
-            .expect("Failed to parse xcrun output as UTF-8")
-            .trim();
+    let sdk_path = str::from_utf8(stdout)
+        .expect("Failed to parse xcrun output as UTF-8")
+        .trim();
 
-        builder
-            .clang_arg("-I/opt/homebrew/include")
-            .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path)) // For frameworks themselves
-    } else {
-        builder
-    }
+    bindgen::builder()
+        .clang_arg("-I/opt/homebrew/include")
+        .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path)) // For frameworks themselves
+}
+
+#[cfg(not(target_os = "macos"))]
+fn opengl_builder() -> bindgen::Builder {
+    bindgen::builder()
 }
 
 fn write_bindings_if_changed(
