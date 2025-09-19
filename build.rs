@@ -1,7 +1,7 @@
 use std::{
     env, fs, io,
     path::{Path, PathBuf},
-    process::Command,
+    process::{Command, Output},
 };
 
 fn main() {
@@ -95,19 +95,20 @@ where
 fn opengl_builder() -> bindgen::Builder {
     let builder = bindgen::builder();
     if cfg!(target_os = "macos") {
-        let sdk_path_output = Command::new("xcrun")
+        let Output { ref stdout, .. } = Command::new("xcrun")
             .arg("--sdk")
             .arg("macosx")
             .arg("--show-sdk-path")
             .output()
             .expect("Failed to execute xcrun to get SDK path");
 
-        let sdk_path = String::from_utf8(sdk_path_output.stdout)
-            .expect("Failed to parse xcrun output as UTF-8");
+        let sdk_path = str::from_utf8(stdout)
+            .expect("Failed to parse xcrun output as UTF-8")
+            .trim();
 
         builder
             .clang_arg("-I/opt/homebrew/include")
-            .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path.trim())) // For frameworks themselves
+            .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path)) // For frameworks themselves
     } else {
         builder
     }
