@@ -125,6 +125,6 @@ fn write_bindings_if_changed(
     {
         Ok(())
     } else {
-        fs::write(out_path, new_contents)
+        fs::write(&out_path, new_contents.as_str())
     }
 }
