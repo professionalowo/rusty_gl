@@ -1,5 +1,5 @@
 use std::{
-    env, fs, io,
+    env, fmt, fs, io,
     path::{Path, PathBuf},
     process::{Command, Output},
 };
@@ -123,7 +123,7 @@ impl LazyBindings {
     where
         P: AsRef<Path>,
     {
-        let new_contents = self.0.to_string();
+        let new_contents = self.to_string();
 
         // Check if the file already exists
         if let Ok(existing_contents) = fs::read_to_string(&out_path)
@@ -133,5 +133,11 @@ impl LazyBindings {
         } else {
             fs::write(&out_path, new_contents.as_str())
         }
+    }
+}
+
+impl fmt::Display for LazyBindings {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&self.0, f)
     }
 }
