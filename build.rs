@@ -4,14 +4,10 @@ use std::{
 };
 
 fn main() {
-    println!("cargo:rerun-if-changed=build.rs");
-    for entry in glob::glob("c/**/*").expect("Failed to read glob pattern") {
-        let path = entry.expect("Failed to read file path");
-        println!("cargo:rerun-if-changed={}", path.display());
-    }
-    print_flags();
-    let out_path = env::var("OUT_DIR").expect("OUT_DIR not set").into();
+    print_build_flags();
 
+    let out_path = env::var("OUT_DIR").expect("OUT_DIR not set").into();
+    
     let opengl_builder = opengl_builder();
 
     bind_gl(opengl_builder.clone(), &out_path, "gl_bindings.rs")
@@ -109,8 +105,17 @@ fn opengl_builder() -> bindgen::Builder {
     bindgen::builder()
 }
 
+fn print_build_flags() {
+    println!("cargo:rerun-if-changed=build.rs");
+    for entry in glob::glob("c/**/*").expect("Failed to read glob pattern") {
+        let path = entry.expect("Failed to read file path");
+        println!("cargo:rerun-if-changed={}", path.display());
+    }
+    print_os_flags();
+}
+
 #[cfg(target_os = "macos")]
-fn print_flags() {
+fn print_os_flags() {
     println!("cargo:rustc-link-lib=framework=OpenGL");
     println!("cargo:rustc-link-search=native=/opt/homebrew/lib");
     println!("cargo:rustc-link-lib=dylib=glfw");
