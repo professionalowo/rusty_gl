@@ -9,15 +9,7 @@ fn main() {
         let path = entry.expect("Failed to read file path");
         println!("cargo:rerun-if-changed={}", path.display());
     }
-
-    if cfg!(target_os = "macos") {
-        println!("cargo:rustc-link-lib=framework=OpenGL");
-        println!("cargo:rustc-link-search=native=/opt/homebrew/lib");
-        println!("cargo:rustc-link-lib=dylib=glfw");
-    } else {
-        println!("cargo:rustc-link-lib=glfw");
-        println!("cargo:rustc-link-lib=GL");
-    }
+    print_flags();
     let out_path = env::var("OUT_DIR").expect("OUT_DIR not set").into();
 
     let opengl_builder = opengl_builder();
@@ -115,6 +107,19 @@ fn opengl_builder() -> bindgen::Builder {
 #[cfg(not(target_os = "macos"))]
 fn opengl_builder() -> bindgen::Builder {
     bindgen::builder()
+}
+
+#[cfg(target_os = "macos")]
+fn print_flags() {
+    println!("cargo:rustc-link-lib=framework=OpenGL");
+    println!("cargo:rustc-link-search=native=/opt/homebrew/lib");
+    println!("cargo:rustc-link-lib=dylib=glfw");
+}
+
+#[cfg(not(target_os = "macos"))]
+fn print_flags() {
+    println!("cargo:rustc-link-lib=glfw");
+    println!("cargo:rustc-link-lib=GL");
 }
 
 #[derive(Debug)]
