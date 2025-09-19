@@ -27,6 +27,14 @@ pub enum TextureError {
     GLError(gl::GLError),
 }
 
+impl PartialEq for Texture2D {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl Eq for Texture2D {}
+
 impl From<gl::GLError> for TextureError {
     fn from(err: gl::GLError) -> Self {
         Self::GLError(err)
@@ -49,10 +57,6 @@ impl fmt::Display for TextureError {
 }
 
 impl Texture2D {
-    pub const fn is_same(&self, other: &Self) -> bool {
-        self.id == other.id
-    }
-
     pub fn try_from_file(path: impl AsRef<Path>, mipmap: bool) -> Result<Self, TextureError> {
         let texture = Self::upload_image_data(GlImageData::try_load(path)?, mipmap)?;
         Ok(texture)
