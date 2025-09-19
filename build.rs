@@ -21,30 +21,34 @@ fn bind_gl<P>(builder: bindgen::Builder, out_path: &PathBuf, bindings_file: P) -
 where
     P: AsRef<Path>,
 {
-    let bindings = builder
+    let out = out_path.join(bindings_file);
+
+    builder
         .header("c/glwrapper.h")
         .allowlist_var("GL_.*")
         .allowlist_function("gl.*")
         .clang_arg("-DGL_GLEXT_PROTOTYPES")
         .generate()
-        .expect("Unable to generate OpenGL bindings");
-
-    LazyBindings(bindings).write_if_changed(out_path.join(bindings_file))
+        .map(LazyBindings)
+        .expect("Unable to generate OpenGL bindings")
+        .write_if_changed(out)
 }
 
 fn bind_glfw<P>(builder: bindgen::Builder, out_path: &PathBuf, bindings_file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
-    let bindings = builder
+    let out = out_path.join(bindings_file);
+
+    builder
         .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
         .allowlist_var("GLFW_.*")
         .allowlist_function("gl.*")
         .allowlist_type("GLFW.*")
         .generate()
-        .expect("Unable to generate GLFW bindings");
-
-    LazyBindings(bindings).write_if_changed(out_path.join(bindings_file))
+        .map(LazyBindings)
+        .expect("Unable to generate GLFW bindings")
+        .write_if_changed(out)
 }
 
 fn bind_stbi<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
@@ -72,7 +76,9 @@ where
         .try_compile("stb_image")
         .expect("Could not compile STBI header");
 
-    let bindings = bindgen::builder()
+    let out = out_path.join(bindings_file);
+
+    bindgen::builder()
         .header(HEADER)
         .allowlist_function("stbi_loadf_from_memory")
         .allowlist_function("stbi_load_from_memory")
@@ -80,9 +86,9 @@ where
         .allowlist_function("stbi_is_hdr_from_memory")
         .allowlist_function("stbi_failure_reason")
         .generate()
-        .expect("Unable to generate STBI bindings");
-
-    LazyBindings(bindings).write_if_changed(out_path.join(bindings_file))
+        .map(LazyBindings)
+        .expect("Unable to generate STBI bindings")
+        .write_if_changed(out)
 }
 
 #[cfg(target_os = "macos")]
