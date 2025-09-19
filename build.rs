@@ -122,7 +122,7 @@ fn print_os_flags() {
 }
 
 #[cfg(not(target_os = "macos"))]
-fn print_flags() {
+fn print_os_flags() {
     println!("cargo:rustc-link-lib=glfw");
     println!("cargo:rustc-link-lib=GL");
 }
