@@ -42,7 +42,7 @@ where
         .generate()
         .expect("Unable to generate bindings");
 
-    write_bindings_if_changed(bindings, out_path.join(bindings_file))
+    LazyBindings(bindings).write_if_changed(out_path.join(bindings_file))
 }
 
 fn bind_glfw<P>(builder: bindgen::Builder, out_path: &PathBuf, bindings_file: P) -> io::Result<()>
@@ -57,7 +57,7 @@ where
         .generate()
         .expect("Unable to generate GLFW bindings");
 
-    write_bindings_if_changed(bindings, out_path.join(bindings_file))
+    LazyBindings(bindings).write_if_changed(out_path.join(bindings_file))
 }
 
 fn bind_stbi<P>(out_path: &PathBuf, bindings_file: P) -> io::Result<()>
@@ -76,12 +76,10 @@ where
 
     with_simd(cc::Build::new())
         .file("c/stb_image.h")
-        .flag("-x")
-        .flag("c")
+        .flags(["-x", "c"])
+        .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
         .define("STB_IMAGE_IMPLEMENTATION", None)
         .define("STBI_NO_STDIO", None)
-        .flag_if_supported("-Wno-unused-parameter")
-        .flag_if_supported("-Wno-unused-function")
         .compile("stb_image");
 
     let bindings = bindgen::builder()
@@ -94,15 +92,13 @@ where
         .generate()
         .expect("Unable to generate bindings");
 
-    write_bindings_if_changed(bindings, out_path.join(bindings_file))
+    LazyBindings(bindings).write_if_changed(out_path.join(bindings_file))
 }
 
 #[cfg(target_os = "macos")]
 fn opengl_builder() -> bindgen::Builder {
     let Output { ref stdout, .. } = Command::new("xcrun")
-        .arg("--sdk")
-        .arg("macosx")
-        .arg("--show-sdk-path")
+        .args(["--sdk", "macosx", "--show-sdk-path"])
         .output()
         .expect("Failed to execute xcrun to get SDK path");
 
@@ -120,18 +116,22 @@ fn opengl_builder() -> bindgen::Builder {
     bindgen::builder()
 }
 
-fn write_bindings_if_changed(
-    bindings: bindgen::Bindings,
-    out_path: impl AsRef<Path>,
-) -> io::Result<()> {
-    let new_contents = bindings.to_string();
-
-    // Check if the file already exists
-    if let Ok(existing_contents) = fs::read_to_string(&out_path)
-        && existing_contents == new_contents
+#[derive(Debug)]
+struct LazyBindings(bindgen::Bindings);
+impl LazyBindings {
+    fn write_if_changed<P>(&self, out_path: P) -> io::Result<()>
+    where
+        P: AsRef<Path>,
     {
-        Ok(())
-    } else {
-        fs::write(&out_path, new_contents.as_str())
+        let new_contents = self.0.to_string();
+
+        // Check if the file already exists
+        if let Ok(existing_contents) = fs::read_to_string(&out_path)
+            && existing_contents == new_contents
+        {
+            Ok(())
+        } else {
+            fs::write(&out_path, new_contents.as_str())
+        }
     }
 }
