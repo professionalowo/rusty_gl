@@ -26,13 +26,12 @@ impl MapChannels for LoadFloat {
     const TYPE: GlType = GlType::Float;
 
     #[inline]
-    fn map_channels(Channels(channels): &Channels) -> u32 {
-        match channels {
+    fn map_channels(Channels(c): &Channels) -> u32 {
+        match c {
             4 => gl_sys::bindings::GL_RGBA32F,
             3 => gl_sys::bindings::GL_RGB32F,
             2 => gl_sys::bindings::GL_RG32F,
-            1 => gl_sys::bindings::GL_R32F,
-            _ => gl_sys::bindings::GL_R32F,
+            1 | _ => gl_sys::bindings::GL_R32F,
         }
     }
 }
@@ -40,13 +39,12 @@ impl MapChannels for LoadFloat {
 impl MapChannels for LoadInt {
     const TYPE: GlType = GlType::UnsignedByte;
     #[inline]
-    fn map_channels(Channels(channels): &Channels) -> u32 {
-        match channels {
-            1 => gl_sys::bindings::GL_RED,
-            2 => gl_sys::bindings::GL_RG,
-            3 => gl_sys::bindings::GL_RGB,
+    fn map_channels(Channels(c): &Channels) -> u32 {
+        match c {
             4 => gl_sys::bindings::GL_RGBA,
-            _ => gl_sys::bindings::GL_RED,
+            3 => gl_sys::bindings::GL_RGB,
+            2 => gl_sys::bindings::GL_RG,
+            1 | _ => gl_sys::bindings::GL_RED,
         }
     }
 }
