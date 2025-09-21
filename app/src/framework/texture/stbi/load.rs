@@ -1,7 +1,5 @@
-use super::{
-    GlImageData, ImageError, ImageResult, dimensions::Dimensions, format::Format, load_trait::*,
-};
-use stbi_sys::{bindings::*, channels::Channels};
+use super::{GlImageData, ImageError, ImageResult, format::Format, load_trait::*};
+use stbi_sys::{bindings::*, channels::Channels, dimensions::Dimensions};
 use std::slice;
 
 pub(super) fn try_loadf(bytes: &[u8]) -> ImageResult<GlImageData> {

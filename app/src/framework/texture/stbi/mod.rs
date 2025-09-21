@@ -1,7 +1,6 @@
 use core::fmt;
 use std::{fs, path::Path};
 
-mod dimensions;
 mod format;
 mod load;
 mod load_trait;

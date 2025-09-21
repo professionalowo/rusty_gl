@@ -1,5 +1,7 @@
 pub mod bindings;
 pub mod channels;
+pub mod dimensions;
+pub mod load;
 
 pub fn is_hdr<B>(bytes: B) -> bool
 where
