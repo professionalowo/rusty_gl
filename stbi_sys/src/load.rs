@@ -68,21 +68,16 @@ impl LoadData {
 pub trait Load {
     fn load<B: AsRef<[u8]>>(
         bytes: B,
-        Dimensions { width, height }: &mut Dimensions,
+        Dimensions {
+            width: x,
+            height: y,
+        }: &mut Dimensions,
         Channels(channels): &mut Channels,
     ) -> StbiPtr<u8> {
         let buffer = bytes.as_ref();
         unsafe {
-            let ptr = Self::load_from_memory(
-                buffer.as_ptr(),
-                buffer.len() as _,
-                width,
-                height,
-                channels,
-                0,
-            );
-
-            StbiPtr::from_raw_parts(ptr, ((*width) * (*height) * (*channels)) as _)
+            let ptr = Self::load_from_memory(buffer.as_ptr(), buffer.len() as _, x, y, channels, 0);
+            StbiPtr::from_raw_parts(ptr, ((*x) * (*y) * (*channels)) as _)
         }
     }
 
