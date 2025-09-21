@@ -9,25 +9,25 @@ use crate::bindings::stbi_image_free;
 /// Safe as long as the pointer is obtained from stb_image and not freed manually.
 /// Constructing from a pointer managed by Rust's allocator is undefined behavior.
 #[derive(Debug, PartialEq)]
-pub struct StbImageBuffer {
-    ptr: *mut u8,
+pub struct StbImageBuffer<T> {
+    ptr: *mut T,
     len: usize,
 }
 
-impl Drop for StbImageBuffer {
+impl<T> Drop for StbImageBuffer<T> {
     fn drop(&mut self) {
         unsafe { stbi_image_free(self.ptr as _) };
     }
 }
 
-impl Default for StbImageBuffer {
+impl<T> Default for StbImageBuffer<T> {
     #[inline]
     fn default() -> Self {
         Self::null()
     }
 }
 
-impl StbImageBuffer {
+impl<T> StbImageBuffer<T> {
     #[inline]
     pub const fn null() -> Self {
         Self {
@@ -37,23 +37,26 @@ impl StbImageBuffer {
     }
 
     #[inline]
-    pub const unsafe fn from_raw_parts(ptr: *mut u8, len: usize) -> Self {
+    pub const unsafe fn from_raw_parts(ptr: *mut T, len: usize) -> Self {
         //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image
         Self { ptr, len }
     }
 
     #[inline]
-    pub const fn as_slice(&self) -> &[u8] {
+    pub const fn as_slice(&self) -> &[T] {
         unsafe { slice::from_raw_parts(self.ptr, self.len) }
     }
 
     #[inline]
-    pub const fn as_mut_slice(&mut self) -> &mut [u8] {
+    pub const fn as_mut_slice(&mut self) -> &mut [T] {
         unsafe { slice::from_raw_parts_mut(self.ptr, self.len) }
     }
 
     #[inline]
-    pub fn to_vec(self) -> Vec<u8> {
+    pub fn to_vec(self) -> Vec<T>
+    where
+        T: Clone,
+    {
         self.as_slice().to_vec()
     }
 
@@ -73,22 +76,22 @@ impl StbImageBuffer {
     }
 }
 
-impl AsRef<[u8]> for StbImageBuffer {
+impl<T> AsRef<[T]> for StbImageBuffer<T> {
     #[inline]
-    fn as_ref(&self) -> &[u8] {
+    fn as_ref(&self) -> &[T] {
         self.as_slice()
     }
 }
 
-impl AsMut<[u8]> for StbImageBuffer {
+impl<T> AsMut<[T]> for StbImageBuffer<T> {
     #[inline]
-    fn as_mut(&mut self) -> &mut [u8] {
+    fn as_mut(&mut self) -> &mut [T] {
         self.as_mut_slice()
     }
 }
 
-impl Deref for StbImageBuffer {
-    type Target = [u8];
+impl<T> Deref for StbImageBuffer<T> {
+    type Target = [T];
 
     #[inline]
     fn deref(&self) -> &Self::Target {
@@ -96,7 +99,7 @@ impl Deref for StbImageBuffer {
     }
 }
 
-impl DerefMut for StbImageBuffer {
+impl<T> DerefMut for StbImageBuffer<T> {
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.as_mut_slice()

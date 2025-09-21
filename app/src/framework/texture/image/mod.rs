@@ -19,7 +19,7 @@ pub(super) struct GlImageData {
     pub format: gl_sys::bindings::GLenum,
     pub internal_format: gl_sys::bindings::GLint,
     pub type_: gl_sys::bindings::GLenum,
-    pub data: StbImageBuffer,
+    pub data: StbImageBuffer<u8>,
 }
 
 #[derive(Debug)]
