@@ -18,7 +18,7 @@ fn main() {
 
 fn bind_gl(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
     builder
-        .header("c/glwrapper.h")
+        .header("glwrapper.h")
         .allowlist_var("GL_.*")
         .allowlist_function("gl.*")
         .clang_arg("-DGL_GLEXT_PROTOTYPES")

@@ -24,7 +24,7 @@ fn bind_stbi(out_path: &PathBuf) -> io::Result<()> {
         build
     }
 
-    const HEADER: &'static str = "c/stb_image.h";
+    const HEADER: &'static str = "stb_image.h";
 
     with_simd(cc::Build::new())
         .file(HEADER)
