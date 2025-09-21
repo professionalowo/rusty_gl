@@ -6,7 +6,7 @@ use crate::{
 };
 
 use gl_sys::{program::Program, uniform::UniformLocationError};
-use gmath::mat4::Mat4;
+use rmath::mat4::Mat4;
 
 #[derive(Debug)]
 pub struct Drawelement {

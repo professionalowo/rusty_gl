@@ -12,7 +12,7 @@ use crate::{
     framework::{material::material_textures::MaterialTextures, texture::TextureError},
 };
 use gl_sys::{self, program::Program, uniform::UniformLocationError};
-use gmath::{vec3::Vec3, vec4::Vec4};
+use rmath::{vec3::Vec3, vec4::Vec4};
 
 mod material_color;
 pub mod material_textures;

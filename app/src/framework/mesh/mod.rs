@@ -13,7 +13,7 @@ use crate::{
     },
 };
 
-use gmath::{vec2::Vec2, vec3::Vec3};
+use rmath::{vec2::Vec2, vec3::Vec3};
 
 use gl_sys::{
     vao::VertexArrayObject,
