@@ -99,7 +99,7 @@ impl Drop for Window {
         unsafe {
             let user_ptr = bindings::glfwGetWindowUserPointer(self.handle);
             if !user_ptr.is_null() {
-                let closure: Box<KeyCallback> = Box::from_raw(user_ptr as *mut Box<KeyCallback>);
+                let closure = Box::from_raw(user_ptr as *mut Box<KeyCallback>);
                 // Drop the closure to unregister the callback
                 drop(closure);
             }
@@ -167,7 +167,7 @@ extern "C" fn key_callback_trampoline(
     unsafe {
         let user_ptr = bindings::glfwGetWindowUserPointer(window);
         if !user_ptr.is_null() {
-            let closure: &mut Box<KeyCallback> = &mut *(user_ptr as *mut Box<KeyCallback>);
+            let closure = &mut *(user_ptr as *mut Box<KeyCallback>);
             closure(event);
         }
     }

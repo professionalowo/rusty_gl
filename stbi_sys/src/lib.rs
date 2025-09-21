@@ -9,7 +9,7 @@ where
     B: AsRef<[u8]>,
 {
     let bytes = bytes.as_ref();
-    unsafe { bindings::stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as i32) != 0 }
+    unsafe { bindings::stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as _) != 0 }
 }
 
 pub fn failure_reason() -> Option<String> {

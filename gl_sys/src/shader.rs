@@ -83,7 +83,7 @@ impl Shader {
 
 fn get_info_log(shader: GLuint) -> String {
     let log_length = get_shader_iv(shader, GL_INFO_LOG_LENGTH);
-    let mut info_log = Vec::with_capacity(log_length as usize);
+    let mut info_log = Vec::with_capacity(log_length as _);
     let ptr = info_log.as_mut_ptr();
     unsafe {
         glGetShaderInfoLog(shader, log_length, ptr::null_mut(), ptr);

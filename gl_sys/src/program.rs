@@ -33,13 +33,13 @@ impl Program {
             unsafe {
                 glGetProgramiv(id, GL_INFO_LOG_LENGTH, &mut log_length);
             }
-            let mut info_log = vec![0u8; log_length as usize];
+            let mut info_log = vec![0u8; log_length as _];
             unsafe {
                 glGetProgramInfoLog(
                     id,
                     log_length,
                     std::ptr::null_mut(),
-                    info_log.as_mut_ptr() as *mut i8,
+                    info_log.as_mut_ptr() as _,
                 );
             }
 

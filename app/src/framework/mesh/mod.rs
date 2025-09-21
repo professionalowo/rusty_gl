@@ -66,20 +66,20 @@ impl Mesh {
     }
 
     pub fn from_ai_mesh(mesh: &assimp::Mesh<'_>) -> Result<Self, MeshLoadError> {
-        let mut positions: Vec<Vec3<f32>> = Vec::with_capacity(mesh.num_vertices() as usize);
+        let mut positions: Vec<Vec3<f32>> = Vec::with_capacity(mesh.num_vertices() as _);
         let mut normals: Vec<Vec3<f32>> = Vec::with_capacity(if mesh.has_normals() {
-            mesh.num_vertices() as usize
+            mesh.num_vertices() as _
         } else {
             0
         });
         let mut texcoords: Vec<Vec2<f32>> = Vec::with_capacity(if mesh.has_texture_coords(0) {
-            mesh.num_vertices() as usize
+            mesh.num_vertices() as _
         } else {
             0
         });
         let mut tangents: Vec<Vec3<f32>> =
             Vec::with_capacity(if mesh.has_tangents_and_bitangents() {
-                mesh.num_vertices() as usize
+                mesh.num_vertices() as _
             } else {
                 0
             });
@@ -125,7 +125,7 @@ impl Mesh {
         if !tangents.is_empty() {
             m.add_vbo(3, 3, tangents.as_slice())?;
         }
-        m.num_indices = indices.len() as u32;
+        m.num_indices = indices.len() as _;
         VertexArrayObject::bind_vertex_array(&m.vao);
         VertexBufferObject::bind_buffer(gl_sys::bindings::GL_ELEMENT_ARRAY_BUFFER, &m.ibo);
         VertexBufferObject::buffer_data(
@@ -147,13 +147,13 @@ impl Mesh {
         dimensions: u32,
         data: &[T],
     ) -> Result<(), MeshLoadError> {
-        if self.num_vertices != 0 && self.num_vertices != data.len() as u32 {
+        if self.num_vertices != 0 && self.num_vertices != data.len() as _ {
             return Err(MeshLoadError::UnequalNumberOfVertices {
                 expected: self.num_indices,
-                actual: data.len() as u32,
+                actual: data.len() as _,
             });
         }
-        self.num_vertices = data.len() as u32;
+        self.num_vertices = data.len() as _;
 
         let buffer_type = gl_sys::bindings::GL_ARRAY_BUFFER;
 
@@ -161,7 +161,7 @@ impl Mesh {
         let vbo = VertexBufferObject::gen_buffers();
         VertexBufferObject::bind_buffer(buffer_type, &vbo);
         VertexBufferObject::buffer_data(buffer_type, &data, gl_sys::bindings::GL_STATIC_DRAW)?;
-        let loc = Location(index as u32);
+        let loc = Location(index as _);
 
         VertexBufferObject::enable_vertex_attrib_array(&loc);
         VertexBufferObject::vertex_attrib_pointer(
@@ -169,7 +169,7 @@ impl Mesh {
             dimensions,
             gl_sys::bindings::GL_FLOAT,
             false,
-            (dimensions * 4) as i32,
+            (dimensions * 4) as _,
             None,
         )?;
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
@@ -268,8 +268,8 @@ where
 
     normalize.normalize_scene(&mut scene);
 
-    let mut drawelements: Vec<Drawelement> = Vec::with_capacity(scene.num_meshes() as usize);
-    let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as usize);
+    let mut drawelements: Vec<Drawelement> = Vec::with_capacity(scene.num_meshes() as _);
+    let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as _);
 
     for mat in scene.material_iter().map(AMaterial) {
         let name = mat
@@ -282,7 +282,7 @@ where
     for aimesh in scene.mesh_iter() {
         let mesh = Mesh::from_ai_mesh(&aimesh)?;
 
-        let index = aimesh.material_index as usize;
+        let index = aimesh.material_index as _;
         let material = materials
             .get(index)
             .ok_or_else(|| MeshLoadError::MaterialNotFound(index))?

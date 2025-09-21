@@ -145,8 +145,7 @@ impl AString {
     unsafe fn from_ai_string(ptr: *const AiString) -> String {
         let s = unsafe { &*(ptr as *const Self) };
 
-        let len = s.length as usize;
-        let bytes = &s.data[..len];
+        let bytes = &s.data[..s.length as _];
 
         unsafe { CStr::from_ptr(bytes.as_ptr()) }
             .to_string_lossy()

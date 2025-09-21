@@ -1,7 +1,8 @@
 use std::fmt;
 
 use crate::{
-    glBindBuffer, glBufferData, glDeleteBuffers, glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer, GLboolean, GLint, GLsizei, GLsizeiptr, GLuint
+    GLboolean, GLint, GLsizei, GLsizeiptr, GLuint, glBindBuffer, glBufferData, glDeleteBuffers,
+    glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer,
 };
 
 #[derive(Debug, Clone)]
@@ -66,7 +67,7 @@ impl VertexBufferObject {
     }
 
     pub fn buffer_data<T>(n: u32, data: &[T], usage: u32) -> Result<(), VBOError> {
-        let pointer = data.as_ptr() as *const std::ffi::c_void;
+        let pointer = data.as_ptr() as _;
         let size = match GLsizeiptr::try_from(data.len() * std::mem::size_of::<T>()) {
             Ok(s) => s,
             Err(_) => return Err(VBOError::CastError),

@@ -37,7 +37,7 @@ impl Uniform for UniformWrapper<&Mat4<f32>> {
     fn set(&self, options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
         let transpose = options.unwrap_or(false);
         let cols = self.cols();
-        let value = cols.as_ptr() as *const f32;
+        let value = cols.as_ptr() as _;
         unsafe {
             gl_sys::bindings::glUniformMatrix4fv(*location, 1, u8::from(transpose), value);
         }

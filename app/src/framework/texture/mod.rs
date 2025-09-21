@@ -151,8 +151,8 @@ impl Texture2D {
             gl_sys::bindings::GL_TEXTURE_2D,
             0,
             self.internal_format,
-            self.width as gl_sys::bindings::GLsizei,
-            self.height as gl_sys::bindings::GLsizei,
+            self.width as _,
+            self.height as _,
             0,
             self.format,
             self.type_,
@@ -211,7 +211,7 @@ impl Uniform for &Texture2D {
         let UniformLocation(location) = *location;
         self.bind(unit).expect("Couldnt bind texture");
         unsafe {
-            gl_sys::bindings::glUniform1i(location, unit as i32);
+            gl_sys::bindings::glUniform1i(location, unit as _);
         }
     }
 }

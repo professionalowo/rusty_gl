@@ -55,7 +55,7 @@ fn normalize_scene(scene: &mut Scene<'_>, scale: u32) {
             bbox.bb(v);
         }
     }
-    let s = (2 * scale) as f32;
+    let s = (2 * scale) as _;
 
     let scale_v = Vec3::scalar(s) / bbox.distance();
 

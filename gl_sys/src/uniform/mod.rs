@@ -23,7 +23,7 @@ impl UniformLocation {
     {
         let name = name.as_ref();
         let name_cstr = ffi::CString::new(name)?;
-        let name_ptr = name_cstr.as_ptr() as *const i8;
+        let name_ptr = name_cstr.as_ptr() as _;
 
         let res = unsafe { glGetUniformLocation(*id, name_ptr) };
 
