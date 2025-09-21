@@ -106,14 +106,14 @@ impl<T> DerefMut for StbiPtr<T> {
     }
 }
 
-impl<T: Copy> From<StbiPtr<T>> for Vec<T> {
+impl<T: Clone> From<StbiPtr<T>> for Vec<T> {
     #[inline]
     fn from(value: StbiPtr<T>) -> Self {
         value.to_vec()
     }
 }
 
-impl<T: Copy> From<StbiPtr<T>> for Box<[T]> {
+impl<T: Clone> From<StbiPtr<T>> for Box<[T]> {
     #[inline]
     fn from(value: StbiPtr<T>) -> Self {
         value.to_vec().into_boxed_slice()
@@ -122,7 +122,7 @@ impl<T: Copy> From<StbiPtr<T>> for Box<[T]> {
 
 impl<T: Clone> IntoIterator for StbiPtr<T> {
     type Item = T;
-    type IntoIter = std::vec::IntoIter<T>;
+    type IntoIter = std::vec::IntoIter<Self::Item>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
