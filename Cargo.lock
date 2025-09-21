@@ -181,14 +181,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
 
 [[package]]
-name = "gmath"
-version = "0.1.0"
-dependencies = [
- "assimp",
- "assimp-sys",
-]
-
-[[package]]
 name = "itertools"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -305,6 +297,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "caf4aa5b0f434c91fe5c7f1ecb6a5ece2130b02ad2a590589dda5146df959001"
 
 [[package]]
+name = "rmath"
+version = "0.1.0"
+dependencies = [
+ "assimp",
+ "assimp-sys",
+]
+
+[[package]]
 name = "rustc-hash"
 version = "2.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -322,7 +322,7 @@ dependencies = [
  "gl_sys",
  "glfw_sys",
  "glob",
- "gmath",
+ "rmath",
  "stbi_sys",
 ]
 
