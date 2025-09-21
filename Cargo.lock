@@ -160,6 +160,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "glfw_sys"
+version = "0.1.0"
+dependencies = [
+ "bindgen",
+ "glob",
+]
+
+[[package]]
 name = "glob"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -305,6 +313,7 @@ dependencies = [
  "cc",
  "derive_more",
  "gl_sys",
+ "glfw_sys",
  "glob",
  "gmath",
 ]

@@ -17,19 +17,18 @@ use rusty_gl::{
 
 use gmath::{mat4::Mat4, vec3::Vec3};
 
-use gl_sys::{
-    gl::{
-        self,
-        program::Program,
-        shader::{Shader, ShaderType},
-        vao::VertexArrayObject,
-    },
-    glfw::{
-        self,
-        input::{KeyEvent, keycode::Keycode, modifier::Modifier},
-        timer::Timer,
-        window::Window,
-    },
+use gl_sys::gl::{
+    self,
+    program::Program,
+    shader::{Shader, ShaderType},
+    vao::VertexArrayObject,
+};
+
+use glfw_sys::glfw::{
+    self,
+    input::{KeyEvent, keycode::Keycode, modifier::Modifier},
+    timer::Timer,
+    window::Window,
 };
 
 const BACKGROUND: ColorRGB = ColorRGB::new(0.0, 0.1, 0.333);

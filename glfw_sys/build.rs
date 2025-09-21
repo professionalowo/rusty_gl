@@ -12,19 +12,19 @@ fn main() {
 
     let opengl_builder = opengl_builder();
 
-    bind_gl(opengl_builder, &out_path.join("gl_bindings.rs"))
-        .expect("Failed to build OpenGL bindings");
+    bind_glfw(opengl_builder, &out_path.join("glfw_bindings.rs"))
+        .expect("Failed to build GLFW bindings");
 }
 
-fn bind_gl(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
+fn bind_glfw(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
     builder
-        .header("c/glwrapper.h")
-        .allowlist_var("GL_.*")
+        .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
+        .allowlist_var("GLFW_.*")
         .allowlist_function("gl.*")
-        .clang_arg("-DGL_GLEXT_PROTOTYPES")
+        .allowlist_type("GLFW.*")
         .generate()
         .map(LazyBindings)
-        .expect("Unable to generate OpenGL bindings")
+        .expect("Unable to generate GLFW bindings")
         .write_if_changed(out_path)
 }
 
