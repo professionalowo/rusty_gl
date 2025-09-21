@@ -92,8 +92,8 @@ fn opengl_builder() -> bindgen::Builder {
         .trim();
 
     bindgen::builder()
-        .clang_arg("-I/opt/homebrew/include")
-        .clang_arg(format!("-F{}/System/Library/Frameworks", sdk_path)) // For frameworks themselves
+        .clang_arg("-I/opt/homebrew/include") // For glfw3.h
+        .clang_arg(format!("-F{sdk_path}/System/Library/Frameworks")) // For frameworks themselves
 }
 
 #[cfg(not(target_os = "macos"))]
