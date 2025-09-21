@@ -1,13 +1,13 @@
 use std::{fmt, path::Path};
 
-use crate::framework::texture::stbi::GlImageData;
+use crate::framework::texture::image::GlImageData;
 
 use gl_sys::{
     self,
     uniform::{UniformLocation, UniformLocationError, uniform_trait::Uniform},
 };
 
-mod stbi;
+mod image;
 mod upload;
 
 #[derive(Debug, Default, Clone)]
@@ -22,7 +22,7 @@ pub struct Texture2D {
 
 #[derive(Debug)]
 pub enum TextureError {
-    LoadFailed(stbi::ImageError),
+    LoadFailed(image::ImageError),
     GLError(gl_sys::GLError),
 }
 
@@ -40,8 +40,8 @@ impl From<gl_sys::GLError> for TextureError {
     }
 }
 
-impl From<stbi::ImageError> for TextureError {
-    fn from(err: stbi::ImageError) -> Self {
+impl From<image::ImageError> for TextureError {
+    fn from(err: image::ImageError) -> Self {
         Self::LoadFailed(err)
     }
 }

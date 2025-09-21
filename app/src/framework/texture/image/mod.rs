@@ -6,7 +6,7 @@ use stbi_sys::{
     load::{Load, LoadData, LoadError, LoadFloat, LoadInt},
 };
 
-use crate::framework::texture::stbi::{format::Format, map_channels::MapChannels};
+use super::image::{format::Format, map_channels::MapChannels};
 
 mod format;
 mod map_channels;
