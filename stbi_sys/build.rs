@@ -13,13 +13,21 @@ fn main() {
 }
 
 fn bind_stbi(out_path: &PathBuf) -> io::Result<()> {
+    #[cfg(target_feature = "sse2")]
     fn with_simd(mut build: cc::Build) -> cc::Build {
-        if cfg!(target_feature = "sse2") {
-            build.flag_if_supported("-msse2");
-        } else if cfg!(target_feature = "neon") {
-            build.define("STBI_NEON", None);
-            build.flag_if_supported("-mfpu=neon");
-        }
+        build.flag_if_supported("-msse2");
+        build
+    }
+
+    #[cfg(target_feature = "neon")]
+    fn with_simd(mut build: cc::Build) -> cc::Build {
+        build.define("STBI_NEON", None);
+        build.flag_if_supported("-mfpu=neon");
+        build
+    }
+
+    #[cfg(not(any(target_feature = "neon", target_feature = "sse2")))]
+    fn with_simd(mut build: cc::Build) -> cc::Build {
         build
     }
 
