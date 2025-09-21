@@ -25,7 +25,7 @@ pub(super) trait MapChannels {
 impl MapChannels for LoadFloat {
     const TYPE: GlType = GlType::Float;
 
-    #[inline]
+    #[inline(always)]
     fn map_channels(Channels(c): &Channels) -> u32 {
         match c {
             4 => gl_sys::bindings::GL_RGBA32F,
@@ -38,7 +38,7 @@ impl MapChannels for LoadFloat {
 
 impl MapChannels for LoadInt {
     const TYPE: GlType = GlType::UnsignedByte;
-    #[inline]
+    #[inline(always)]
     fn map_channels(Channels(c): &Channels) -> u32 {
         match c {
             4 => gl_sys::bindings::GL_RGBA,
