@@ -82,7 +82,7 @@ fn load<L: Load + MapChannels>(data: &[u8]) -> ImageResult<GlImageData> {
     let Format {
         format,
         internal_format,
-    } = Format::try_from_load::<L>(channels)?;
+    } = Format::try_from_channels::<L>(channels)?;
     Ok(GlImageData {
         width,
         height,

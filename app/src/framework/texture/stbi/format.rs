@@ -20,7 +20,7 @@ pub struct Format {
 }
 
 impl Format {
-    pub fn try_from_load<M: MapChannels>(channels: &Channels) -> Result<Self, TryFromIntError> {
+    pub fn try_from_channels<M: MapChannels>(channels: &Channels) -> Result<Self, TryFromIntError> {
         let internal_format = i32::try_from(M::map_channels(channels))?;
         Ok(Self {
             format: format_channels(channels),
