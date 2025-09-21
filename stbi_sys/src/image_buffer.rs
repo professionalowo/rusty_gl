@@ -9,24 +9,24 @@ use crate::bindings::stbi_image_free;
 /// Safe as long as the pointer is obtained from stb_image and not freed manually.
 /// Constructing from a pointer managed by Rust's allocator is undefined behavior.
 #[derive(Debug, PartialEq)]
-pub struct ImageBuffer {
+pub struct StbImageBuffer {
     ptr: *mut u8,
     len: usize,
 }
 
-impl Drop for ImageBuffer {
+impl Drop for StbImageBuffer {
     fn drop(&mut self) {
         unsafe { stbi_image_free(self.ptr as _) };
     }
 }
 
-impl Default for ImageBuffer {
+impl Default for StbImageBuffer {
     fn default() -> Self {
         Self::null()
     }
 }
 
-impl ImageBuffer {
+impl StbImageBuffer {
     pub const fn null() -> Self {
         Self {
             ptr: std::ptr::null_mut(),
@@ -57,26 +57,26 @@ impl ImageBuffer {
     }
 }
 
-impl AsRef<[u8]> for ImageBuffer {
+impl AsRef<[u8]> for StbImageBuffer {
     fn as_ref(&self) -> &[u8] {
         self.as_slice()
     }
 }
 
-impl AsMut<[u8]> for ImageBuffer {
+impl AsMut<[u8]> for StbImageBuffer {
     fn as_mut(&mut self) -> &mut [u8] {
         self.as_mut_slice()
     }
 }
 
-impl Deref for ImageBuffer {
+impl Deref for StbImageBuffer {
     type Target = [u8];
     fn deref(&self) -> &Self::Target {
         self.as_slice()
     }
 }
 
-impl DerefMut for ImageBuffer {
+impl DerefMut for StbImageBuffer {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.as_mut_slice()
     }
