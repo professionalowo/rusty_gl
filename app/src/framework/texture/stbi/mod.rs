@@ -54,13 +54,10 @@ impl GlImageData {
 
     pub fn try_load_from_memory(data: impl AsRef<[u8]>) -> ImageResult<Self> {
         let bytes = data.as_ref();
-        if load::is_hdr(bytes) {
+        if stbi_sys::is_hdr(bytes) {
             load::try_loadf(bytes)
         } else {
             load::try_load(bytes)
         }
     }
 }
-
-#[cfg(test)]
-mod tests {}

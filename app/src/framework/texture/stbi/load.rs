@@ -4,12 +4,8 @@ use super::{
     format::{Channels, Format},
     load_trait::*,
 };
-use stbi_sys::*;
+use stbi_sys::bindings::*;
 use std::slice;
-
-pub(super) fn is_hdr(bytes: &[u8]) -> bool {
-    unsafe { stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as i32) != 0 }
-}
 
 pub(super) fn try_loadf(bytes: &[u8]) -> ImageResult<GlImageData> {
     try_load_opt::<LoadFloat>(bytes)
@@ -62,7 +58,7 @@ where
         let ptr = L::load(bytes, &mut dimensions, &mut channels);
         if ptr.is_null() {
             return Err(ImageError::StbiError(
-                failure_reason().unwrap_or_else(|| String::from("Unknown error")),
+                stbi_sys::failure_reason().unwrap_or_else(|| String::from("Unknown error")),
             ));
         }
         slice::from_raw_parts(ptr, dimensions.volume_with_channels(&channels).try_into()?)
@@ -72,18 +68,4 @@ where
         channels,
         data,
     })
-}
-
-pub fn failure_reason() -> Option<String> {
-    let ptr = unsafe { stbi_failure_reason() };
-
-    if ptr.is_null() {
-        None
-    } else {
-        Some(
-            unsafe { std::ffi::CStr::from_ptr(ptr) }
-                .to_string_lossy()
-                .into_owned(),
-        )
-    }
 }
