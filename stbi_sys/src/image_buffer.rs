@@ -34,6 +34,12 @@ impl ImageBuffer {
     }
 }
 
+impl AsRef<[u8]> for ImageBuffer {
+    fn as_ref(&self) -> &[u8] {
+        self.as_slice()
+    }
+}
+
 impl Deref for ImageBuffer {
     type Target = [u8];
     fn deref(&self) -> &Self::Target {
