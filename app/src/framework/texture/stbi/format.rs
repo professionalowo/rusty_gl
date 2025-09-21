@@ -1,4 +1,4 @@
-use crate::framework::texture::stbi::load_trait::MapChannels;
+use crate::framework::texture::stbi::map_channels::MapChannels;
 
 use stbi_sys::channels::Channels;
 use std::num::TryFromIntError;

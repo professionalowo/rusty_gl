@@ -1,9 +1,11 @@
 use core::fmt;
-use std::{fs, path::Path};
+use std::{fs, num::TryFromIntError, path::Path};
+
+use stbi_sys::load::LoadError;
 
 mod format;
 mod load;
-mod load_trait;
+mod map_channels;
 
 #[derive(Debug, PartialEq)]
 pub(super) struct GlImageData {
@@ -18,23 +20,29 @@ pub(super) struct GlImageData {
 #[derive(Debug)]
 pub enum ImageError {
     IoError(std::io::Error),
-    CastError(std::num::TryFromIntError),
-    StbiError(String),
+    TryFromIntError(TryFromIntError),
+    LoadError(LoadError),
 }
 
 impl std::fmt::Display for ImageError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::IoError(err) => fmt::Display::fmt(err, f),
-            Self::CastError(err) => fmt::Display::fmt(err, f),
-            Self::StbiError(err) => write!(f, "STBI Error: {}", err),
+            Self::LoadError(err) => fmt::Display::fmt(err, f),
+            Self::TryFromIntError(err) => fmt::Display::fmt(err, f),
         }
     }
 }
 
-impl From<std::num::TryFromIntError> for ImageError {
-    fn from(err: std::num::TryFromIntError) -> Self {
-        Self::CastError(err)
+impl From<TryFromIntError> for ImageError {
+    fn from(value: TryFromIntError) -> Self {
+        Self::TryFromIntError(value)
+    }
+}
+
+impl From<LoadError> for ImageError {
+    fn from(value: LoadError) -> Self {
+        Self::LoadError(value)
     }
 }
 
