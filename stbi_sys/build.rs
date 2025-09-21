@@ -35,6 +35,8 @@ fn bind_stbi(out_path: &PathBuf) -> io::Result<()> {
         .file(HEADER)
         .flags(["-x", "c"])
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
+        .flags(["-march=native", "-mtune=native"])
+        .flag("-ffast-math")
         .define("STB_IMAGE_IMPLEMENTATION", None)
         .define("STBI_NO_STDIO", None)
         .try_compile("stb_image")
