@@ -59,30 +59,30 @@ impl From<std::io::Error> for ImageError {
 pub type ImageResult<T> = std::result::Result<T, ImageError>;
 
 impl GlImageData {
-    pub fn try_load(path: impl AsRef<Path>) -> ImageResult<Self> {
+    pub fn try_load<P: AsRef<Path>>(path: P) -> ImageResult<Self> {
         fs::read(path).map(Self::try_load_from_memory)?
     }
 
-    pub fn try_load_from_memory(data: impl AsRef<[u8]>) -> ImageResult<Self> {
+    pub fn try_load_from_memory<B: AsRef<[u8]>>(data: B) -> ImageResult<Self> {
         let bytes = data.as_ref();
         if stbi_sys::is_hdr(bytes) {
-            load::<LoadFloat>(bytes)
+            load_from_memory::<LoadFloat>(bytes)
         } else {
-            load::<LoadInt>(bytes)
+            load_from_memory::<LoadInt>(bytes)
         }
     }
 }
 
-fn load<L: Load + MapChannels>(data: &[u8]) -> ImageResult<GlImageData> {
+fn load_from_memory<L: Load + MapChannels>(bytes: &[u8]) -> ImageResult<GlImageData> {
     let LoadData {
-        ref channels,
+        channels,
         data,
         dimensions: Dimensions { height, width },
-    } = LoadData::try_load::<L>(data)?;
+    } = LoadData::try_load::<L>(bytes)?;
     let Format {
         format,
         internal_format,
-    } = Format::try_from_channels::<L>(channels)?;
+    } = Format::try_from_channels::<L>(&channels)?;
     Ok(GlImageData {
         width,
         height,
