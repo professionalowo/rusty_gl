@@ -3,8 +3,8 @@ use std::{fs, num::TryFromIntError, path::Path};
 
 use stbi_sys::{
     dimensions::Dimensions,
-    image_buffer::StbiPtr,
     load::{Load, LoadData, LoadError, LoadFloat, LoadInt},
+    stbi_ptr::StbiPtr,
 };
 
 use super::image::{format::Format, map_channels::MapChannels};

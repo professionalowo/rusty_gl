@@ -7,7 +7,7 @@ use crate::{
     channels::Channels,
     dimensions::Dimensions,
     failure_reason,
-    image_buffer::StbiPtr,
+    stbi_ptr::StbiPtr,
 };
 
 #[derive(Debug)]

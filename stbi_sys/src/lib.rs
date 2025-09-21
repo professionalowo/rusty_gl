@@ -1,8 +1,8 @@
 pub mod bindings;
 pub mod channels;
 pub mod dimensions;
-pub mod image_buffer;
 pub mod load;
+pub mod stbi_ptr;
 
 pub fn is_hdr<B>(bytes: B) -> bool
 where
