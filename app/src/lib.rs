@@ -9,7 +9,7 @@ use gmath::{mat4::Mat4, vec3::Vec3, vec4::Vec4};
 pub mod assimp;
 pub mod framework;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UniformWrapper<T>(pub T);
 
 impl<T> From<T> for UniformWrapper<T> {
