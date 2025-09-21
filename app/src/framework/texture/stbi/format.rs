@@ -22,9 +22,9 @@ impl From<i32> for Channels {
     }
 }
 
-impl Into<i32> for Channels {
-    fn into(self) -> i32 {
-        self.0
+impl From<Channels> for i32 {
+    fn from(Channels(value): Channels) -> Self {
+        value
     }
 }
 
