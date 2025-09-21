@@ -65,21 +65,20 @@ impl GlImageData {
     }
 
     pub fn try_load_from_memory<B: AsRef<[u8]>>(data: B) -> ImageResult<Self> {
-        let bytes = data.as_ref();
-        if stbi_sys::is_hdr(bytes) {
-            load_from_memory::<LoadFloat>(bytes)
+        if stbi_sys::is_hdr(&data) {
+            load_from_memory::<LoadFloat, _>(&data)
         } else {
-            load_from_memory::<LoadInt>(bytes)
+            load_from_memory::<LoadInt, _>(&data)
         }
     }
 }
 
-fn load_from_memory<L: Load + MapChannels>(bytes: &[u8]) -> ImageResult<GlImageData> {
+fn load_from_memory<L: Load + MapChannels, B: AsRef<[u8]>>(bytes: B) -> ImageResult<GlImageData> {
     let LoadData {
         ref channels,
         data,
         dimensions: Dimensions { height, width },
-    } = LoadData::try_load::<L>(bytes)?;
+    } = LoadData::try_load::<L, _>(bytes)?;
     let Format {
         format,
         internal_format,

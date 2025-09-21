@@ -38,9 +38,10 @@ impl fmt::Display for LoadError {
     }
 }
 impl LoadData {
-    pub fn try_load<L>(bytes: &[u8]) -> Result<Self, LoadError>
+    pub fn try_load<L, B>(bytes: B) -> Result<Self, LoadError>
     where
         L: Load,
+        B: AsRef<[u8]>,
     {
         unsafe {
             stbi_set_flip_vertically_on_load(1);
@@ -65,8 +66,8 @@ impl LoadData {
 }
 
 pub trait Load {
-    fn load(
-        bytes: &[u8],
+    fn load<B: AsRef<[u8]>>(
+        bytes: B,
         Dimensions { width, height }: &mut Dimensions,
         Channels(channels): &mut Channels,
     ) -> StbiPtr<u8> {
