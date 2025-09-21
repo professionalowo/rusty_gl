@@ -19,7 +19,7 @@ type KeyCallback = dyn FnMut(KeyEvent);
 impl Window {
     pub fn try_new<B>(width: u32, height: u32, title: B) -> Result<Self, NulError>
     where
-        Vec<u8>: From<B>,
+        B: Into<Vec<u8>>,
     {
         let title_cstr = CString::new(title)?;
         let handle = create_window(width, height, &title_cstr, None, None);

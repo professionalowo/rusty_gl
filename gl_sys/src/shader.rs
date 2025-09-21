@@ -59,7 +59,7 @@ impl Shader {
 
     pub fn try_from_bytes<B>(shader_type: ShaderType, source: B) -> Result<Self, ShaderError>
     where
-        Vec<u8>: From<B>,
+        B: Into<Vec<u8>>,
     {
         let shader = unsafe { glCreateShader(shader_type.key()) };
         let c_str = ffi::CString::new(source)?;

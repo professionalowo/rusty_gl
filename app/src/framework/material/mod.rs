@@ -136,15 +136,17 @@ impl Material {
 
 fn get_color<C>(col: C) -> Result<Texture2D, TextureError>
 where
-    Vec3<f32>: From<C>,
+    C: Into<Vec3<f32>>,
 {
+    let col: Vec3<f32> = col.into();
+
     Texture2D::from_data(
         1,
         1,
         gl_sys::bindings::GL_RGB32F as i32,
         gl_sys::bindings::GL_RGB,
         gl_sys::bindings::GL_FLOAT,
-        &[Vec3::from(col)],
+        &[col],
         false,
     )
 }
