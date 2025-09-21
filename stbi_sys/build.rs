@@ -1,7 +1,6 @@
-use std::{
-    env, fs, io,
-    path::{Path, PathBuf},
-};
+use std::{env, io, path::PathBuf};
+
+use build_utils::{LazyBindings, print_build_flags};
 
 fn main() {
     print_build_flags();
@@ -46,46 +45,4 @@ fn bind_stbi(out_path: &PathBuf) -> io::Result<()> {
         .map(LazyBindings)
         .expect("Unable to generate STBI bindings")
         .write_if_changed(out_path)
-}
-
-fn print_build_flags() {
-    println!("cargo:rerun-if-changed=build.rs");
-    for entry in glob::glob("c/**/*").expect("Failed to read glob pattern") {
-        let path = entry.expect("Failed to read file path");
-        println!("cargo:rerun-if-changed={}", path.display());
-    }
-    print_os_flags();
-}
-
-#[cfg(target_os = "macos")]
-fn print_os_flags() {
-    println!("cargo:rustc-link-lib=framework=OpenGL");
-    println!("cargo:rustc-link-search=native=/opt/homebrew/lib");
-    println!("cargo:rustc-link-lib=dylib=glfw");
-}
-
-#[cfg(not(target_os = "macos"))]
-fn print_os_flags() {
-    println!("cargo:rustc-link-lib=glfw");
-    println!("cargo:rustc-link-lib=GL");
-}
-
-#[derive(Debug)]
-struct LazyBindings(bindgen::Bindings);
-impl LazyBindings {
-    fn write_if_changed<P>(&self, out_path: P) -> io::Result<()>
-    where
-        P: AsRef<Path>,
-    {
-        let new_contents = self.0.to_string();
-
-        // Check if the file already exists
-        if let Ok(existing_contents) = fs::read_to_string(&out_path)
-            && existing_contents == new_contents
-        {
-            Ok(())
-        } else {
-            fs::write(&out_path, new_contents.as_str())
-        }
-    }
 }
