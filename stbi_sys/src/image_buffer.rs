@@ -5,15 +5,21 @@ use std::{
 
 use crate::bindings;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct ImageBuffer {
     ptr: *mut u8,
     len: usize,
 }
 
+impl Drop for ImageBuffer {
+    fn drop(&mut self) {
+        unsafe { bindings::stbi_image_free(self.ptr as _) };
+    }
+}
+
 impl ImageBuffer {
     pub unsafe fn from_raw(ptr: *mut u8, len: usize) -> Self {
-        ImageBuffer { ptr, len }
+        Self { ptr, len }
     }
 
     pub fn as_slice(&self) -> &[u8] {
@@ -40,6 +46,12 @@ impl AsRef<[u8]> for ImageBuffer {
     }
 }
 
+impl AsMut<[u8]> for ImageBuffer {
+    fn as_mut(&mut self) -> &mut [u8] {
+        self.as_mut_slice()
+    }
+}
+
 impl Deref for ImageBuffer {
     type Target = [u8];
     fn deref(&self) -> &Self::Target {
@@ -50,11 +62,5 @@ impl Deref for ImageBuffer {
 impl DerefMut for ImageBuffer {
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.as_mut_slice()
-    }
-}
-
-impl Drop for ImageBuffer {
-    fn drop(&mut self) {
-        unsafe { bindings::stbi_image_free(self.ptr as _) };
     }
 }

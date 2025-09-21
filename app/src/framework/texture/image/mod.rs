@@ -3,6 +3,7 @@ use std::{fs, num::TryFromIntError, path::Path};
 
 use stbi_sys::{
     dimensions::Dimensions,
+    image_buffer::ImageBuffer,
     load::{Load, LoadData, LoadError, LoadFloat, LoadInt},
 };
 
@@ -18,7 +19,7 @@ pub(super) struct GlImageData {
     pub format: gl_sys::bindings::GLenum,
     pub internal_format: gl_sys::bindings::GLint,
     pub type_: gl_sys::bindings::GLenum,
-    pub data: Box<[u8]>,
+    pub data: ImageBuffer,
 }
 
 #[derive(Debug)]
@@ -87,7 +88,7 @@ fn load_from_memory<L: Load + MapChannels>(bytes: &[u8]) -> ImageResult<GlImageD
         width,
         height,
         format,
-        data: data.into_boxed_slice(),
+        data,
         type_: L::TYPE.data(),
         internal_format,
     })
