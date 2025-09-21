@@ -61,7 +61,7 @@ fn main() -> ExitCode {
     )
     .expect("Failed to set window hint");
 
-    let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
+    let mut window = Window::try_new(1920, 1080, "Rust").expect("Failed to create GLFW window");
 
     let scene =
         mesh::load_mesh(entrypoint, NormalizeOptions::Scale(200)).expect("Failed to load model");
