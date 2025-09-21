@@ -36,7 +36,6 @@ impl StbImageBuffer {
 
     pub const unsafe fn from_raw(ptr: *mut u8, len: usize) -> Self {
         //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image
-        //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image
         Self { ptr, len }
     }
 
