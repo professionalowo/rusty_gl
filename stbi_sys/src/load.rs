@@ -74,14 +74,14 @@ pub trait Load {
         unsafe {
             let ptr = Self::load_from_memory(
                 buffer.as_ptr(),
-                buffer.len() as i32,
+                buffer.len() as _,
                 width,
                 height,
                 channels,
                 0,
             );
 
-            StbImageBuffer::from_raw(ptr, ((*width) * (*height) * (*channels)) as _)
+            StbImageBuffer::from_raw_parts(ptr, ((*width) * (*height) * (*channels)) as _)
         }
     }
 
