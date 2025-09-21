@@ -18,25 +18,24 @@ impl Drop for ImageBuffer {
 }
 
 impl ImageBuffer {
-    pub unsafe fn from_raw(ptr: *mut u8, len: usize) -> Self {
+    pub const unsafe fn from_raw(ptr: *mut u8, len: usize) -> Self {
         Self { ptr, len }
     }
 
-    pub fn as_slice(&self) -> &[u8] {
+    pub const fn as_slice(&self) -> &[u8] {
         unsafe { slice::from_raw_parts(self.ptr, self.len) }
     }
 
-    pub fn as_mut_slice(&mut self) -> &mut [u8] {
+    pub const fn as_mut_slice(&mut self) -> &mut [u8] {
         unsafe { slice::from_raw_parts_mut(self.ptr, self.len) }
     }
 
-    pub fn is_null(&self) -> bool {
+    pub const fn is_null(&self) -> bool {
         self.ptr.is_null()
     }
 
-    pub fn into_boxed_slice(self) -> Box<[u8]> {
-        let slice = self.as_slice();
-        slice.to_vec().into_boxed_slice()
+    pub fn to_vec(self) -> Vec<u8> {
+        self.as_slice().to_vec()
     }
 }
 
