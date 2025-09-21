@@ -1,4 +1,4 @@
-use crate::glfw;
+use crate::get_time;
 
 #[derive(Debug)]
 pub struct Timer<const FPS: u32> {
@@ -12,7 +12,7 @@ impl<const FPS: u32> Timer<FPS> {
     }
 
     pub fn start(&mut self) {
-        self.now = glfw::get_time();
+        self.now = get_time();
     }
 
     pub fn should_render(&self) -> bool {

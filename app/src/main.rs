@@ -24,7 +24,7 @@ use gl_sys::{
     vao::VertexArrayObject,
 };
 
-use glfw_sys::glfw::{
+use glfw_sys::{
     self,
     input::{KeyEvent, keycode::Keycode, modifier::Modifier},
     timer::Timer,
@@ -44,14 +44,22 @@ fn main() -> ExitCode {
         None => return usage(),
     };
 
-    glfw::init().expect("Failed to initialize GLFW");
+    glfw_sys::init().expect("Failed to initialize GLFW");
 
-    glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MAJOR, 4).expect("Failed to set window hint");
-    glfw::window_hint(glfw::GLFW_CONTEXT_VERSION_MINOR, 1).expect("Failed to set window hint");
-    glfw::window_hint(glfw::GLFW_OPENGL_PROFILE, glfw::GLFW_OPENGL_CORE_PROFILE)
+    glfw_sys::window_hint(glfw_sys::bindings::GLFW_CONTEXT_VERSION_MAJOR, 4)
         .expect("Failed to set window hint");
-    glfw::window_hint(glfw::GLFW_OPENGL_FORWARD_COMPAT, glfw::GLFW_TRUE)
+    glfw_sys::window_hint(glfw_sys::bindings::GLFW_CONTEXT_VERSION_MINOR, 1)
         .expect("Failed to set window hint");
+    glfw_sys::window_hint(
+        glfw_sys::bindings::GLFW_OPENGL_PROFILE,
+        glfw_sys::bindings::GLFW_OPENGL_CORE_PROFILE,
+    )
+    .expect("Failed to set window hint");
+    glfw_sys::window_hint(
+        glfw_sys::bindings::GLFW_OPENGL_FORWARD_COMPAT,
+        glfw_sys::bindings::GLFW_TRUE,
+    )
+    .expect("Failed to set window hint");
 
     let mut window = Window::try_new(640, 320, "Rust").expect("Failed to create GLFW window");
 
@@ -189,7 +197,7 @@ fn main() -> ExitCode {
             timer.rendered();
         }
     }
-    glfw::terminate();
+    glfw_sys::terminate();
     ExitCode::SUCCESS
 }
 

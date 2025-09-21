@@ -5,14 +5,11 @@ use std::{
 };
 
 use crate::{
-    glfw,
-    glfw::{
-        GLFWError,
-        input::{KeyEvent, action::Action, keycode::Keycode, modifier::Modifier},
-    },
+    GLFWError, bindings,
+    input::{KeyEvent, action::Action, keycode::Keycode, modifier::Modifier},
 };
 pub struct Window {
-    handle: *mut glfw::GLFWwindow,
+    handle: *mut bindings::GLFWwindow,
     last_event: Rc<RefCell<Option<KeyEvent>>>,
     _title: CString,
 }
@@ -34,7 +31,7 @@ impl Window {
             }
         });
         unsafe {
-            glfw::glfwSetFramebufferSizeCallback(handle, Some(framebuffer_size_callback));
+            bindings::glfwSetFramebufferSizeCallback(handle, Some(framebuffer_size_callback));
         }
         Ok(Self {
             handle,
@@ -45,7 +42,7 @@ impl Window {
 
     pub fn should_close(&self) -> Result<bool, GLFWError> {
         unsafe {
-            let result = glfw::glfwWindowShouldClose(self.handle);
+            let result = bindings::glfwWindowShouldClose(self.handle);
             if result == 0 {
                 Ok(false)
             } else if result == 1 {
@@ -58,19 +55,19 @@ impl Window {
 
     pub fn set_should_close(&self, value: bool) {
         unsafe {
-            glfw::glfwSetWindowShouldClose(self.handle, if value { 1 } else { 0 });
+            bindings::glfwSetWindowShouldClose(self.handle, if value { 1 } else { 0 });
         }
     }
 
     pub fn poll_events(&self) {
         unsafe {
-            glfw::glfwPollEvents();
+            bindings::glfwPollEvents();
         }
     }
 
     pub fn swap_buffers(&self) {
         unsafe {
-            glfw::glfwSwapBuffers(self.handle);
+            bindings::glfwSwapBuffers(self.handle);
         }
     }
 
@@ -91,7 +88,7 @@ impl Window {
         let mut w = 0;
         let mut h = 0;
         unsafe {
-            glfw::glfwGetFramebufferSize(self.handle, &mut w, &mut h);
+            bindings::glfwGetFramebufferSize(self.handle, &mut w, &mut h);
         }
         (w, h)
     }
@@ -100,18 +97,18 @@ impl Window {
 impl Drop for Window {
     fn drop(&mut self) {
         unsafe {
-            let user_ptr = glfw::glfwGetWindowUserPointer(self.handle);
+            let user_ptr = bindings::glfwGetWindowUserPointer(self.handle);
             if !user_ptr.is_null() {
                 let closure: Box<KeyCallback> = Box::from_raw(user_ptr as *mut Box<KeyCallback>);
                 // Drop the closure to unregister the callback
                 drop(closure);
             }
-            glfw::glfwDestroyWindow(self.handle);
+            bindings::glfwDestroyWindow(self.handle);
         }
     }
 }
 
-fn set_key_callback<F>(window: *mut glfw::GLFWwindow, callback: F)
+fn set_key_callback<F>(window: *mut bindings::GLFWwindow, callback: F)
 where
     F: FnMut(KeyEvent) + 'static,
 {
@@ -119,8 +116,8 @@ where
     let raw = Box::into_raw(Box::new(closure));
 
     unsafe {
-        glfw::glfwSetWindowUserPointer(window, raw as *mut c_void);
-        glfw::glfwSetKeyCallback(window, Some(key_callback_trampoline));
+        bindings::glfwSetWindowUserPointer(window, raw as *mut c_void);
+        bindings::glfwSetKeyCallback(window, Some(key_callback_trampoline));
     }
 }
 
@@ -128,35 +125,35 @@ fn create_window(
     width: u32,
     height: u32,
     title: &CStr,
-    monitor: Option<*mut glfw::GLFWmonitor>,
-    share: Option<*mut glfw::GLFWwindow>,
-) -> *mut glfw::GLFWwindow {
+    monitor: Option<*mut bindings::GLFWmonitor>,
+    share: Option<*mut bindings::GLFWwindow>,
+) -> *mut bindings::GLFWwindow {
     unsafe {
-        let window = glfw::glfwCreateWindow(
+        let window = bindings::glfwCreateWindow(
             width as c_int,
             height as c_int,
             title.as_ptr(),
             monitor.unwrap_or(std::ptr::null_mut()),
             share.unwrap_or(std::ptr::null_mut()),
         );
-        glfw::glfwMakeContextCurrent(window);
+        bindings::glfwMakeContextCurrent(window);
         window
     }
 }
 
 extern "C" fn framebuffer_size_callback(
-    _window: *mut glfw::GLFWwindow,
+    _window: *mut bindings::GLFWwindow,
     width: c_int,
     height: c_int,
 ) {
     unsafe {
-        glfw::glViewport(0, 0, width, height);
+        bindings::glViewport(0, 0, width, height);
     }
 }
 
 // DO NOT PANIC HERE EVER
 extern "C" fn key_callback_trampoline(
-    window: *mut glfw::GLFWwindow,
+    window: *mut bindings::GLFWwindow,
     key: c_int,
     _scancode: c_int,
     action: c_int,
@@ -168,7 +165,7 @@ extern "C" fn key_callback_trampoline(
     let event = KeyEvent::new(keycode, action, modifier);
 
     unsafe {
-        let user_ptr = glfw::glfwGetWindowUserPointer(window);
+        let user_ptr = bindings::glfwGetWindowUserPointer(window);
         if !user_ptr.is_null() {
             let closure: &mut Box<KeyCallback> = &mut *(user_ptr as *mut Box<KeyCallback>);
             closure(event);
