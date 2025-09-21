@@ -7,13 +7,14 @@ use crate::{
     channels::Channels,
     dimensions::Dimensions,
     failure_reason,
+    image_buffer::ImageBuffer,
 };
 
 #[derive(Debug)]
-pub struct LoadData<'b> {
+pub struct LoadData {
     pub dimensions: Dimensions,
     pub channels: Channels,
-    pub data: &'b [u8],
+    pub data: ImageBuffer,
 }
 
 #[derive(Debug)]
@@ -36,8 +37,8 @@ impl fmt::Display for LoadError {
         }
     }
 }
-impl<'b> LoadData<'b> {
-    pub fn try_load<L>(bytes: &'b [u8]) -> Result<Self, LoadError>
+impl LoadData {
+    pub fn try_load<L>(bytes: &[u8]) -> Result<Self, LoadError>
     where
         L: Load,
     {
@@ -47,15 +48,14 @@ impl<'b> LoadData<'b> {
 
         let mut dimensions = Dimensions::default();
         let mut channels = Channels::default();
-        let data = unsafe {
-            let ptr = L::load(bytes, &mut dimensions, &mut channels);
-            if ptr.is_null() {
-                return Err(LoadError::StbiError(
-                    failure_reason().unwrap_or_else(|| String::from("Unknown error")),
-                ));
-            }
-            slice::from_raw_parts(ptr, dimensions.volume_with_channels(&channels).try_into()?)
-        };
+
+        let data = L::load(bytes, &mut dimensions, &mut channels);
+        if data.is_null() {
+            return Err(LoadError::StbiError(
+                failure_reason().unwrap_or_else(|| String::from("Unknown error")),
+            ));
+        }
+
         Ok(Self {
             dimensions,
             channels,
@@ -69,18 +69,19 @@ pub trait Load {
         bytes: &[u8],
         Dimensions { width, height }: &mut Dimensions,
         Channels(channels): &mut Channels,
-    ) -> *const u8 {
+    ) -> ImageBuffer {
         let buffer = bytes.as_ref();
         unsafe {
-            Self::load_from_memory(
+            let ptr = Self::load_from_memory(
                 buffer.as_ptr(),
                 buffer.len() as i32,
                 width,
                 height,
                 channels,
                 0,
-            )
-            .cast_const()
+            );
+
+            ImageBuffer::from_raw(ptr, ((*width) * (*height) * (*channels)) as _)
         }
     }
 
@@ -92,14 +93,6 @@ pub trait Load {
         channels_in_file: *mut c_int,
         desired_channels: c_int,
     ) -> *mut u8;
-}
-
-impl Drop for LoadData<'_> {
-    fn drop(&mut self) {
-        unsafe {
-            crate::bindings::stbi_image_free(self.data.as_ptr() as *mut std::ffi::c_void);
-        }
-    }
 }
 
 pub struct LoadFloat;

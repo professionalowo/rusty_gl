@@ -87,7 +87,7 @@ fn load_from_memory<L: Load + MapChannels>(bytes: &[u8]) -> ImageResult<GlImageD
         width,
         height,
         format,
-        data: Box::from(data),
+        data: data.into_boxed_slice(),
         type_: L::TYPE.data(),
         internal_format,
     })
