@@ -1,4 +1,4 @@
-use std::{ffi::c_int, fmt, num::TryFromIntError};
+use std::{ffi::c_int, fmt, num};
 
 use crate::{
     bindings::{
@@ -20,11 +20,11 @@ pub struct LoadData {
 #[derive(Debug)]
 pub enum LoadError {
     StbiError(String),
-    TryFromIntError(TryFromIntError),
+    TryFromIntError(num::TryFromIntError),
 }
 
-impl From<TryFromIntError> for LoadError {
-    fn from(value: TryFromIntError) -> Self {
+impl From<num::TryFromIntError> for LoadError {
+    fn from(value: num::TryFromIntError) -> Self {
         Self::TryFromIntError(value)
     }
 }
