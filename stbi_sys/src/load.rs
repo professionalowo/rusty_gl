@@ -36,8 +36,8 @@ impl fmt::Display for LoadError {
         }
     }
 }
-impl LoadData<'_> {
-    pub fn load<L>(bytes: &[u8]) -> Result<LoadData<'_>, LoadError>
+impl<'b> LoadData<'b> {
+    pub fn load<L>(bytes: &'b [u8]) -> Result<LoadData<'b>, LoadError>
     where
         L: Load,
     {
@@ -58,6 +58,13 @@ impl LoadData<'_> {
             data,
         })
     }
+}
+
+pub fn try_load<L: Load>(bytes: &[u8]) -> Result<LoadData<'_>, LoadError> {
+    unsafe {
+        stbi_set_flip_vertically_on_load(1);
+    }
+    LoadData::load::<L>(bytes)
 }
 
 pub trait Load {
@@ -121,11 +128,4 @@ impl Load for LoadInt {
     ) -> *mut u8 {
         unsafe { stbi_load_from_memory(buffer, len, x, y, channels_in_file, desired_channels) }
     }
-}
-
-pub fn try_load_opt<L: Load>(bytes: &[u8]) -> Result<LoadData<'_>, LoadError> {
-    unsafe {
-        stbi_set_flip_vertically_on_load(1);
-    }
-    LoadData::load::<L>(bytes)
 }
