@@ -14,9 +14,9 @@ fn main() {
 
 fn bind_stbi(out_path: &PathBuf) -> io::Result<()> {
     fn with_simd(mut build: cc::Build) -> cc::Build {
-        if cfg!(any(target_arch = "x86_64", target_arch = "x86")) {
+        if cfg!(target_feature = "sse2") {
             build.flag_if_supported("-msse2");
-        } else if cfg!(all(target_arch = "aarch64", target_feature = "neon")) {
+        } else if cfg!(target_feature = "neon") {
             build.define("STBI_NEON", None);
             build.flag_if_supported("-mfpu=neon");
         }
