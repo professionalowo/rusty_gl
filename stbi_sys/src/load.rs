@@ -66,7 +66,7 @@ impl<'b> LoadData<'b> {
 
 pub trait Load {
     unsafe fn load(
-        bytes: impl AsRef<[u8]>,
+        bytes: &[u8],
         Dimensions { width, height }: &mut Dimensions,
         Channels(channels): &mut Channels,
     ) -> *const u8 {
