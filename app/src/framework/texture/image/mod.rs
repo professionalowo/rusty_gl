@@ -1,5 +1,4 @@
-use core::fmt;
-use std::{fs, num::TryFromIntError, path::Path};
+use std::{fmt, fs, io, num, path::Path};
 
 use stbi_sys::{
     dimensions::Dimensions,
@@ -24,13 +23,13 @@ pub(super) struct GlImageData {
 
 #[derive(Debug)]
 pub enum ImageError {
-    IoError(std::io::Error),
-    TryFromIntError(TryFromIntError),
+    IoError(io::Error),
+    TryFromIntError(num::TryFromIntError),
     LoadError(LoadError),
 }
 
-impl std::fmt::Display for ImageError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl fmt::Display for ImageError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::IoError(err) => fmt::Display::fmt(err, f),
             Self::LoadError(err) => fmt::Display::fmt(err, f),
@@ -39,8 +38,8 @@ impl std::fmt::Display for ImageError {
     }
 }
 
-impl From<TryFromIntError> for ImageError {
-    fn from(value: TryFromIntError) -> Self {
+impl From<num::TryFromIntError> for ImageError {
+    fn from(value: num::TryFromIntError) -> Self {
         Self::TryFromIntError(value)
     }
 }
@@ -51,8 +50,8 @@ impl From<LoadError> for ImageError {
     }
 }
 
-impl From<std::io::Error> for ImageError {
-    fn from(err: std::io::Error) -> Self {
+impl From<io::Error> for ImageError {
+    fn from(err: io::Error) -> Self {
         Self::IoError(err)
     }
 }
