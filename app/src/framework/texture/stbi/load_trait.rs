@@ -15,11 +15,13 @@ impl GlType {
     }
 }
 
-pub(super) trait Load {
+pub(super) trait MapChannels {
     const TYPE: GlType;
 
     fn map_channels(channels: &Channels) -> u32;
+}
 
+pub(super) trait Load {
     unsafe fn load(
         bytes: impl AsRef<[u8]>,
         Dimensions { width, height }: &mut Dimensions,
@@ -52,19 +54,6 @@ pub(super) trait Load {
 pub(super) struct LoadFloat;
 
 impl Load for LoadFloat {
-    const TYPE: GlType = GlType::Float;
-
-    #[inline]
-    fn map_channels(Channels(channels): &Channels) -> u32 {
-        match channels {
-            4 => gl_sys::bindings::GL_RGBA32F,
-            3 => gl_sys::bindings::GL_RGB32F,
-            2 => gl_sys::bindings::GL_RG32F,
-            1 => gl_sys::bindings::GL_R32F,
-            _ => gl_sys::bindings::GL_R32F,
-        }
-    }
-
     #[inline]
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
@@ -79,21 +68,24 @@ impl Load for LoadFloat {
     }
 }
 
-pub(super) struct LoadInt;
+impl MapChannels for LoadFloat {
+    const TYPE: GlType = GlType::Float;
 
-impl Load for LoadInt {
-    const TYPE: GlType = GlType::UnsignedByte;
     #[inline]
     fn map_channels(Channels(channels): &Channels) -> u32 {
         match channels {
-            1 => gl_sys::bindings::GL_RED,
-            2 => gl_sys::bindings::GL_RG,
-            3 => gl_sys::bindings::GL_RGB,
-            4 => gl_sys::bindings::GL_RGBA,
-            _ => gl_sys::bindings::GL_RED,
+            4 => gl_sys::bindings::GL_RGBA32F,
+            3 => gl_sys::bindings::GL_RGB32F,
+            2 => gl_sys::bindings::GL_RG32F,
+            1 => gl_sys::bindings::GL_R32F,
+            _ => gl_sys::bindings::GL_R32F,
         }
     }
+}
 
+pub(super) struct LoadInt;
+
+impl Load for LoadInt {
     #[inline]
     unsafe fn load_from_memory(
         buffer: *const stbi_uc,
@@ -104,5 +96,19 @@ impl Load for LoadInt {
         desired_channels: c_int,
     ) -> *mut u8 {
         unsafe { stbi_load_from_memory(buffer, len, x, y, channels_in_file, desired_channels) }
+    }
+}
+
+impl MapChannels for LoadInt {
+    const TYPE: GlType = GlType::UnsignedByte;
+    #[inline]
+    fn map_channels(Channels(channels): &Channels) -> u32 {
+        match channels {
+            1 => gl_sys::bindings::GL_RED,
+            2 => gl_sys::bindings::GL_RG,
+            3 => gl_sys::bindings::GL_RGB,
+            4 => gl_sys::bindings::GL_RGBA,
+            _ => gl_sys::bindings::GL_RED,
+        }
     }
 }

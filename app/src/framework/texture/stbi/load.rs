@@ -14,7 +14,7 @@ pub(super) fn try_load(bytes: &[u8]) -> ImageResult<GlImageData> {
 
 fn try_load_opt<L>(bytes: &[u8]) -> ImageResult<GlImageData>
 where
-    L: Load,
+    L: Load + MapChannels,
 {
     unsafe {
         stbi_set_flip_vertically_on_load(1);

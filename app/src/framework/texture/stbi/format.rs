@@ -1,4 +1,5 @@
-use super::load_trait::Load;
+use crate::framework::texture::stbi::load_trait::MapChannels;
+
 use stbi_sys::channels::Channels;
 use std::num::TryFromIntError;
 
@@ -19,8 +20,8 @@ pub struct Format {
 }
 
 impl Format {
-    pub fn try_from_load<L: Load>(channels: &Channels) -> Result<Self, TryFromIntError> {
-        let internal_format = i32::try_from(L::map_channels(channels))?;
+    pub fn try_from_load<M: MapChannels>(channels: &Channels) -> Result<Self, TryFromIntError> {
+        let internal_format = i32::try_from(M::map_channels(channels))?;
         Ok(Self {
             format: format_channels(channels),
             internal_format,
