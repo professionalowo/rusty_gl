@@ -37,10 +37,14 @@ impl fmt::Display for LoadError {
     }
 }
 impl<'b> LoadData<'b> {
-    pub fn load<L>(bytes: &'b [u8]) -> Result<Self, LoadError>
+    pub fn try_load<L>(bytes: &'b [u8]) -> Result<Self, LoadError>
     where
         L: Load,
     {
+        unsafe {
+            stbi_set_flip_vertically_on_load(1);
+        }
+
         let mut dimensions = Dimensions::default();
         let mut channels = Channels::default();
         let data = unsafe {
@@ -58,13 +62,6 @@ impl<'b> LoadData<'b> {
             data,
         })
     }
-}
-
-pub fn try_load<'b, L: Load>(bytes: &'b [u8]) -> Result<LoadData<'b>, LoadError> {
-    unsafe {
-        stbi_set_flip_vertically_on_load(1);
-    }
-    LoadData::load::<L>(bytes)
 }
 
 pub trait Load {
