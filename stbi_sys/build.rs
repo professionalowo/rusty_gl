@@ -1,10 +1,10 @@
 use std::{env, io, path::PathBuf};
 
-use build_utils::{LazyBindings, print_build_flags};
+use build_utils::LazyBindings;
+
+const HEADER: &'static str = "stb_image.h";
 
 fn main() {
-    print_build_flags();
-
     let out_path = env::var("OUT_DIR")
         .map(PathBuf::from)
         .expect("OUT_DIR not set");
@@ -22,8 +22,6 @@ fn bind_stbi(out_path: &PathBuf) -> io::Result<()> {
         }
         build
     }
-
-    const HEADER: &'static str = "stb_image.h";
 
     with_simd(cc::Build::new())
         .file(HEADER)
