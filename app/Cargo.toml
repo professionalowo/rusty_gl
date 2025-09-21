@@ -1,5 +1,4 @@
 [package]
-build = "build.rs"
 name = "rusty_gl"
 version = "0.1.0"
 edition = "2024"
@@ -15,4 +14,5 @@ assimp-sys = "0.3.1"
 derive_more = { version = "2.0.1", features = ["full"] }
 gl_sys = { path = "../gl_sys" }
 glfw_sys = { path = "../glfw_sys" }
+stbi_sys = { path = "../stbi_sys" }
 gmath = { path = "../gmath", features = ["assimp"] }

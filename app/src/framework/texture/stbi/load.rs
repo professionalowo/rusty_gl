@@ -1,10 +1,10 @@
 use super::{
     GlImageData, ImageError, ImageResult,
-    bindings::*,
     dimensions::Dimensions,
     format::{Channels, Format},
     load_trait::*,
 };
+use stbi_sys::*;
 use std::slice;
 
 pub(super) fn is_hdr(bytes: &[u8]) -> bool {
