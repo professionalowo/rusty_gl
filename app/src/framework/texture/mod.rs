@@ -123,26 +123,26 @@ impl Texture2D {
         upload::tex_parameteri(
             gl_sys::bindings::GL_TEXTURE_2D,
             gl_sys::bindings::GL_TEXTURE_WRAP_S,
-            gl_sys::bindings::GL_REPEAT as gl_sys::bindings::GLint,
+            gl_sys::bindings::GL_REPEAT as _,
         );
         upload::tex_parameteri(
             gl_sys::bindings::GL_TEXTURE_2D,
             gl_sys::bindings::GL_TEXTURE_WRAP_R,
-            gl_sys::bindings::GL_REPEAT as gl_sys::bindings::GLint,
+            gl_sys::bindings::GL_REPEAT as _,
         );
         upload::tex_parameteri(
             gl_sys::bindings::GL_TEXTURE_2D,
             gl_sys::bindings::GL_TEXTURE_MAG_FILTER,
-            gl_sys::bindings::GL_NEAREST as gl_sys::bindings::GLint,
+            gl_sys::bindings::GL_NEAREST as _,
         );
 
         upload::tex_parameteri(
             gl_sys::bindings::GL_TEXTURE_2D,
             gl_sys::bindings::GL_TEXTURE_MIN_FILTER,
             if mipmap {
-                gl_sys::bindings::GL_LINEAR_MIPMAP_LINEAR as gl_sys::bindings::GLint
+                gl_sys::bindings::GL_LINEAR_MIPMAP_LINEAR as _
             } else {
-                gl_sys::bindings::GL_LINEAR as gl_sys::bindings::GLint
+                gl_sys::bindings::GL_LINEAR as _
             },
         );
         gl_sys::get_error()?;
@@ -156,7 +156,7 @@ impl Texture2D {
             0,
             self.format,
             self.type_,
-            data.as_ptr() as *const std::ffi::c_void,
+            data.as_ptr() as _,
         );
         gl_sys::get_error()?;
 

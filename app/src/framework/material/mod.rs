@@ -143,7 +143,7 @@ where
     Texture2D::from_data(
         1,
         1,
-        gl_sys::bindings::GL_RGB32F as i32,
+        gl_sys::bindings::GL_RGB32F as _,
         gl_sys::bindings::GL_RGB,
         gl_sys::bindings::GL_FLOAT,
         &[col],
