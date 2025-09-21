@@ -4,7 +4,9 @@ use std::{
 };
 
 use crate::bindings;
-
+/// A buffer that holds image data loaded by stb_image.
+/// Safe as long as the pointer is obtained from stb_image and not freed manually.
+/// Constructing from a pointer managed by Rust's allocator is undefined behavior.
 #[derive(Debug, PartialEq)]
 pub struct ImageBuffer {
     ptr: *mut u8,
@@ -17,8 +19,22 @@ impl Drop for ImageBuffer {
     }
 }
 
+impl Default for ImageBuffer {
+    fn default() -> Self {
+        Self::null()
+    }
+}
+
 impl ImageBuffer {
+    pub const fn null() -> Self {
+        Self {
+            ptr: std::ptr::null_mut(),
+            len: 0,
+        }
+    }
+
     pub const unsafe fn from_raw(ptr: *mut u8, len: usize) -> Self {
+        //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image
         Self { ptr, len }
     }
 
