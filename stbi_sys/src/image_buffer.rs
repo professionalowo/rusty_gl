@@ -9,25 +9,25 @@ use crate::bindings::stbi_image_free;
 /// Safe as long as the pointer is obtained from stb_image and not freed manually.
 /// Constructing from a pointer managed by Rust's allocator is undefined behavior.
 #[derive(Debug, PartialEq)]
-pub struct StbPtr<T> {
+pub struct StbiPtr<T> {
     raw: *mut T,
     len: usize,
 }
 
-impl<T> Drop for StbPtr<T> {
+impl<T> Drop for StbiPtr<T> {
     fn drop(&mut self) {
         unsafe { stbi_image_free(self.raw as _) };
     }
 }
 
-impl<T> Default for StbPtr<T> {
+impl<T> Default for StbiPtr<T> {
     #[inline]
     fn default() -> Self {
         Self::null()
     }
 }
 
-impl<T> StbPtr<T> {
+impl<T> StbiPtr<T> {
     #[inline]
     pub const fn null() -> Self {
         Self {
@@ -76,21 +76,21 @@ impl<T> StbPtr<T> {
     }
 }
 
-impl<T> AsRef<[T]> for StbPtr<T> {
+impl<T> AsRef<[T]> for StbiPtr<T> {
     #[inline]
     fn as_ref(&self) -> &[T] {
         self.as_slice()
     }
 }
 
-impl<T> AsMut<[T]> for StbPtr<T> {
+impl<T> AsMut<[T]> for StbiPtr<T> {
     #[inline]
     fn as_mut(&mut self) -> &mut [T] {
         self.as_mut_slice()
     }
 }
 
-impl<T> Deref for StbPtr<T> {
+impl<T> Deref for StbiPtr<T> {
     type Target = [T];
 
     #[inline]
@@ -99,7 +99,7 @@ impl<T> Deref for StbPtr<T> {
     }
 }
 
-impl<T> DerefMut for StbPtr<T> {
+impl<T> DerefMut for StbiPtr<T> {
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
         self.as_mut_slice()

@@ -7,14 +7,14 @@ use crate::{
     channels::Channels,
     dimensions::Dimensions,
     failure_reason,
-    image_buffer::StbPtr,
+    image_buffer::StbiPtr,
 };
 
 #[derive(Debug)]
 pub struct LoadData {
     pub dimensions: Dimensions,
     pub channels: Channels,
-    pub data: StbPtr<u8>,
+    pub data: StbiPtr<u8>,
 }
 
 #[derive(Debug)]
@@ -69,7 +69,7 @@ pub trait Load {
         bytes: &[u8],
         Dimensions { width, height }: &mut Dimensions,
         Channels(channels): &mut Channels,
-    ) -> StbPtr<u8> {
+    ) -> StbiPtr<u8> {
         let buffer = bytes.as_ref();
         unsafe {
             let ptr = Self::load_from_memory(
@@ -81,7 +81,7 @@ pub trait Load {
                 0,
             );
 
-            StbPtr::from_raw_parts(ptr, ((*width) * (*height) * (*channels)) as _)
+            StbiPtr::from_raw_parts(ptr, ((*width) * (*height) * (*channels)) as _)
         }
     }
 
