@@ -1,7 +1,6 @@
 use core::fmt;
 use std::{fs, path::Path};
 
-use gl_sys::gl;
 
 mod bindings;
 mod dimensions;
@@ -11,11 +10,11 @@ mod load_trait;
 
 #[derive(Debug, PartialEq)]
 pub(super) struct GlImageData {
-    pub width: gl::GLsizei,
-    pub height: gl::GLsizei,
-    pub format: gl::GLenum,
-    pub internal_format: gl::GLint,
-    pub type_: gl::GLenum,
+    pub width: gl_sys::GLsizei,
+    pub height: gl_sys::GLsizei,
+    pub format: gl_sys::GLenum,
+    pub internal_format: gl_sys::GLint,
+    pub type_: gl_sys::GLenum,
     pub data: Box<[u8]>,
 }
 

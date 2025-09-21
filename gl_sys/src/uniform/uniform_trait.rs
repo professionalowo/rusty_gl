@@ -1,4 +1,4 @@
-use crate::gl::{self, GLfloat, GLint, uniform::UniformLocation};
+use crate::{GLfloat, GLint, glUniform1f, glUniform1i, uniform::UniformLocation};
 
 pub trait Uniform {
     type Options;
@@ -11,7 +11,7 @@ impl Uniform for GLfloat {
 
     fn set(&self, _options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
         unsafe {
-            gl::glUniform1f(*location, *self);
+            glUniform1f(*location, *self);
         }
     }
 }
@@ -19,6 +19,6 @@ impl Uniform for GLfloat {
 impl Uniform for GLint {
     type Options = ();
     fn set(&self, _options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
-        unsafe { gl::glUniform1i(*location, *self) };
+        unsafe { glUniform1i(*location, *self) };
     }
 }

@@ -1,4 +1,4 @@
-use super::{gl, load_trait::Load};
+use super::load_trait::Load;
 use std::num::TryFromIntError;
 
 #[derive(Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
@@ -6,12 +6,12 @@ pub struct Channels(pub i32);
 
 impl Channels {
     #[inline]
-    pub const fn format(&self) -> gl::GLenum {
+    pub const fn format(&self) -> gl_sys::GLenum {
         match self.0 {
-            4 => gl::GL_RGBA,
-            3 => gl::GL_RGB,
-            2 => gl::GL_RG,
-            1 | _ => gl::GL_RED,
+            4 => gl_sys::GL_RGBA,
+            3 => gl_sys::GL_RGB,
+            2 => gl_sys::GL_RG,
+            1 | _ => gl_sys::GL_RED,
         }
     }
 }

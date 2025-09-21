@@ -17,7 +17,7 @@ use rusty_gl::{
 
 use gmath::{mat4::Mat4, vec3::Vec3};
 
-use gl_sys::gl::{
+use gl_sys::{
     self,
     program::Program,
     shader::{Shader, ShaderType},
@@ -92,7 +92,7 @@ fn main() -> ExitCode {
 
     const COLOR_EXP: ColorRGB = ColorRGB::new(2.2, 2.2, 2.2);
 
-    gl::enable(gl::GL_DEPTH_TEST);
+    gl_sys::enable(gl_sys::GL_DEPTH_TEST);
     let mut timer: Timer<60> = Timer::new();
     while let Ok(false) = window.should_close() {
         timer.start();
@@ -129,8 +129,8 @@ fn main() -> ExitCode {
             }
         }
         if timer.should_render() {
-            gl::clear_color(BACKGROUND.r(), BACKGROUND.g(), BACKGROUND.g(), 0.0);
-            gl::clear(gl::GL_COLOR_BUFFER_BIT | gl::GL_DEPTH_BUFFER_BIT);
+            gl_sys::clear_color(BACKGROUND.r(), BACKGROUND.g(), BACKGROUND.g(), 0.0);
+            gl_sys::clear(gl_sys::GL_COLOR_BUFFER_BIT | gl_sys::GL_DEPTH_BUFFER_BIT);
 
             let aspect_ratio = window.aspect_ratio();
             for element in &scene {

@@ -1,4 +1,4 @@
-use crate::gl::{
+use crate::{
     GL_INFO_LOG_LENGTH, GL_LINK_STATUS, GL_VALIDATE_STATUS, glAttachShader, glCreateProgram,
     glDeleteProgram, glGetProgramInfoLog, glGetProgramiv, glLinkProgram, glUseProgram,
     glValidateProgram,

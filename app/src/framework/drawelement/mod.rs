@@ -5,7 +5,7 @@ use crate::{
     framework::{camera::Camera, material::Material, mesh::Mesh},
 };
 
-use gl_sys::gl::{program::Program, uniform::UniformLocationError};
+use gl_sys::{program::Program, uniform::UniformLocationError};
 use gmath::mat4::Mat4;
 
 #[derive(Debug)]

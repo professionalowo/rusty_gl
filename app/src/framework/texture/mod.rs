@@ -2,7 +2,7 @@ use std::{fmt, path::Path};
 
 use crate::framework::texture::stbi::GlImageData;
 
-use gl_sys::gl::{
+use gl_sys::{
     self,
     uniform::{UniformLocation, UniformLocationError, uniform_trait::Uniform},
 };
@@ -12,18 +12,18 @@ mod upload;
 
 #[derive(Debug, Default, Clone)]
 pub struct Texture2D {
-    id: gl::GLuint,
-    width: gl::GLsizei,
-    height: gl::GLsizei,
-    internal_format: gl::GLint,
-    format: gl::GLenum,
-    type_: gl::GLenum,
+    id: gl_sys::GLuint,
+    width: gl_sys::GLsizei,
+    height: gl_sys::GLsizei,
+    internal_format: gl_sys::GLint,
+    format: gl_sys::GLenum,
+    type_: gl_sys::GLenum,
 }
 
 #[derive(Debug)]
 pub enum TextureError {
     LoadFailed(stbi::ImageError),
-    GLError(gl::GLError),
+    GLError(gl_sys::GLError),
 }
 
 impl PartialEq for Texture2D {
@@ -34,8 +34,8 @@ impl PartialEq for Texture2D {
 
 impl Eq for Texture2D {}
 
-impl From<gl::GLError> for TextureError {
-    fn from(err: gl::GLError) -> Self {
+impl From<gl_sys::GLError> for TextureError {
+    fn from(err: gl_sys::GLError) -> Self {
         Self::GLError(err)
     }
 }
@@ -62,11 +62,11 @@ impl Texture2D {
     }
 
     pub fn from_data<T>(
-        width: gl::GLsizei,
-        height: gl::GLsizei,
-        internal_format: gl::GLint,
-        format: gl::GLenum,
-        type_: gl::GLenum,
+        width: gl_sys::GLsizei,
+        height: gl_sys::GLsizei,
+        internal_format: gl_sys::GLint,
+        format: gl_sys::GLenum,
+        type_: gl_sys::GLenum,
         data: &[T],
         mipmap: bool,
     ) -> Result<Self, TextureError> {
@@ -84,22 +84,22 @@ impl Texture2D {
 
     pub fn bind(&self, unit: u32) -> Result<(), UniformLocationError> {
         upload::active_texture(unit);
-        gl::get_error()?;
-        upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
-        gl::get_error()?;
+        gl_sys::get_error()?;
+        upload::bind_texture(gl_sys::GL_TEXTURE_2D, self.id);
+        gl_sys::get_error()?;
         Ok(())
     }
 
     pub fn unbind(&self) {
-        upload::bind_texture(gl::GL_TEXTURE_2D, 0);
+        upload::bind_texture(gl_sys::GL_TEXTURE_2D, 0);
     }
 
-    pub fn resize(&mut self, w: gl::GLsizei, h: gl::GLsizei) {
+    pub fn resize(&mut self, w: gl_sys::GLsizei, h: gl_sys::GLsizei) {
         self.width = w;
         self.height = h;
-        upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
+        upload::bind_texture(gl_sys::GL_TEXTURE_2D, self.id);
         upload::tex_image_2d(
-            gl::GL_TEXTURE_2D,
+            gl_sys::GL_TEXTURE_2D,
             0,
             self.internal_format,
             self.width,
@@ -109,63 +109,63 @@ impl Texture2D {
             self.type_,
             std::ptr::null(),
         );
-        upload::bind_texture(gl::GL_TEXTURE_2D, 0);
+        upload::bind_texture(gl_sys::GL_TEXTURE_2D, 0);
     }
 
-    fn upload<T>(&mut self, data: &[T], mipmap: bool) -> Result<(), gl::GLError> {
+    fn upload<T>(&mut self, data: &[T], mipmap: bool) -> Result<(), gl_sys::GLError> {
         upload::gen_textures(&mut self.id);
-        gl::get_error()?;
+        gl_sys::get_error()?;
 
-        upload::bind_texture(gl::GL_TEXTURE_2D, self.id);
-        gl::get_error()?;
-        upload::pixel_storei(gl::GL_UNPACK_ALIGNMENT, 1);
-        gl::get_error()?;
+        upload::bind_texture(gl_sys::GL_TEXTURE_2D, self.id);
+        gl_sys::get_error()?;
+        upload::pixel_storei(gl_sys::GL_UNPACK_ALIGNMENT, 1);
+        gl_sys::get_error()?;
         upload::tex_parameteri(
-            gl::GL_TEXTURE_2D,
-            gl::GL_TEXTURE_WRAP_S,
-            gl::GL_REPEAT as gl::GLint,
+            gl_sys::GL_TEXTURE_2D,
+            gl_sys::GL_TEXTURE_WRAP_S,
+            gl_sys::GL_REPEAT as gl_sys::GLint,
         );
         upload::tex_parameteri(
-            gl::GL_TEXTURE_2D,
-            gl::GL_TEXTURE_WRAP_R,
-            gl::GL_REPEAT as gl::GLint,
+            gl_sys::GL_TEXTURE_2D,
+            gl_sys::GL_TEXTURE_WRAP_R,
+            gl_sys::GL_REPEAT as gl_sys::GLint,
         );
         upload::tex_parameteri(
-            gl::GL_TEXTURE_2D,
-            gl::GL_TEXTURE_MAG_FILTER,
-            gl::GL_NEAREST as gl::GLint,
+            gl_sys::GL_TEXTURE_2D,
+            gl_sys::GL_TEXTURE_MAG_FILTER,
+            gl_sys::GL_NEAREST as gl_sys::GLint,
         );
 
         upload::tex_parameteri(
-            gl::GL_TEXTURE_2D,
-            gl::GL_TEXTURE_MIN_FILTER,
+            gl_sys::GL_TEXTURE_2D,
+            gl_sys::GL_TEXTURE_MIN_FILTER,
             if mipmap {
-                gl::GL_LINEAR_MIPMAP_LINEAR as gl::GLint
+                gl_sys::GL_LINEAR_MIPMAP_LINEAR as gl_sys::GLint
             } else {
-                gl::GL_LINEAR as gl::GLint
+                gl_sys::GL_LINEAR as gl_sys::GLint
             },
         );
-        gl::get_error()?;
+        gl_sys::get_error()?;
 
         upload::tex_image_2d(
-            gl::GL_TEXTURE_2D,
+            gl_sys::GL_TEXTURE_2D,
             0,
             self.internal_format,
-            self.width as gl::GLsizei,
-            self.height as gl::GLsizei,
+            self.width as gl_sys::GLsizei,
+            self.height as gl_sys::GLsizei,
             0,
             self.format,
             self.type_,
             data.as_ptr() as *const std::ffi::c_void,
         );
-        gl::get_error()?;
+        gl_sys::get_error()?;
 
         if mipmap {
-            upload::generate_mipmap(gl::GL_TEXTURE_2D);
-            gl::get_error()?;
+            upload::generate_mipmap(gl_sys::GL_TEXTURE_2D);
+            gl_sys::get_error()?;
         }
-        upload::bind_texture(gl::GL_TEXTURE_2D, 0);
-        gl::get_error()?;
+        upload::bind_texture(gl_sys::GL_TEXTURE_2D, 0);
+        gl_sys::get_error()?;
         Ok(())
     }
 
@@ -179,7 +179,7 @@ impl Texture2D {
             ref data,
         }: GlImageData,
         mipmap: bool,
-    ) -> Result<Self, gl::GLError> {
+    ) -> Result<Self, gl_sys::GLError> {
         let mut texture = Self {
             id: 0,
             width,
@@ -197,7 +197,7 @@ impl Drop for Texture2D {
     fn drop(&mut self) {
         if self.id != 0 {
             unsafe {
-                gl::glDeleteTextures(1, &self.id);
+                gl_sys::glDeleteTextures(1, &self.id);
             }
         }
     }
@@ -211,7 +211,7 @@ impl Uniform for &Texture2D {
         let UniformLocation(location) = *location;
         self.bind(unit).expect("Couldnt bind texture");
         unsafe {
-            gl::glUniform1i(location, unit as i32);
+            gl_sys::glUniform1i(location, unit as i32);
         }
     }
 }

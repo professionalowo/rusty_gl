@@ -9,8 +9,8 @@ pub(super) enum GlType {
 impl GlType {
     pub const fn data(&self) -> u32 {
         match self {
-            Self::Float => gl::GL_FLOAT,
-            Self::UnsignedByte => gl::GL_UNSIGNED_BYTE,
+            Self::Float => gl_sys::GL_FLOAT,
+            Self::UnsignedByte => gl_sys::GL_UNSIGNED_BYTE,
         }
     }
 }
@@ -57,11 +57,11 @@ impl Load for LoadFloat {
     #[inline]
     fn map_channels(Channels(channels): &Channels) -> u32 {
         match channels {
-            4 => gl::GL_RGBA32F,
-            3 => gl::GL_RGB32F,
-            2 => gl::GL_RG32F,
-            1 => gl::GL_R32F,
-            _ => gl::GL_R32F,
+            4 => gl_sys::GL_RGBA32F,
+            3 => gl_sys::GL_RGB32F,
+            2 => gl_sys::GL_RG32F,
+            1 => gl_sys::GL_R32F,
+            _ => gl_sys::GL_R32F,
         }
     }
 
@@ -86,11 +86,11 @@ impl Load for LoadInt {
     #[inline]
     fn map_channels(Channels(channels): &Channels) -> u32 {
         match channels {
-            1 => gl::GL_RED,
-            2 => gl::GL_RG,
-            3 => gl::GL_RGB,
-            4 => gl::GL_RGBA,
-            _ => gl::GL_RED,
+            1 => gl_sys::GL_RED,
+            2 => gl_sys::GL_RG,
+            3 => gl_sys::GL_RGB,
+            4 => gl_sys::GL_RGBA,
+            _ => gl_sys::GL_RED,
         }
     }
 

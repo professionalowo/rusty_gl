@@ -15,8 +15,7 @@ use crate::{
 
 use gmath::{vec2::Vec2, vec3::Vec3};
 
-use gl_sys::gl::{
-    self,
+use gl_sys::{
     vao::VertexArrayObject,
     vbo::{Location, VBOError, VertexBufferObject},
 };
@@ -26,7 +25,7 @@ pub mod normalize;
 #[derive(Debug, Default, Clone)]
 pub struct VboData {
     pub vbo: VertexBufferObject,
-    pub buffer_type: gl::GLenum,
+    pub buffer_type: gl_sys::GLenum,
     pub dimensions: u32,
 }
 
@@ -37,7 +36,7 @@ pub struct Mesh {
     pub num_vertices: u32,
     pub num_indices: u32,
     pub vbos: [Option<VboData>; 4],
-    pub primitive_type: gl::GLenum,
+    pub primitive_type: gl_sys::GLenum,
 }
 
 impl Mesh {
@@ -48,7 +47,7 @@ impl Mesh {
             num_vertices: 0,
             num_indices: 0,
             vbos: Default::default(),
-            primitive_type: gl::GL_TRIANGLES,
+            primitive_type: gl_sys::GL_TRIANGLES,
         }
     }
 
@@ -59,10 +58,10 @@ impl Mesh {
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
     }
     pub fn draw(&self) {
-        gl::draw_elements(
-            gl::GL_TRIANGLES,
+        gl_sys::draw_elements(
+            gl_sys::GL_TRIANGLES,
             self.num_indices as i32,
-            gl::GL_UNSIGNED_INT,
+            gl_sys::GL_UNSIGNED_INT,
         );
     }
 
@@ -128,10 +127,17 @@ impl Mesh {
         }
         m.num_indices = indices.len() as u32;
         VertexArrayObject::bind_vertex_array(&m.vao);
-        VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, &m.ibo);
-        VertexBufferObject::buffer_data(gl::GL_ELEMENT_ARRAY_BUFFER, &indices, gl::GL_STATIC_DRAW)?;
+        VertexBufferObject::bind_buffer(gl_sys::GL_ELEMENT_ARRAY_BUFFER, &m.ibo);
+        VertexBufferObject::buffer_data(
+            gl_sys::GL_ELEMENT_ARRAY_BUFFER,
+            &indices,
+            gl_sys::GL_STATIC_DRAW,
+        )?;
         VertexArrayObject::bind_vertex_array(&VertexArrayObject::zero());
-        VertexBufferObject::bind_buffer(gl::GL_ELEMENT_ARRAY_BUFFER, &VertexBufferObject::zero());
+        VertexBufferObject::bind_buffer(
+            gl_sys::GL_ELEMENT_ARRAY_BUFFER,
+            &VertexBufferObject::zero(),
+        );
         Ok(m)
     }
 
@@ -149,19 +155,19 @@ impl Mesh {
         }
         self.num_vertices = data.len() as u32;
 
-        let buffer_type = gl::GL_ARRAY_BUFFER;
+        let buffer_type = gl_sys::GL_ARRAY_BUFFER;
 
         VertexArrayObject::bind_vertex_array(&self.vao);
         let vbo = VertexBufferObject::gen_buffers();
         VertexBufferObject::bind_buffer(buffer_type, &vbo);
-        VertexBufferObject::buffer_data(buffer_type, &data, gl::GL_STATIC_DRAW)?;
+        VertexBufferObject::buffer_data(buffer_type, &data, gl_sys::GL_STATIC_DRAW)?;
         let loc = Location(index as u32);
 
         VertexBufferObject::enable_vertex_attrib_array(&loc);
         VertexBufferObject::vertex_attrib_pointer(
             &loc,
             dimensions,
-            gl::GL_FLOAT,
+            gl_sys::GL_FLOAT,
             false,
             (dimensions * 4) as i32,
             None,

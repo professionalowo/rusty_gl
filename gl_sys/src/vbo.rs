@@ -1,15 +1,14 @@
 use std::fmt;
 
-use crate::gl::{
-    self, GLboolean, GLint, GLsizei, GLsizeiptr, glBindBuffer, glBufferData, glDeleteBuffers,
-    glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer,
+use crate::{
+    glBindBuffer, glBufferData, glDeleteBuffers, glEnableVertexAttribArray, glGenBuffers, glVertexAttribPointer, GLboolean, GLint, GLsizei, GLsizeiptr, GLuint
 };
 
 #[derive(Debug, Clone)]
-pub struct Location(pub gl::GLuint);
+pub struct Location(pub GLuint);
 
 #[derive(Debug, Clone, Default)]
-pub struct VertexBufferObject(pub gl::GLuint);
+pub struct VertexBufferObject(pub GLuint);
 
 impl VertexBufferObject {
     pub const fn zero() -> Self {

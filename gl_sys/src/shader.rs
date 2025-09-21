@@ -1,6 +1,6 @@
 use std::{ffi, fmt, fs, io, path::Path, ptr};
 
-use crate::gl;
+use crate::*;
 
 #[derive(Debug)]
 pub enum ShaderError {
@@ -16,10 +16,10 @@ pub enum ShaderType {
 }
 
 impl ShaderType {
-    pub const fn key(&self) -> gl::GLenum {
+    pub const fn key(&self) -> GLenum {
         match self {
-            Self::Fragment => gl::GL_FRAGMENT_SHADER,
-            Self::Vertex => gl::GL_VERTEX_SHADER,
+            Self::Fragment => GL_FRAGMENT_SHADER,
+            Self::Vertex => GL_VERTEX_SHADER,
         }
     }
 }
@@ -61,15 +61,15 @@ impl Shader {
     where
         Vec<u8>: From<B>,
     {
-        let shader = unsafe { gl::glCreateShader(shader_type.key()) };
+        let shader = unsafe { glCreateShader(shader_type.key()) };
         let c_str = ffi::CString::new(source)?;
         let c_str_ptr = c_str.as_ptr();
         unsafe {
-            gl::glShaderSource(shader, 1, &c_str_ptr, ptr::null());
-            gl::glCompileShader(shader);
+            glShaderSource(shader, 1, &c_str_ptr, ptr::null());
+            glCompileShader(shader);
         }
 
-        if get_shader_iv(shader, gl::GL_COMPILE_STATUS) == 0 {
+        if get_shader_iv(shader, GL_COMPILE_STATUS) == 0 {
             return Err(ShaderError::CompilationError(get_info_log(shader)));
         }
 
@@ -81,22 +81,22 @@ impl Shader {
     }
 }
 
-fn get_info_log(shader: gl::GLuint) -> String {
-    let log_length = get_shader_iv(shader, gl::GL_INFO_LOG_LENGTH);
+fn get_info_log(shader: GLuint) -> String {
+    let log_length = get_shader_iv(shader, GL_INFO_LOG_LENGTH);
     let mut info_log = Vec::with_capacity(log_length as usize);
     let ptr = info_log.as_mut_ptr();
     unsafe {
-        gl::glGetShaderInfoLog(shader, log_length, ptr::null_mut(), ptr);
+        glGetShaderInfoLog(shader, log_length, ptr::null_mut(), ptr);
         ffi::CStr::from_ptr(ptr)
     }
     .to_string_lossy()
     .into_owned()
 }
 
-pub fn get_shader_iv(shader: gl::GLuint, pname: gl::GLenum) -> i32 {
+pub fn get_shader_iv(shader: GLuint, pname: GLenum) -> i32 {
     let mut params = 0;
     unsafe {
-        gl::glGetShaderiv(shader, pname, &mut params);
+        glGetShaderiv(shader, pname, &mut params);
     }
     params
 }
@@ -104,7 +104,7 @@ pub fn get_shader_iv(shader: gl::GLuint, pname: gl::GLenum) -> i32 {
 impl Drop for Shader {
     fn drop(&mut self) {
         unsafe {
-            gl::glDeleteShader(self.0);
+            glDeleteShader(self.0);
         }
     }
 }

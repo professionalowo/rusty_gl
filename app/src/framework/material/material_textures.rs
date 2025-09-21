@@ -2,7 +2,7 @@ use std::ops::Index;
 
 use crate::framework::texture::Texture2D;
 
-use gl_sys::gl::{program::Program, uniform::UniformLocationError};
+use gl_sys::{program::Program, uniform::UniformLocationError};
 
 #[derive(Debug, Clone)]
 pub struct MaterialTextures {

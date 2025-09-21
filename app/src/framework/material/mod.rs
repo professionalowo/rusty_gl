@@ -12,7 +12,7 @@ use crate::{
     framework::{material::material_textures::MaterialTextures, texture::TextureError},
 };
 use gmath::{vec3::Vec3, vec4::Vec4};
-use gl_sys::gl::{self, program::Program, uniform::UniformLocationError};
+use gl_sys::{self, program::Program, uniform::UniformLocationError};
 
 mod material_color;
 pub mod material_textures;
@@ -141,9 +141,9 @@ where
     Texture2D::from_data(
         1,
         1,
-        gl::GL_RGB32F as i32,
-        gl::GL_RGB,
-        gl::GL_FLOAT,
+        gl_sys::GL_RGB32F as i32,
+        gl_sys::GL_RGB,
+        gl_sys::GL_FLOAT,
         &[Vec3::from(col)],
         false,
     )

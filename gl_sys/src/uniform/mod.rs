@@ -5,10 +5,13 @@ use std::{
 
 pub mod uniform_trait;
 
-use crate::gl::{self, program::Program, uniform::uniform_trait::Uniform};
+use crate::{
+    GLError, GLint, get_error, glGetUniformLocation, program::Program,
+    uniform::uniform_trait::Uniform,
+};
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
-pub struct UniformLocation(pub gl::GLint);
+pub struct UniformLocation(pub GLint);
 
 impl UniformLocation {
     pub fn try_for_program<S>(Program(id): &Program, name: S) -> Result<Self, UniformLocationError>
@@ -19,9 +22,9 @@ impl UniformLocation {
         let name_cstr = ffi::CString::new(name)?;
         let name_ptr = name_cstr.as_ptr() as *const i8;
 
-        let res = unsafe { gl::glGetUniformLocation(*id, name_ptr) };
+        let res = unsafe { glGetUniformLocation(*id, name_ptr) };
 
-        gl::get_error()?;
+        get_error()?;
 
         match res {
             -1 => Err(UniformLocationError::UnusedUniform {
@@ -51,7 +54,7 @@ impl UniformLocation {
 pub enum UniformLocationError {
     UnusedUniform { id: u32, name: String },
     FFIError(ffi::NulError),
-    GlError(gl::GLError),
+    GlError(GLError),
 }
 
 impl fmt::Display for UniformLocationError {
@@ -66,8 +69,8 @@ impl fmt::Display for UniformLocationError {
     }
 }
 
-impl From<gl::GLError> for UniformLocationError {
-    fn from(value: gl::GLError) -> Self {
+impl From<GLError> for UniformLocationError {
+    fn from(value: GLError) -> Self {
         Self::GlError(value)
     }
 }
