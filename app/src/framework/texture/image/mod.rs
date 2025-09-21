@@ -3,7 +3,7 @@ use std::{fs, num::TryFromIntError, path::Path};
 
 use stbi_sys::{
     dimensions::Dimensions,
-    image_buffer::StbImageBuffer,
+    image_buffer::StbPointer,
     load::{Load, LoadData, LoadError, LoadFloat, LoadInt},
 };
 
@@ -19,7 +19,7 @@ pub(super) struct GlImageData {
     pub format: gl_sys::bindings::GLenum,
     pub internal_format: gl_sys::bindings::GLint,
     pub type_: gl_sys::bindings::GLenum,
-    pub data: StbImageBuffer<u8>,
+    pub data: StbPointer<u8>,
 }
 
 #[derive(Debug)]
