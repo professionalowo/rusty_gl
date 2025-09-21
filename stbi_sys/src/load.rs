@@ -10,10 +10,10 @@ use crate::{
 };
 
 #[derive(Debug)]
-pub struct LoadData<'a> {
+pub struct LoadData<'b> {
     pub dimensions: Dimensions,
     pub channels: Channels,
-    pub data: &'a [u8],
+    pub data: &'b [u8],
 }
 
 #[derive(Debug)]
@@ -37,7 +37,7 @@ impl fmt::Display for LoadError {
     }
 }
 impl<'b> LoadData<'b> {
-    pub fn load<L>(bytes: &'b [u8]) -> Result<LoadData<'b>, LoadError>
+    pub fn load<L>(bytes: &'b [u8]) -> Result<Self, LoadError>
     where
         L: Load,
     {
@@ -52,7 +52,7 @@ impl<'b> LoadData<'b> {
             }
             slice::from_raw_parts(ptr, dimensions.volume_with_channels(&channels).try_into()?)
         };
-        Ok(LoadData {
+        Ok(Self {
             dimensions,
             channels,
             data,
@@ -60,7 +60,7 @@ impl<'b> LoadData<'b> {
     }
 }
 
-pub fn try_load<L: Load>(bytes: &[u8]) -> Result<LoadData<'_>, LoadError> {
+pub fn try_load<'b, L: Load>(bytes: &'b [u8]) -> Result<LoadData<'b>, LoadError> {
     unsafe {
         stbi_set_flip_vertically_on_load(1);
     }
