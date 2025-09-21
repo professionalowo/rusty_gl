@@ -83,7 +83,7 @@ impl Mat4<f32> {
 
     pub fn invert(&self) -> Option<Self> {
         let mut inv = [0.0; 16];
-        let m: [f32; 16] = self.cols();
+        let m = self.cols();
 
         inv[0] = m[5] * m[10] * m[15] - m[5] * m[11] * m[14] - m[9] * m[6] * m[15]
             + m[9] * m[7] * m[14]
