@@ -65,7 +65,7 @@ impl<'b> LoadData<'b> {
 }
 
 pub trait Load {
-    unsafe fn load(
+    fn load(
         bytes: &[u8],
         Dimensions { width, height }: &mut Dimensions,
         Channels(channels): &mut Channels,
@@ -92,6 +92,14 @@ pub trait Load {
         channels_in_file: *mut c_int,
         desired_channels: c_int,
     ) -> *mut u8;
+}
+
+impl Drop for LoadData<'_> {
+    fn drop(&mut self) {
+        unsafe {
+            crate::bindings::stbi_image_free(self.data.as_ptr() as *mut std::ffi::c_void);
+        }
+    }
 }
 
 pub struct LoadFloat;

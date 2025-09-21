@@ -75,14 +75,14 @@ impl GlImageData {
 
 fn load_from_memory<L: Load + MapChannels>(bytes: &[u8]) -> ImageResult<GlImageData> {
     let LoadData {
-        channels,
+        ref channels,
         data,
         dimensions: Dimensions { height, width },
     } = LoadData::try_load::<L>(bytes)?;
     let Format {
         format,
         internal_format,
-    } = Format::try_from_channels::<L>(&channels)?;
+    } = Format::try_from_channels::<L>(channels)?;
     Ok(GlImageData {
         width,
         height,

@@ -39,6 +39,7 @@ fn bind_stbi(out_path: &PathBuf) -> io::Result<()> {
         .allowlist_function("stbi_set_flip_vertically_on_load")
         .allowlist_function("stbi_is_hdr_from_memory")
         .allowlist_function("stbi_failure_reason")
+        .allowlist_function("stbi_image_free")
         .generate()
         .map(LazyBindings)
         .expect("Unable to generate STBI bindings")
