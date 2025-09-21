@@ -98,14 +98,14 @@ fn main() -> ExitCode {
     const COLOR_EXP: ColorRGB = ColorRGB::new(2.2, 2.2, 2.2);
 
     gl_sys::enable(gl_sys::bindings::GL_DEPTH_TEST);
-    let mut timer: Timer<60> = Timer::new();
+    let mut timer = Timer::<144>::new();
     while let Ok(false) = window.should_close() {
         timer.start();
 
         window.poll_events();
 
-        const TURN_ANGLE: f32 = PI / 2.0;
-        const MOVE_DISTANCE: f32 = 0.8;
+        const TURN_ANGLE: f32 = PI / 2.4;
+        const MOVE_DISTANCE: f32 = 1.2;
 
         if let Some(event) = window.pump_event() {
             match event {
