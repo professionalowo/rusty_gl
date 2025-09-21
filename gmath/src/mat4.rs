@@ -5,12 +5,7 @@ use std::{
 
 const RANK: usize = 4;
 
-use gl_sys::gl::{
-    self,
-    uniform::{UniformLocation, uniform_trait::Uniform},
-};
-
-use crate::math::vec4::Vec4;
+use crate::vec4::Vec4;
 
 #[repr(C)]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
@@ -190,19 +185,6 @@ impl From<[f32; RANK * RANK]> for Mat4<f32> {
             Vec4::new(data[8], data[9], data[10], data[11]),
             Vec4::new(data[12], data[13], data[14], data[15]),
         )
-    }
-}
-
-impl Uniform for &Mat4<f32> {
-    type Options = bool; // transpose
-
-    fn set(&self, options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
-        let transpose = options.unwrap_or(false);
-        let cols = self.cols();
-        let value = cols.as_ptr() as *const f32;
-        unsafe {
-            gl::glUniformMatrix4fv(*location, 1, u8::from(transpose), value);
-        }
     }
 }
 

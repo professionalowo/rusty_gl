@@ -1,7 +1,7 @@
 use assimp::Scene;
 use assimp_sys::AiVector3D;
 
-use crate::math::{Scalar, vec3::Vec3};
+use gmath::{Scalar, vec3::Vec3};
 
 #[derive(Debug)]
 pub enum NormalizeOptions {

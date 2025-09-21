@@ -10,9 +10,8 @@ use super::texture::Texture2D;
 use crate::{
     assimp::{AMaterial, AiError, material_key::MaterialKey},
     framework::{material::material_textures::MaterialTextures, texture::TextureError},
-    math::{vec3::Vec3, vec4::Vec4},
 };
-
+use gmath::{vec3::Vec3, vec4::Vec4};
 use gl_sys::gl::{self, program::Program, uniform::UniformLocationError};
 
 mod material_color;

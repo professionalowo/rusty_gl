@@ -1,12 +1,8 @@
 use std::ops::Div;
 
 use super::Vec3;
-use gl_sys::gl::{
-    self,
-    uniform::{UniformLocation, uniform_trait::Uniform},
-};
 
-use crate::math::Scalar;
+use crate::Scalar;
 
 impl Vec3<f32> {
     pub const fn rgb(r: f32, g: f32, b: f32) -> Self {
@@ -132,44 +128,38 @@ impl Div<f32> for Vec3<f32> {
     }
 }
 
+#[cfg(feature = "assimp")]
 impl From<assimp::Vector3D> for Vec3<f32> {
     fn from(v: assimp::Vector3D) -> Self {
         Self::new(v.x, v.y, v.z)
     }
 }
 
+#[cfg(feature = "assimp")]
 impl From<Vec3<f32>> for assimp::Vector3D {
     fn from(Vec3 { x, y, z }: Vec3<f32>) -> Self {
         Self::new(x, y, z)
     }
 }
 
+#[cfg(feature = "assimp")]
 impl From<assimp_sys::AiVector3D> for Vec3<f32> {
     fn from(assimp_sys::AiVector3D { x, y, z }: assimp_sys::AiVector3D) -> Self {
         Self::new(x, y, z)
     }
 }
 
+#[cfg(feature = "assimp")]
 impl From<Vec3<f32>> for assimp_sys::AiVector3D {
     fn from(Vec3 { x, y, z }: Vec3<f32>) -> Self {
         Self { x, y, z }
     }
 }
 
+#[cfg(feature = "assimp")]
 impl From<assimp::Color3D> for Vec3<f32> {
     fn from(c: assimp::Color3D) -> Self {
         Self::rgb(c.r, c.g, c.b)
-    }
-}
-
-impl Uniform for &Vec3<f32> {
-    type Options = ();
-
-    fn set(&self, _options: Option<Self::Options>, UniformLocation(location): &UniformLocation) {
-        let Vec3 { x, y, z } = self;
-        unsafe {
-            gl::glUniform3f(*location, *x, *y, *z);
-        }
     }
 }
 
@@ -207,6 +197,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "assimp")]
     fn test_vec3_from_assimp() {
         let assimp_vec = assimp::Vector3D::new(1.0, 2.0, 3.0);
         let vec: Vec3<f32> = Vec3::from(assimp_vec);

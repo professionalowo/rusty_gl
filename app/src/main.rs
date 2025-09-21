@@ -6,14 +6,16 @@ use std::{
 };
 
 use rusty_gl::{
+    UniformWrapper,
     framework::{
         camera::Camera,
         color::rgb::ColorRGB,
         material::material_textures::MaterialTextureType,
         mesh::{self, normalize::NormalizeOptions},
     },
-    math::{mat4::Mat4, vec3::Vec3},
 };
+
+use gmath::{mat4::Mat4, vec3::Vec3};
 
 use gl_sys::{
     gl::{
@@ -138,25 +140,31 @@ fn main() -> ExitCode {
                     .expect("Failed to bind element");
 
                 program
-                    .uniform("pointlight_pos", &POINTLIGHT_POS)
+                    .uniform("pointlight_pos", UniformWrapper(&POINTLIGHT_POS))
                     .expect("Failed to set pointlight position");
                 program
-                    .uniform("pointlight_color", &Vec3::pow(POINTLIGHT_COLOR, COLOR_EXP))
+                    .uniform(
+                        "pointlight_color",
+                        UniformWrapper(&Vec3::pow(POINTLIGHT_COLOR, COLOR_EXP)),
+                    )
                     .expect("Failed to set pointlight color");
                 program
                     .uniform("pointlight_intensity", POINTLIGHT_INTENSITY)
                     .expect("Failed to set pointlight intensity");
                 program
-                    .uniform("dirlight_dir", &DIRLIGHT_DIR)
+                    .uniform("dirlight_dir", UniformWrapper(&DIRLIGHT_DIR))
                     .expect("Failed to set dirlight direction");
                 program
-                    .uniform("dirlight_color", &Vec3::pow(DIRLIGHT_COLOR, COLOR_EXP))
+                    .uniform(
+                        "dirlight_color",
+                        UniformWrapper(&Vec3::pow(DIRLIGHT_COLOR, COLOR_EXP)),
+                    )
                     .expect("Failed to set dirlight color");
                 program
                     .uniform("dirlight_intensity", DIRLIGHT_INTENSITY)
                     .expect("Failed to set dirlight intensity");
                 program
-                    .uniform("camera_pos", camera.position())
+                    .uniform("camera_pos", UniformWrapper(camera.position()))
                     .expect("Failed to set camera position");
                 program
                     .uniform(

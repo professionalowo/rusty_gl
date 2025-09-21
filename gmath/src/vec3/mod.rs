@@ -2,7 +2,7 @@ pub mod f32;
 
 use std::ops::{Add, AddAssign, Div, Mul, MulAssign, Neg, Not, Sub, SubAssign};
 
-use crate::math::{Scalar, vec2::Vec2, vec4::Vec4};
+use crate::{Scalar, vec2::Vec2, vec4::Vec4};
 
 #[repr(C)]
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq)]

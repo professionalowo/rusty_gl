@@ -1,6 +1,6 @@
 use derive_more::{Add, AddAssign, Neg, Sub, SubAssign};
 
-use crate::math::vec3::Vec3;
+use gmath::vec3::Vec3;
 
 #[repr(C)]
 #[derive(Debug, Clone, Default, PartialEq, Add, AddAssign, Sub, SubAssign, Neg)]

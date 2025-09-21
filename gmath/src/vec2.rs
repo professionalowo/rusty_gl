@@ -1,6 +1,6 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-use crate::math::Scalar;
+use crate::Scalar;
 
 #[repr(C)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

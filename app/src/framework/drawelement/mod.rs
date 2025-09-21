@@ -1,11 +1,12 @@
 use std::rc::Rc;
 
 use crate::{
+    UniformWrapper,
     framework::{camera::Camera, material::Material, mesh::Mesh},
-    math::mat4::Mat4,
 };
 
 use gl_sys::gl::{program::Program, uniform::UniformLocationError};
+use gmath::mat4::Mat4;
 
 #[derive(Debug)]
 pub struct Drawelement {
@@ -22,16 +23,16 @@ impl Drawelement {
     ) -> Result<(), UniformLocationError> {
         program.bind();
         self.material.bind(program)?;
-        program.uniform("view", &camera.view())?;
-        program.uniform("projection", &camera.projection(aspect))?;
+        program.uniform("view", UniformWrapper(&camera.view()))?;
+        program.uniform("projection", UniformWrapper(&camera.projection(aspect)))?;
         Ok(())
     }
 
     pub fn draw(&self, program: &Program, model: &Mat4<f32>) -> Result<(), UniformLocationError> {
-        program.uniform("model", model)?;
+        program.uniform("model", UniformWrapper(model))?;
         program.uniform(
             "model_normal",
-            &model.invert().unwrap_or(Mat4::identity()).transpose(),
+            UniformWrapper(&model.invert().unwrap_or(Mat4::identity()).transpose()),
         )?;
         self.mesh.bind();
         self.mesh.draw();

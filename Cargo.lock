@@ -166,6 +166,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
 
 [[package]]
+name = "gmath"
+version = "0.1.0"
+dependencies = [
+ "assimp",
+ "assimp-sys",
+]
+
+[[package]]
 name = "itertools"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -298,6 +306,7 @@ dependencies = [
  "derive_more",
  "gl_sys",
  "glob",
+ "gmath",
 ]
 
 [[package]]

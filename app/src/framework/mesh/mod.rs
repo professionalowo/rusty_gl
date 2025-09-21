@@ -11,8 +11,9 @@ use crate::{
         material::{Material, MaterialConversionError},
         mesh::normalize::NormalizeOptions,
     },
-    math::{vec2::Vec2, vec3::Vec3},
 };
+
+use gmath::{vec2::Vec2, vec3::Vec3};
 
 use gl_sys::gl::{
     self,

@@ -1,6 +1,6 @@
 use std::ops::{Add, AddAssign, Mul, Neg, Sub, SubAssign};
 
-use crate::math::Scalar;
+use crate::Scalar;
 
 pub mod f32;
 

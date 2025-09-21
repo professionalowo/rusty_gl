@@ -4,7 +4,7 @@ use std::{
 };
 
 const RANK: usize = 3;
-use crate::math::vec3::Vec3;
+use crate::vec3::Vec3;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy)]

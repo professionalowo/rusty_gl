@@ -1,4 +1,4 @@
-use crate::math::{Scalar, mat4::Mat4, vec3::Vec3, vec4::Vec4};
+use gmath::{Scalar, mat4::Mat4, vec3::Vec3, vec4::Vec4};
 
 #[derive(Debug)]
 pub struct Camera {
