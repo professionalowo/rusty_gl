@@ -1,10 +1,14 @@
 use core::fmt;
 use std::{fs, num::TryFromIntError, path::Path};
 
-use stbi_sys::load::LoadError;
+use stbi_sys::{
+    dimensions::Dimensions,
+    load::{self, Load, LoadData, LoadError, LoadFloat, LoadInt},
+};
+
+use crate::framework::texture::stbi::{format::Format, map_channels::MapChannels};
 
 mod format;
-mod load;
 mod map_channels;
 
 #[derive(Debug, PartialEq)]
@@ -62,9 +66,29 @@ impl GlImageData {
     pub fn try_load_from_memory(data: impl AsRef<[u8]>) -> ImageResult<Self> {
         let bytes = data.as_ref();
         if stbi_sys::is_hdr(bytes) {
-            load::try_loadf(bytes)
+            load::<LoadFloat>(bytes)
         } else {
-            load::try_load(bytes)
+            load::<LoadInt>(bytes)
         }
     }
+}
+
+fn load<L: Load + MapChannels>(data: &[u8]) -> ImageResult<GlImageData> {
+    let LoadData {
+        ref channels,
+        data,
+        dimensions: Dimensions { height, width },
+    } = load::try_load_opt::<L>(data)?;
+    let Format {
+        format,
+        internal_format,
+    } = Format::try_from_load::<L>(channels)?;
+    Ok(GlImageData {
+        width,
+        height,
+        format,
+        data: Box::from(data),
+        type_: L::TYPE.data(),
+        internal_format,
+    })
 }

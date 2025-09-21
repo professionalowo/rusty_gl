@@ -1,7 +1,9 @@
 use std::{ffi::c_int, fmt, num::TryFromIntError, slice};
 
 use crate::{
-    bindings::{stbi_load_from_memory, stbi_loadf_from_memory, stbi_uc},
+    bindings::{
+        stbi_load_from_memory, stbi_loadf_from_memory, stbi_set_flip_vertically_on_load, stbi_uc,
+    },
     channels::Channels,
     dimensions::Dimensions,
     failure_reason,
@@ -119,4 +121,11 @@ impl Load for LoadInt {
     ) -> *mut u8 {
         unsafe { stbi_load_from_memory(buffer, len, x, y, channels_in_file, desired_channels) }
     }
+}
+
+pub fn try_load_opt<L: Load>(bytes: &[u8]) -> Result<LoadData<'_>, LoadError> {
+    unsafe {
+        stbi_set_flip_vertically_on_load(1);
+    }
+    LoadData::load::<L>(bytes)
 }
