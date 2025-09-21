@@ -1,4 +1,7 @@
-use crate::{GLfloat, GLint, glUniform1f, glUniform1i, uniform::UniformLocation};
+use crate::{
+    bindings::{GLfloat, GLint, glUniform1f, glUniform1i},
+    uniform::UniformLocation,
+};
 
 pub trait Uniform {
     type Options;

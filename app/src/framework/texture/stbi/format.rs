@@ -6,12 +6,12 @@ pub struct Channels(pub i32);
 
 impl Channels {
     #[inline]
-    pub const fn format(&self) -> gl_sys::GLenum {
+    pub const fn format(&self) -> gl_sys::bindings::GLenum {
         match self.0 {
-            4 => gl_sys::GL_RGBA,
-            3 => gl_sys::GL_RGB,
-            2 => gl_sys::GL_RG,
-            1 | _ => gl_sys::GL_RED,
+            4 => gl_sys::bindings::GL_RGBA,
+            3 => gl_sys::bindings::GL_RGB,
+            2 => gl_sys::bindings::GL_RG,
+            1 | _ => gl_sys::bindings::GL_RED,
         }
     }
 }

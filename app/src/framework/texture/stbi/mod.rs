@@ -10,11 +10,11 @@ mod load_trait;
 
 #[derive(Debug, PartialEq)]
 pub(super) struct GlImageData {
-    pub width: gl_sys::GLsizei,
-    pub height: gl_sys::GLsizei,
-    pub format: gl_sys::GLenum,
-    pub internal_format: gl_sys::GLint,
-    pub type_: gl_sys::GLenum,
+    pub width: gl_sys::bindings::GLsizei,
+    pub height: gl_sys::bindings::GLsizei,
+    pub format: gl_sys::bindings::GLenum,
+    pub internal_format: gl_sys::bindings::GLint,
+    pub type_: gl_sys::bindings::GLenum,
     pub data: Box<[u8]>,
 }
 

@@ -6,7 +6,10 @@ use std::{
 pub mod uniform_trait;
 
 use crate::{
-    GLError, GLint, get_error, glGetUniformLocation, program::Program,
+    GLError,
+    bindings::{GLint, glGetUniformLocation},
+    get_error,
+    program::Program,
     uniform::uniform_trait::Uniform,
 };
 
