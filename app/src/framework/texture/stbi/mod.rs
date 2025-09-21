@@ -3,7 +3,7 @@ use std::{fs, num::TryFromIntError, path::Path};
 
 use stbi_sys::{
     dimensions::Dimensions,
-    load::{self, Load, LoadData, LoadError, LoadFloat, LoadInt},
+    load::{Load, LoadData, LoadError, LoadFloat, LoadInt},
 };
 
 use crate::framework::texture::stbi::{format::Format, map_channels::MapChannels};
