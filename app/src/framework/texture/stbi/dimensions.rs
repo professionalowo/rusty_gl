@@ -1,4 +1,4 @@
-use super::format::Channels;
+use stbi_sys::channels::Channels;
 
 #[derive(Debug, Default, PartialEq)]
 pub struct Dimensions {

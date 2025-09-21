@@ -1,6 +1,5 @@
-use self::dimensions::Dimensions;
-use super::{format::Channels, *};
-use stbi_sys::bindings::*;
+use super::dimensions::Dimensions;
+use stbi_sys::{bindings::*, channels::Channels};
 use std::ffi::c_int;
 pub(super) enum GlType {
     Float,
