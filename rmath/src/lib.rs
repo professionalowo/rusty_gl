@@ -8,6 +8,7 @@ pub mod vec2;
 pub mod vec3;
 pub mod vec4;
 
+#[repr(transparent)]
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Scalar<T>(pub T);
 
