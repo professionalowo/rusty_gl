@@ -21,24 +21,10 @@ impl<T> Drop for StbiPtr<T> {
     }
 }
 
-impl<T> Default for StbiPtr<T> {
-    #[inline]
-    fn default() -> Self {
-        Self::null()
-    }
-}
-
 impl<T> StbiPtr<T> {
     #[inline]
-    pub const fn null() -> Self {
-        Self {
-            raw: std::ptr::null_mut(),
-            len: 0,
-        }
-    }
-
-    #[inline]
     pub const unsafe fn from_raw_parts(raw: *mut T, len: usize) -> Self {
+        debug_assert!(!raw.is_null(), "Wrapped pointer cannot be null");
         //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image, len must be smaller than or equal to the number of elements in raw
         Self { raw, len }
     }
