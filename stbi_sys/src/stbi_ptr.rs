@@ -24,17 +24,17 @@ impl<T> Drop for StbiPtr<T> {
 
 impl<T> StbiPtr<T> {
     #[inline]
-    pub const unsafe fn from_raw_parts_unchecked(raw: *mut T, len: usize) -> Self {
+    pub const unsafe fn from_raw_parts_unchecked(ptr: *mut T, len: usize) -> Self {
         //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image, len must be smaller than or equal to the number of elements in raw
         Self {
-            inner: unsafe { NonNull::new_unchecked(raw) },
+            inner: unsafe { NonNull::new_unchecked(ptr) },
             len,
         }
     }
 
     #[inline]
-    pub const fn from_raw_parts(raw: *mut T, len: usize) -> Option<Self> {
-        match NonNull::new(raw) {
+    pub const fn from_raw_parts(ptr: *mut T, len: usize) -> Option<Self> {
+        match NonNull::new(ptr) {
             None => None,
             Some(inner) => Some(Self { inner, len }),
         }
