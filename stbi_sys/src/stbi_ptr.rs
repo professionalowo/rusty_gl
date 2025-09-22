@@ -16,6 +16,7 @@ pub struct StbiPtr<T> {
 
 impl<T> Drop for StbiPtr<T> {
     fn drop(&mut self) {
+		//SAFETY: Safe as long as 'raw' was allocated by stb_image
         unsafe { stbi_image_free(self.raw as _) };
     }
 }
