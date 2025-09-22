@@ -50,13 +50,7 @@ impl LoadData {
         let mut dimensions = Dimensions::default();
         let mut channels = Channels::default();
 
-        let data = L::load(bytes, &mut dimensions, &mut channels);
-        if data.is_null() {
-            return Err(LoadError::StbiError(
-                failure_reason().unwrap_or_else(|| String::from("Unknown error")),
-            ));
-        }
-
+        let data = L::load(bytes, &mut dimensions, &mut channels).map_err(LoadError::StbiError)?;
         Ok(Self {
             dimensions,
             channels,
@@ -73,11 +67,18 @@ pub trait Load {
             height: y,
         }: &mut Dimensions,
         Channels(channels): &mut Channels,
-    ) -> StbiPtr<u8> {
+    ) -> Result<StbiPtr<u8>, String> {
         let buffer = bytes.as_ref();
         unsafe {
             let ptr = Self::load_from_memory(buffer.as_ptr(), buffer.len() as _, x, y, channels, 0);
-            StbiPtr::from_raw_parts(ptr, ((*x) * (*y) * (*channels)) as _)
+            if ptr.is_null() {
+                Err(failure_reason().unwrap_or_else(|| String::from("Unknown error")))
+            } else {
+                Ok(StbiPtr::from_raw_parts(
+                    ptr,
+                    ((*x) * (*y) * (*channels)) as _,
+                ))
+            }
         }
     }
 
