@@ -16,7 +16,7 @@ pub struct StbiPtr<T> {
 
 impl<T> Drop for StbiPtr<T> {
     fn drop(&mut self) {
-		//SAFETY: Safe as long as 'raw' was allocated by stb_image
+        //SAFETY: Safe as long as 'raw' was allocated by stb_image
         unsafe { stbi_image_free(self.raw as _) };
     }
 }
@@ -39,17 +39,19 @@ impl<T> StbiPtr<T> {
 
     #[inline]
     pub const unsafe fn from_raw_parts(raw: *mut T, len: usize) -> Self {
-        //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image
+        //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image, len must be smaller than or equal to the number of elements in raw
         Self { raw, len }
     }
 
     #[inline]
     pub const fn as_slice(&self) -> &[T] {
+        //SAFETY: safe as long as invariant 'from_raw_parts' is followed
         unsafe { slice::from_raw_parts(self.raw, self.len) }
     }
 
     #[inline]
     pub const fn as_mut_slice(&mut self) -> &mut [T] {
+        //SAFETY: safe as long as invariant 'from_raw_parts' is followed
         unsafe { slice::from_raw_parts_mut(self.raw, self.len) }
     }
 
@@ -59,6 +61,14 @@ impl<T> StbiPtr<T> {
         T: Clone,
     {
         self.as_slice().to_vec()
+    }
+
+    #[inline]
+    pub fn into_boxed_slice(self) -> Box<[T]>
+    where
+        T: Clone,
+    {
+        self.to_vec().into_boxed_slice()
     }
 
     #[inline]
@@ -117,7 +127,7 @@ impl<T: Clone> From<StbiPtr<T>> for Vec<T> {
 impl<T: Clone> From<StbiPtr<T>> for Box<[T]> {
     #[inline]
     fn from(value: StbiPtr<T>) -> Self {
-        value.to_vec().into_boxed_slice()
+        value.into_boxed_slice()
     }
 }
 
