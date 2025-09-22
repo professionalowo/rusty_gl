@@ -1,5 +1,6 @@
 use std::{
     ops::{Deref, DerefMut},
+    ptr::NonNull,
     slice,
 };
 
@@ -10,34 +11,45 @@ use crate::bindings::stbi_image_free;
 /// Constructing from a pointer managed by Rust's allocator is undefined behavior.
 #[derive(Debug, PartialEq)]
 pub struct StbiPtr<T> {
-    raw: *mut T,
+    inner: NonNull<T>,
     len: usize,
 }
 
 impl<T> Drop for StbiPtr<T> {
     fn drop(&mut self) {
         //SAFETY: Safe as long as 'raw' was allocated by stb_image
-        unsafe { stbi_image_free(self.raw as _) };
+        unsafe { stbi_image_free(self.inner.as_ptr() as _) };
     }
 }
 
 impl<T> StbiPtr<T> {
     #[inline]
-    pub const unsafe fn from_raw_parts(raw: *mut T, len: usize) -> Self {
+    pub const unsafe fn from_raw_parts_unchecked(raw: *mut T, len: usize) -> Self {
         //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image, len must be smaller than or equal to the number of elements in raw
-        Self { raw, len }
+        Self {
+            inner: unsafe { NonNull::new_unchecked(raw) },
+            len,
+        }
+    }
+
+    #[inline]
+    pub const fn from_raw_parts(raw: *mut T, len: usize) -> Option<Self> {
+        match NonNull::new(raw) {
+            None => None,
+            Some(inner) => Some(Self { inner, len }),
+        }
     }
 
     #[inline]
     pub const fn as_slice(&self) -> &[T] {
         //SAFETY: safe as long as invariant 'from_raw_parts' is followed
-        unsafe { slice::from_raw_parts(self.raw, self.len) }
+        unsafe { slice::from_raw_parts(self.inner.as_ptr(), self.len) }
     }
 
     #[inline]
     pub const fn as_mut_slice(&mut self) -> &mut [T] {
         //SAFETY: safe as long as invariant 'from_raw_parts' is followed
-        unsafe { slice::from_raw_parts_mut(self.raw, self.len) }
+        unsafe { slice::from_raw_parts_mut(self.inner.as_ptr(), self.len) }
     }
 
     #[inline]
@@ -59,11 +71,6 @@ impl<T> StbiPtr<T> {
     #[inline]
     pub const fn len(&self) -> usize {
         self.len
-    }
-
-    #[inline]
-    pub const fn is_null(&self) -> bool {
-        self.raw.is_null()
     }
 
     #[inline]

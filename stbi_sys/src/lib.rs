@@ -12,7 +12,6 @@ where
     unsafe { bindings::stbi_is_hdr_from_memory(bytes.as_ptr(), bytes.len() as _) != 0 }
 }
 
-#[cold]
 pub fn failure_reason() -> Option<String> {
     let ptr = unsafe { bindings::stbi_failure_reason() };
 
