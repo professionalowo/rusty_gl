@@ -22,9 +22,9 @@ impl From<(i32, i32)> for Dimensions {
     }
 }
 
-impl Into<(i32, i32)> for Dimensions {
-    fn into(self) -> (i32, i32) {
-        (self.width, self.height)
+impl From<Dimensions> for (i32, i32) {
+    fn from(Dimensions { width, height }: Dimensions) -> Self {
+        (width, height)
     }
 }
 
@@ -34,9 +34,9 @@ impl From<[i32; 2]> for Dimensions {
     }
 }
 
-impl Into<[i32; 2]> for Dimensions {
-    fn into(self) -> [i32; 2] {
-        [self.width, self.height]
+impl From<Dimensions> for [i32; 2] {
+    fn from(Dimensions { width, height }: Dimensions) -> Self {
+        [width, height]
     }
 }
 
