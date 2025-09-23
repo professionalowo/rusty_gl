@@ -5,7 +5,9 @@ edition = "2024"
 
 [features]
 assimp = ["dep:assimp", "dep:assimp-sys"]
+imgui = ["dep:imgui_sys"]
 
 [dependencies]
 assimp = { version = "0.3.1", optional = true }
 assimp-sys = { version = "0.3.1", optional = true }
+imgui_sys = { path = "../imgui_sys", optional = true }

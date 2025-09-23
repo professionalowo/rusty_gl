@@ -18,9 +18,9 @@ fn main() {
 fn bind_glfw(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
     builder
         .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
-        .allowlist_var("GLFW_.*")
-        .allowlist_function("gl.*")
+        .allowlist_function("glfw.*")
         .allowlist_type("GLFW.*")
+        .allowlist_var("GLFW.*")
         .generate()
         .map(LazyBindings)
         .expect("Unable to generate GLFW bindings")

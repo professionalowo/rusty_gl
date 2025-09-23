@@ -19,6 +19,9 @@ jobs:
                       install: brew install glfw
         steps:
             - uses: actions/checkout@v4
+              with:
+                submodules: recursive
+                fetch-depth: 1
 
             - name: Install Dependencies
               run: ${{ matrix.install }}

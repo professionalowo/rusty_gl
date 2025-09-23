@@ -1,8 +1,10 @@
 use std::{
     cell::RefCell,
-    ffi::{CStr, CString, NulError, c_int, c_void},
+    ffi::{CStr, CString, NulError, c_int},
     rc::Rc,
 };
+
+use gl_sys::bindings::glViewport;
 
 use crate::{
     GLFWError, bindings,
@@ -92,6 +94,23 @@ impl Window {
         }
         (w, h)
     }
+
+    pub fn size(&self) -> (i32, i32) {
+        let mut w = 0;
+        let mut h = 0;
+        unsafe {
+            bindings::glfwGetWindowSize(self.handle, &mut w, &mut h);
+        }
+        (w, h)
+    }
+
+    pub const fn as_ptr(&self) -> *const bindings::GLFWwindow {
+        self.handle.cast_const()
+    }
+
+    pub const fn as_mut_ptr(&mut self) -> *mut bindings::GLFWwindow {
+        self.handle
+    }
 }
 
 impl Drop for Window {
@@ -116,7 +135,7 @@ where
     let raw = Box::into_raw(Box::new(closure));
 
     unsafe {
-        bindings::glfwSetWindowUserPointer(window, raw as *mut c_void);
+        bindings::glfwSetWindowUserPointer(window, raw as _);
         bindings::glfwSetKeyCallback(window, Some(key_callback_trampoline));
     }
 }
@@ -147,7 +166,7 @@ extern "C" fn framebuffer_size_callback(
     height: c_int,
 ) {
     unsafe {
-        bindings::glViewport(0, 0, width, height);
+        glViewport(0, 0, width, height);
     }
 }
 

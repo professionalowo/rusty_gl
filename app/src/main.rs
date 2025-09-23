@@ -5,6 +5,7 @@ use std::{
     process::ExitCode,
 };
 
+use imgui_sys::bindings::ImGuiCond__ImGuiCond_Once;
 use rusty_gl::{
     UniformWrapper,
     framework::{
@@ -15,7 +16,7 @@ use rusty_gl::{
     },
 };
 
-use rmath::{mat4::Mat4, vec3::Vec3};
+use rmath::{mat4::Mat4, vec2::Vec2, vec3::Vec3};
 
 use gl_sys::{
     self,
@@ -61,6 +62,18 @@ fn main() -> ExitCode {
     )
     .expect("Failed to set window hint");
 
+    glfw_sys::window_hint(
+        glfw_sys::bindings::GLFW_COCOA_RETINA_FRAMEBUFFER,
+        glfw_sys::bindings::GLFW_FALSE,
+    )
+    .expect("Failed to set window hint");
+
+    glfw_sys::window_hint(
+        glfw_sys::bindings::GLFW_SCALE_TO_MONITOR,
+        glfw_sys::bindings::GLFW_FALSE,
+    )
+    .expect("Failed to set window hint");
+
     let mut window = Window::try_new(960, 540, "Rust").expect("Failed to create GLFW window");
 
     let scene =
@@ -98,11 +111,40 @@ fn main() -> ExitCode {
     const COLOR_EXP: ColorRGB = ColorRGB::new(2.2, 2.2, 2.2);
 
     gl_sys::enable(gl_sys::bindings::GL_DEPTH_TEST);
+
+    let ctx = imgui_sys::init(window.as_mut_ptr(), "#version 410 core")
+        .expect("Failed to initialize ImGui");
+
     let mut timer = Timer::<144>::new();
     while let Ok(false) = window.should_close() {
         timer.start();
 
         window.poll_events();
+
+        imgui_sys::begin_drawing();
+
+        imgui_sys::set_next_window_size(Vec2::new(250.0, 70.0), ImGuiCond__ImGuiCond_Once as _);
+
+        imgui_sys::set_next_window_pos(
+            Vec2::new(10.0, 10.0),
+            ImGuiCond__ImGuiCond_Once as _,
+            Vec2::new(0.0, 0.0),
+        );
+
+        imgui_sys::begin("Camera").expect("Could not init window");
+        {
+            let Vec3 { x, y, z } = camera.position();
+            imgui_sys::text(format!("Pos: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
+                .expect("Could not format Camera position");
+
+            let Vec3 { x, y, z } = camera.dir();
+            imgui_sys::text(format!("View: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
+                .expect("Could not format Camera position");
+        }
+        imgui_sys::end();
+
+        imgui_sys::end_drawing();
+        window.swap_buffers();
 
         const TURN_ANGLE: f32 = PI / 2.4;
         const MOVE_DISTANCE: f32 = 1.2;
@@ -191,11 +233,10 @@ fn main() -> ExitCode {
                     .expect("Failed to draw element");
                 element.unbind(&program);
             }
-
-            window.swap_buffers();
             timer.rendered();
         }
     }
+    imgui_sys::shutdown(ctx);
     glfw_sys::terminate();
     ExitCode::SUCCESS
 }

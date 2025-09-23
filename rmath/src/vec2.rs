@@ -1,5 +1,8 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+#[cfg(feature = "imgui")]
+use imgui_sys::bindings::ImVec2;
+
 use crate::Scalar;
 
 #[repr(C)]
@@ -109,6 +112,20 @@ impl<T: Copy> From<(T, T)> for Vec2<T> {
 impl<T: Copy> From<[T; 2]> for Vec2<T> {
     fn from([x, y]: [T; 2]) -> Self {
         Self::new(x, y)
+    }
+}
+
+#[cfg(feature = "imgui")]
+impl From<ImVec2> for Vec2<f32> {
+    fn from(ImVec2 { x, y }: ImVec2) -> Self {
+        Self { x, y }
+    }
+}
+
+#[cfg(feature = "imgui")]
+impl From<Vec2<f32>> for ImVec2 {
+    fn from(Vec2 { x, y }: Vec2<f32>) -> Self {
+        Self { x, y }
     }
 }
 

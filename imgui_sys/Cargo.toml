@@ -1,11 +1,12 @@
 [package]
-name = "glfw_sys"
+name = "imgui_sys"
 version = "0.1.0"
 edition = "2024"
 
 [build-dependencies]
 bindgen = "0.72.0"
+cc = "1.2.33"
 build_utils = { path = "../build_utils" }
 
 [dependencies]
-gl_sys = { path = "../gl_sys" }
+glfw_sys = { path = "../glfw_sys" }
