@@ -38,6 +38,7 @@ fn main() {
         .clang_arg(CXXSTD)
         .clang_args(INCLUDES.map(|i| format!("-I{i}")))
         .allowlist_function("ImGui.*")
+		.allowlist_function("IMGUI.*")
         .allowlist_type("ImGui.*")
         .allowlist_var("ImGui.*")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))

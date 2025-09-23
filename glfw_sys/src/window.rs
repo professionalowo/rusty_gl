@@ -92,6 +92,14 @@ impl Window {
         }
         (w, h)
     }
+
+    pub const fn as_ptr(&self) -> *const bindings::GLFWwindow {
+        self.handle.cast_const()
+    }
+
+    pub const fn as_mut_ptr(&mut self) -> *mut bindings::GLFWwindow {
+        self.handle
+    }
 }
 
 impl Drop for Window {
