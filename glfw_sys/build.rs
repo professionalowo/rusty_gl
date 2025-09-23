@@ -9,9 +9,7 @@ fn main() {
         .map(PathBuf::from)
         .expect("OUT_DIR not set");
 
-    let opengl_builder = opengl_builder();
-
-    bind_glfw(opengl_builder, &out_path.join("glfw_bindings.rs"))
+    bind_glfw(opengl_builder(), &out_path.join("glfw_bindings.rs"))
         .expect("Failed to build GLFW bindings");
 }
 
