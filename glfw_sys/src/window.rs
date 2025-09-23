@@ -4,6 +4,8 @@ use std::{
     rc::Rc,
 };
 
+use gl_sys::bindings::glViewport;
+
 use crate::{
     GLFWError, bindings,
     input::{KeyEvent, action::Action, keycode::Keycode, modifier::Modifier},
@@ -155,7 +157,7 @@ extern "C" fn framebuffer_size_callback(
     height: c_int,
 ) {
     unsafe {
-        bindings::glViewport(0, 0, width, height);
+        glViewport(0, 0, width, height);
     }
 }
 

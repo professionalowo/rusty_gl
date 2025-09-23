@@ -7,3 +7,5 @@ edition = "2024"
 bindgen = "0.72.0"
 build_utils = { path = "../build_utils" }
 
+[dependencies]
+gl_sys = { path = "../gl_sys" }

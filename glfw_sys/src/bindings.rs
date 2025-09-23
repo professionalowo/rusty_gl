@@ -3,4 +3,6 @@
 #![allow(non_snake_case)]
 #![allow(dead_code)]
 
+use gl_sys::bindings::*;
+
 include!(concat!(env!("OUT_DIR"), "/glfw_bindings.rs"));

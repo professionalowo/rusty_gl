@@ -9,3 +9,4 @@ cc = "1.2.33"
 build_utils = { path = "../build_utils" }
 
 [dependencies]
+glfw_sys = { path = "../glfw_sys" }

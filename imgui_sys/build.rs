@@ -38,9 +38,11 @@ fn main() {
         .clang_arg(CXXSTD)
         .clang_args(INCLUDES.map(|i| format!("-I{i}")))
         .allowlist_function("ImGui.*")
-		.allowlist_function("IMGUI.*")
+        .allowlist_function("IMGUI.*")
         .allowlist_type("ImGui.*")
         .allowlist_var("ImGui.*")
+        .blocklist_type("GL.*")
+        .blocklist_function("gl.*")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate bindings");

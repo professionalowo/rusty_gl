@@ -172,6 +172,7 @@ version = "0.1.0"
 dependencies = [
  "bindgen",
  "build_utils",
+ "gl_sys",
 ]
 
 [[package]]
@@ -187,6 +188,7 @@ dependencies = [
  "bindgen",
  "build_utils",
  "cc",
+ "glfw_sys",
 ]
 
 [[package]]

@@ -1,12 +1,14 @@
+use glfw_sys::bindings::GLFWwindow;
+
 use crate::bindings::{
-    GLFWwindow, ImGui_CreateContext, ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL,
-    ImGui_ImplOpenGL3_Init, ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
+    ImGui_CreateContext, ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplOpenGL3_Init,
+    ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard,
 };
 
 pub mod bindings;
 
-fn init(window: *mut GLFWwindow) {
+pub fn init(window: *mut GLFWwindow) {
     unsafe {
         ImGui_CreateContext(std::ptr::null_mut());
         let io = ImGui_GetIO();

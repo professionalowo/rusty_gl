@@ -4,4 +4,6 @@
 #![allow(dead_code)]
 #![allow(unsafe_op_in_unsafe_fn)]
 
+use glfw_sys::bindings::*;
+
 include!(concat!(env!("OUT_DIR"), "/imgui_bindings.rs"));
