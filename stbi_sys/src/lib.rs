@@ -1,3 +1,5 @@
+use std::ptr::NonNull;
+
 pub mod bindings;
 pub mod channels;
 pub mod dimensions;
@@ -13,15 +15,14 @@ where
 }
 
 pub fn failure_reason() -> Option<String> {
-    let ptr = unsafe { bindings::stbi_failure_reason() };
+    let ptr = unsafe { bindings::stbi_failure_reason() }.cast_mut();
 
-    if ptr.is_null() {
-        None
-    } else {
-        Some(
-            unsafe { std::ffi::CStr::from_ptr(ptr) }
+    match NonNull::new(ptr) {
+        None => None,
+        Some(n) => Some(
+            unsafe { std::ffi::CStr::from_ptr(n.as_ptr()) }
                 .to_string_lossy()
                 .into_owned(),
-        )
+        ),
     }
 }
