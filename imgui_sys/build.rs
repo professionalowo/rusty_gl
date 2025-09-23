@@ -5,6 +5,8 @@ use build_utils::{opengl_builder, print_build_flags};
 fn main() {
     print_build_flags();
 
+    const CXXSTD: &'static str = "-std=c++14";
+
     let mut build = cc::Build::new();
     build
         .cpp(true)
@@ -19,7 +21,7 @@ fn main() {
         .file("imguiwrapper.cpp")
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
         .includes(["imgui", "imgui/backends"])
-        .flag_if_supported("-std=c++14");
+        .flag_if_supported(CXXSTD);
 
     #[cfg(target_os = "macos")]
     build.include("/opt/homebrew/include");
@@ -30,9 +32,8 @@ fn main() {
 
     let bindings = opengl_builder()
         .header("imguiwrapper.h")
-        .clang_arg("-x")
-        .clang_arg("c++")
-        .clang_arg("-std=c++17")
+        .clang_args(["-x", "c++"])
+        .clang_arg(CXXSTD)
         .clang_args(["-Iimgui", "-Iimgui/backends"])
         .allowlist_function("ImGui.*")
         .allowlist_type("ImGui.*")
