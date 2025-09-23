@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use build_utils::{opengl_builder, print_build_flags};
+use build_utils::{bindgen, cc, opengl_builder, print_build_flags};
 
 fn main() {
     print_build_flags();

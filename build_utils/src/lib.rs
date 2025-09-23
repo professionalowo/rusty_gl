@@ -1,5 +1,8 @@
 use std::{fs, io, path::Path};
 
+pub use bindgen;
+pub use cc;
+
 #[cfg(target_os = "macos")]
 pub fn opengl_builder() -> bindgen::Builder {
     use std::process::{Command, Output};

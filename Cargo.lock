@@ -68,6 +68,7 @@ name = "build_utils"
 version = "0.1.0"
 dependencies = [
  "bindgen",
+ "cc",
 ]
 
 [[package]]
@@ -162,7 +163,6 @@ checksum = "1ced73b1dacfc750a6db6c0a0c3a3853c8b41997e2e2c563dc90804ae6867959"
 name = "gl_sys"
 version = "0.1.0"
 dependencies = [
- "bindgen",
  "build_utils",
 ]
 
@@ -170,7 +170,6 @@ dependencies = [
 name = "glfw_sys"
 version = "0.1.0"
 dependencies = [
- "bindgen",
  "build_utils",
  "gl_sys",
 ]
@@ -185,9 +184,7 @@ checksum = "0cc23270f6e1808e30a928bdc84dea0b9b4136a8bc82338574f23baf47bbd280"
 name = "imgui_sys"
 version = "0.1.0"
 dependencies = [
- "bindgen",
  "build_utils",
- "cc",
  "glfw_sys",
 ]
 
@@ -202,9 +199,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.175"
+version = "0.2.176"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a82ae493e598baaea5209805c49bbf2ea7de956d50d7da0da1164f9c6d28543"
+checksum = "58f929b4d672ea937a23a1ab494143d968337a5f47e56d0815df1e0890ddf174"
 
 [[package]]
 name = "libloading"
@@ -349,9 +346,7 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 name = "stbi_sys"
 version = "0.1.0"
 dependencies = [
- "bindgen",
  "build_utils",
- "cc",
 ]
 
 [[package]]

@@ -1,6 +1,6 @@
 use std::{env, io, path::PathBuf};
 
-use build_utils::{LazyBindings, opengl_builder, print_build_flags};
+use build_utils::{LazyBindings, bindgen, opengl_builder, print_build_flags};
 
 fn main() {
     print_build_flags();

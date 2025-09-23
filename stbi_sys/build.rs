@@ -1,6 +1,6 @@
 use std::{env, io, path::PathBuf};
 
-use build_utils::LazyBindings;
+use build_utils::{LazyBindings, bindgen, cc};
 
 const HEADER: &'static str = "stb_image.h";
 
