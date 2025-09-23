@@ -3,4 +3,9 @@ name = "imgui_sys"
 version = "0.1.0"
 edition = "2024"
 
+[build-dependencies]
+build_utils = { path = "../build_utils" }
+bindgen = "0.72.0"
+cc = "1.2.33"
+
 [dependencies]
