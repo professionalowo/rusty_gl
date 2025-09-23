@@ -23,7 +23,8 @@ fn main() {
         .expect("Unable to generate bindings");
 
     let out_path = PathBuf::from(std::env::var("OUT_DIR").unwrap());
+    let bindings_file = out_path.join("imgui_bindings.rs");
     bindings
-        .write_to_file(out_path.join("imgui_bindings.rs"))
+        .write_to_file(&bindings_file)
         .expect("Couldn't write bindings!");
 }
