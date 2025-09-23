@@ -42,13 +42,11 @@ impl<T> StbiPtr<T> {
 
     #[inline]
     pub const fn as_slice(&self) -> &[T] {
-        //SAFETY: safe as long as invariant 'from_raw_parts' is followed
         unsafe { slice::from_raw_parts(self.inner.as_ptr(), self.len) }
     }
 
     #[inline]
     pub const fn as_mut_slice(&mut self) -> &mut [T] {
-        //SAFETY: safe as long as invariant 'from_raw_parts' is followed
         unsafe { slice::from_raw_parts_mut(self.inner.as_ptr(), self.len) }
     }
 
