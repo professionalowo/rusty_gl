@@ -20,7 +20,6 @@ fn main() {
             "imgui/backends/imgui_impl_glfw.cpp",
             "imgui/backends/imgui_impl_opengl3.cpp",
         ])
-        .file("imguiwrapper.cpp")
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
         .includes(INCLUDES)
         .flag_if_supported(CXXSTD);
