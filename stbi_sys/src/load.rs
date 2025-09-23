@@ -69,11 +69,11 @@ pub trait Load {
         Channels(channels): &mut Channels,
     ) -> Result<StbiPtr<u8>, String> {
         let buffer = bytes.as_ref();
-        let raw = unsafe {
+        let ptr = unsafe {
             Self::load_from_memory(buffer.as_ptr(), buffer.len() as _, x, y, channels, 0)
         };
         let len = (*x) * (*y) * (*channels);
-        match StbiPtr::from_raw_parts(raw, len as _) {
+        match StbiPtr::from_raw_parts(ptr, len as _) {
             Some(p) => Ok(p),
             None => Err(failure_reason().unwrap_or_else(|| String::from("Unknown error"))),
         }
