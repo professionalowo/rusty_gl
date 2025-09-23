@@ -5,6 +5,7 @@ use std::{
     process::ExitCode,
 };
 
+use imgui_sys::bindings::{ImGuiCond__ImGuiCond_Always, ImGuiCond__ImGuiCond_FirstUseEver};
 use rusty_gl::{
     UniformWrapper,
     framework::{
@@ -15,7 +16,7 @@ use rusty_gl::{
     },
 };
 
-use rmath::{mat4::Mat4, vec3::Vec3};
+use rmath::{mat4::Mat4, vec2::Vec2, vec3::Vec3};
 
 use gl_sys::{
     self,
@@ -107,7 +108,31 @@ fn main() -> ExitCode {
         timer.start();
 
         window.poll_events();
+
         imgui_sys::begin_drawing();
+
+        imgui_sys::set_next_window_size(
+            Vec2::new(1800.0, 800.0),
+            ImGuiCond__ImGuiCond_FirstUseEver as _,
+        );
+
+        imgui_sys::set_next_window_pos(
+            Vec2::new(10.0, 10.0),
+            ImGuiCond__ImGuiCond_Always as _,
+            Vec2::new(0.0, 0.0),
+        );
+
+        imgui_sys::begin("Camera").expect("Could not init window");
+        {
+            let Vec3 { x, y, z } = camera.position();
+            imgui_sys::text(format!("Pos: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
+                .expect("Could not format Camera position");
+
+            let Vec3 { x, y, z } = camera.dir();
+            imgui_sys::text(format!("View: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
+                .expect("Could not format Camera position");
+        }
+        imgui_sys::end();
 
         const TURN_ANGLE: f32 = PI / 2.4;
         const MOVE_DISTANCE: f32 = 1.2;

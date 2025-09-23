@@ -3,12 +3,13 @@ use std::ffi::{CString, NulError};
 use glfw_sys::bindings::GLFWwindow;
 
 use crate::bindings::{
-    ImGui_CreateContext, ImGui_DestroyContext, ImGui_GetDrawData, ImGui_GetIO,
-    ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame, ImGui_ImplGlfw_Shutdown,
+    ImGui_Begin, ImGui_CreateContext, ImGui_DestroyContext, ImGui_End, ImGui_GetDrawData,
+    ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame, ImGui_ImplGlfw_Shutdown,
     ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame, ImGui_ImplOpenGL3_RenderDrawData,
-    ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render,
+    ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render, ImGui_SetNextWindowPos,
+    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
-    ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext,
+    ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext, ImVec2,
 };
 
 pub mod bindings;
@@ -34,6 +35,38 @@ pub fn init<S: Into<Vec<u8>>>(
         ctx
     };
     Ok(Context(c))
+}
+
+pub fn begin<T: Into<Vec<u8>>>(title: T) -> Result<(), NulError> {
+    unsafe {
+        ImGui_Begin(CString::new(title)?.as_ptr(), std::ptr::null_mut(), 0);
+    }
+    Ok(())
+}
+
+pub fn end() {
+    unsafe {
+        ImGui_End();
+    }
+}
+
+pub fn text<T: Into<Vec<u8>>>(title: T) -> Result<(), NulError> {
+    unsafe {
+        ImGui_Text(CString::new(title)?.as_ptr());
+    }
+    Ok(())
+}
+
+pub fn set_next_window_size<V: Into<ImVec2>>(size: V, cond: ImGuiCond) {
+    unsafe {
+        ImGui_SetNextWindowSize(&size.into(), cond);
+    }
+}
+
+pub fn set_next_window_pos<V: Into<ImVec2>, P: Into<ImVec2>>(pos: V, cond: ImGuiCond, pivot: P) {
+    unsafe {
+        ImGui_SetNextWindowPos(&pos.into(), cond, &pivot.into());
+    }
 }
 
 pub fn shutdown(Context(ctx): Context) {
