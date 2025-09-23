@@ -134,6 +134,9 @@ fn main() -> ExitCode {
         }
         imgui_sys::end();
 
+        imgui_sys::end_drawing();
+        window.swap_buffers();
+
         const TURN_ANGLE: f32 = PI / 2.4;
         const MOVE_DISTANCE: f32 = 1.2;
 
@@ -221,9 +224,6 @@ fn main() -> ExitCode {
                     .expect("Failed to draw element");
                 element.unbind(&program);
             }
-
-            imgui_sys::end_drawing();
-            window.swap_buffers();
             timer.rendered();
         }
     }

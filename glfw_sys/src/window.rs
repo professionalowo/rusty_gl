@@ -95,6 +95,15 @@ impl Window {
         (w, h)
     }
 
+    pub fn size(&self) -> (i32, i32) {
+        let mut w = 0;
+        let mut h = 0;
+        unsafe {
+            bindings::glfwGetWindowSize(self.handle, &mut w, &mut h);
+        }
+        (w, h)
+    }
+
     pub const fn as_ptr(&self) -> *const bindings::GLFWwindow {
         self.handle.cast_const()
     }
