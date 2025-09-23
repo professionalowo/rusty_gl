@@ -27,7 +27,6 @@ use gl_sys::{
 
 use glfw_sys::{
     self,
-    bindings::glfwGetWindowContentScale,
     input::{KeyEvent, keycode::Keycode, modifier::Modifier},
     timer::Timer,
     window::Window,
