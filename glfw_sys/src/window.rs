@@ -1,6 +1,7 @@
 use std::{
     cell::RefCell,
     ffi::{CStr, CString, NulError, c_int},
+    ptr::NonNull,
     rc::Rc,
 };
 
@@ -11,7 +12,7 @@ use crate::{
     input::{KeyEvent, action::Action, keycode::Keycode, modifier::Modifier},
 };
 pub struct Window {
-    handle: *mut bindings::GLFWwindow,
+    handle: NonNull<bindings::GLFWwindow>,
     last_event: Rc<RefCell<Option<KeyEvent>>>,
     _title: CString,
 }
@@ -24,16 +25,21 @@ impl Window {
         B: Into<Vec<u8>>,
     {
         let title_cstr = CString::new(title)?;
-        let handle = create_window(width, height, &title_cstr, None, None);
+        let handle = unsafe {
+            NonNull::new_unchecked(create_window(width, height, &title_cstr, None, None))
+        };
         let last_event = Rc::new(RefCell::new(None));
-        set_key_callback(handle, {
+        set_key_callback(handle.as_ptr(), {
             let last_key_event = last_event.clone();
             move |event| {
                 *last_key_event.borrow_mut() = Some(event);
             }
         });
         unsafe {
-            bindings::glfwSetFramebufferSizeCallback(handle, Some(framebuffer_size_callback));
+            bindings::glfwSetFramebufferSizeCallback(
+                handle.as_ptr(),
+                Some(framebuffer_size_callback),
+            );
         }
         Ok(Self {
             handle,
@@ -44,7 +50,7 @@ impl Window {
 
     pub fn should_close(&self) -> Result<bool, GLFWError> {
         unsafe {
-            let result = bindings::glfwWindowShouldClose(self.handle);
+            let result = bindings::glfwWindowShouldClose(self.handle.as_ptr());
             if result == 0 {
                 Ok(false)
             } else if result == 1 {
@@ -57,7 +63,7 @@ impl Window {
 
     pub fn set_should_close(&self, value: bool) {
         unsafe {
-            bindings::glfwSetWindowShouldClose(self.handle, if value { 1 } else { 0 });
+            bindings::glfwSetWindowShouldClose(self.handle.as_ptr(), if value { 1 } else { 0 });
         }
     }
 
@@ -69,7 +75,7 @@ impl Window {
 
     pub fn swap_buffers(&self) {
         unsafe {
-            bindings::glfwSwapBuffers(self.handle);
+            bindings::glfwSwapBuffers(self.handle.as_ptr());
         }
     }
 
@@ -90,7 +96,7 @@ impl Window {
         let mut w = 0;
         let mut h = 0;
         unsafe {
-            bindings::glfwGetFramebufferSize(self.handle, &mut w, &mut h);
+            bindings::glfwGetFramebufferSize(self.handle.as_ptr(), &mut w, &mut h);
         }
         (w, h)
     }
@@ -99,30 +105,42 @@ impl Window {
         let mut w = 0;
         let mut h = 0;
         unsafe {
-            bindings::glfwGetWindowSize(self.handle, &mut w, &mut h);
+            bindings::glfwGetWindowSize(self.handle.as_ptr(), &mut w, &mut h);
         }
         (w, h)
     }
 
     pub const fn as_ptr(&self) -> *const bindings::GLFWwindow {
-        self.handle.cast_const()
+        self.handle.as_ptr()
     }
 
     pub const fn as_mut_ptr(&mut self) -> *mut bindings::GLFWwindow {
-        self.handle
+        self.handle.as_ptr()
+    }
+}
+
+impl AsRef<bindings::GLFWwindow> for Window {
+    fn as_ref(&self) -> &bindings::GLFWwindow {
+        unsafe { self.handle.as_ref() }
+    }
+}
+
+impl AsMut<bindings::GLFWwindow> for Window {
+    fn as_mut(&mut self) -> &mut bindings::GLFWwindow {
+        unsafe { self.handle.as_mut() }
     }
 }
 
 impl Drop for Window {
     fn drop(&mut self) {
         unsafe {
-            let user_ptr = bindings::glfwGetWindowUserPointer(self.handle);
+            let user_ptr = bindings::glfwGetWindowUserPointer(self.handle.as_ptr());
             if !user_ptr.is_null() {
                 let closure = Box::from_raw(user_ptr as *mut Box<KeyCallback>);
                 // Drop the closure to unregister the callback
                 drop(closure);
             }
-            bindings::glfwDestroyWindow(self.handle);
+            bindings::glfwDestroyWindow(self.handle.as_ptr());
         }
     }
 }

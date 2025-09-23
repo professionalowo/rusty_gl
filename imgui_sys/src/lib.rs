@@ -19,11 +19,12 @@ pub mod bindings;
 pub struct Context(*mut ImGuiContext);
 impl Context {
     #[must_use]
-    pub fn init<S: Into<Vec<u8>>>(
-        window: *mut GLFWwindow,
+    pub fn init<S: Into<Vec<u8>>, W: AsMut<GLFWwindow>>(
+        window: &mut W,
         glsl_version: S,
     ) -> Result<Self, NulError> {
         let glsl_version = CString::new(glsl_version)?;
+        let window = window.as_mut();
         let c = unsafe {
             let ctx = ImGui_CreateContext(std::ptr::null_mut());
             let io = ImGui_GetIO();
