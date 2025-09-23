@@ -1,6 +1,6 @@
 use std::{
     cell::RefCell,
-    ffi::{CStr, CString, NulError, c_int, c_void},
+    ffi::{CStr, CString, NulError, c_int},
     rc::Rc,
 };
 
