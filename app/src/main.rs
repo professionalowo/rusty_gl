@@ -5,7 +5,7 @@ use std::{
     process::ExitCode,
 };
 
-use imgui_sys::bindings::{ImGuiCond__ImGuiCond_Always, ImGuiCond__ImGuiCond_FirstUseEver};
+use imgui_sys::bindings::ImGuiCond__ImGuiCond_Once;
 use rusty_gl::{
     UniformWrapper,
     framework::{
@@ -27,6 +27,10 @@ use gl_sys::{
 
 use glfw_sys::{
     self,
+    bindings::{
+        GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE, GLFW_SCALE_TO_MONITOR, GLFW_TRUE,
+        glfwGetWindowContentScale,
+    },
     input::{KeyEvent, keycode::Keycode, modifier::Modifier},
     timer::Timer,
     window::Window,
@@ -59,6 +63,18 @@ fn main() -> ExitCode {
     glfw_sys::window_hint(
         glfw_sys::bindings::GLFW_OPENGL_FORWARD_COMPAT,
         glfw_sys::bindings::GLFW_TRUE,
+    )
+    .expect("Failed to set window hint");
+
+    glfw_sys::window_hint(
+        glfw_sys::bindings::GLFW_COCOA_RETINA_FRAMEBUFFER,
+        glfw_sys::bindings::GLFW_FALSE,
+    )
+    .expect("Failed to set window hint");
+
+    glfw_sys::window_hint(
+        glfw_sys::bindings::GLFW_SCALE_TO_MONITOR,
+        glfw_sys::bindings::GLFW_FALSE,
     )
     .expect("Failed to set window hint");
 
@@ -109,16 +125,13 @@ fn main() -> ExitCode {
 
         window.poll_events();
 
-        imgui_sys::begin_drawing(window.as_mut_ptr());
+        imgui_sys::begin_drawing();
 
-        imgui_sys::set_next_window_size(
-            Vec2::new(1800.0, 800.0),
-            ImGuiCond__ImGuiCond_FirstUseEver as _,
-        );
+        imgui_sys::set_next_window_size(Vec2::new(1800.0, 800.0), ImGuiCond__ImGuiCond_Once as _);
 
         imgui_sys::set_next_window_pos(
             Vec2::new(10.0, 10.0),
-            ImGuiCond__ImGuiCond_Always as _,
+            ImGuiCond__ImGuiCond_Once as _,
             Vec2::new(0.0, 0.0),
         );
 
@@ -244,4 +257,13 @@ where
     let mut pb = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     pb.extend(paths);
     pb
+}
+
+fn get_scaled_size(width: f32, height: f32, window: &mut Window) -> Vec2<f32> {
+    let mut xscale = 1.0f32;
+    let mut yscale = 1.0f32;
+    unsafe {
+        glfwGetWindowContentScale(window.as_mut_ptr(), &mut xscale, &mut yscale);
+    }
+    Vec2::new(width / xscale, height / yscale)
 }

@@ -1,13 +1,13 @@
 use std::ffi::{CString, NulError};
 
-use glfw_sys::bindings::{GLFWwindow, glfwGetFramebufferSize, glfwGetWindowSize};
+use glfw_sys::bindings::{GLFWwindow, glfwGetWindowContentScale};
 
 use crate::bindings::{
     ImGui_Begin, ImGui_CreateContext, ImGui_DestroyContext, ImGui_End, ImGui_GetDrawData,
-    ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame, ImGui_ImplGlfw_Shutdown,
-    ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame, ImGui_ImplOpenGL3_RenderDrawData,
-    ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render, ImGui_SetNextWindowPos,
-    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
+    ImGui_GetIO, ImGui_GetStyle, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame,
+    ImGui_ImplGlfw_Shutdown, ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame,
+    ImGui_ImplOpenGL3_RenderDrawData, ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render,
+    ImGui_SetNextWindowPos, ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext, ImVec2,
 };
@@ -77,25 +77,8 @@ pub fn shutdown(Context(ctx): Context) {
     }
 }
 
-pub fn begin_drawing(window: *mut GLFWwindow) {
+pub fn begin_drawing() {
     unsafe {
-        let io = ImGui_GetIO();
-
-        // Get current window & framebuffer size
-        let mut fb_width: i32 = 0;
-        let mut fb_height: i32 = 0;
-        let mut win_width: i32 = 0;
-        let mut win_height: i32 = 0;
-
-        glfwGetFramebufferSize(window, &mut fb_width, &mut fb_height);
-        glfwGetWindowSize(window, &mut win_width, &mut win_height);
-
-        // Update ImGui scaling
-        (*io).DisplaySize.x = win_width as f32;
-        (*io).DisplaySize.y = win_height as f32;
-        (*io).DisplayFramebufferScale.x = fb_width as f32 / win_width as f32;
-        (*io).DisplayFramebufferScale.y = fb_height as f32 / win_height as f32;
-        (*io).FontGlobalScale = (*io).DisplayFramebufferScale.x;
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui_NewFrame();
