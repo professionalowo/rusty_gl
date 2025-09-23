@@ -1,22 +1,26 @@
 use std::path::PathBuf;
 
 fn main() {
+    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let imgui_path = manifest_dir.join("../imgui");
+
     cc::Build::new()
         .cpp(true)
-        .file("imguiwrapper.cpp")
+        .file(manifest_dir.join("imguiwrapper.cpp"))
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
-        .includes(["../imgui/", "../imgui/backends"])
+        .include(&imgui_path)
+        .include(format!("{}/backends", imgui_path.display()))
         .flag_if_supported("-std=c++17")
         .try_compile("imgui")
         .expect("Could not compile STBI header");
 
     let bindings = bindgen::Builder::default()
-        .header("imguiwrapper.h")
+        .header(manifest_dir.join("imguiwrapper.h").to_str().unwrap())
         .clang_arg("-x")
         .clang_arg("c++")
         .clang_arg("-std=c++17")
-        .clang_arg("-I../imgui")
-        .clang_arg("-I../imgui/backends")
+        .clang_arg(format!("-I{}", imgui_path.display()))
+        .clang_arg(format!("-I{}/backends", imgui_path.display()))
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate bindings");
