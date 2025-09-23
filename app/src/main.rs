@@ -124,7 +124,7 @@ fn main() -> ExitCode {
 
         imgui_sys::begin_drawing();
 
-        imgui_sys::set_next_window_size(Vec2::new(1800.0, 800.0), ImGuiCond__ImGuiCond_Once as _);
+        imgui_sys::set_next_window_size(Vec2::new(250.0, 70.0), ImGuiCond__ImGuiCond_Once as _);
 
         imgui_sys::set_next_window_pos(
             Vec2::new(10.0, 10.0),
@@ -254,13 +254,4 @@ where
     let mut pb = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     pb.extend(paths);
     pb
-}
-
-fn get_scaled_size(width: f32, height: f32, window: &mut Window) -> Vec2<f32> {
-    let mut xscale = 1.0f32;
-    let mut yscale = 1.0f32;
-    unsafe {
-        glfwGetWindowContentScale(window.as_mut_ptr(), &mut xscale, &mut yscale);
-    }
-    Vec2::new(width / xscale, height / yscale)
 }
