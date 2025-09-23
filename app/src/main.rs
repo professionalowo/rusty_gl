@@ -99,13 +99,15 @@ fn main() -> ExitCode {
 
     gl_sys::enable(gl_sys::bindings::GL_DEPTH_TEST);
 
-    imgui_sys::init(window.as_mut_ptr(), "#version 410 core").expect("Failed to initialize ImGui");
+    let ctx = imgui_sys::init(window.as_mut_ptr(), "#version 410 core")
+        .expect("Failed to initialize ImGui");
 
     let mut timer = Timer::<144>::new();
     while let Ok(false) = window.should_close() {
         timer.start();
 
         window.poll_events();
+        imgui_sys::begin_drawing();
 
         const TURN_ANGLE: f32 = PI / 2.4;
         const MOVE_DISTANCE: f32 = 1.2;
@@ -195,10 +197,12 @@ fn main() -> ExitCode {
                 element.unbind(&program);
             }
 
+            imgui_sys::end_drawing();
             window.swap_buffers();
             timer.rendered();
         }
     }
+    imgui_sys::shutdown(ctx);
     glfw_sys::terminate();
     ExitCode::SUCCESS
 }
