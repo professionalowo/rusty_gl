@@ -1,13 +1,13 @@
 use std::ffi::{CString, NulError};
 
-use glfw_sys::bindings::{GLFWwindow, glfwGetWindowContentScale};
+use glfw_sys::bindings::GLFWwindow;
 
 use crate::bindings::{
     ImGui_Begin, ImGui_CreateContext, ImGui_DestroyContext, ImGui_End, ImGui_GetDrawData,
-    ImGui_GetIO, ImGui_GetStyle, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame,
-    ImGui_ImplGlfw_Shutdown, ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame,
-    ImGui_ImplOpenGL3_RenderDrawData, ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render,
-    ImGui_SetNextWindowPos, ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
+    ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame, ImGui_ImplGlfw_Shutdown,
+    ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame, ImGui_ImplOpenGL3_RenderDrawData,
+    ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render, ImGui_SetNextWindowPos,
+    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext, ImVec2,
 };

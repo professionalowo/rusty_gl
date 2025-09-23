@@ -27,10 +27,7 @@ use gl_sys::{
 
 use glfw_sys::{
     self,
-    bindings::{
-        GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE, GLFW_SCALE_TO_MONITOR, GLFW_TRUE,
-        glfwGetWindowContentScale,
-    },
+    bindings::glfwGetWindowContentScale,
     input::{KeyEvent, keycode::Keycode, modifier::Modifier},
     timer::Timer,
     window::Window,
