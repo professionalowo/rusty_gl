@@ -20,12 +20,8 @@ jobs:
         steps:
             - uses: actions/checkout@v4
               with:
-                submodules: false
+                submodules: recursive
                 fetch-depth: 1
-
-            - name: Init submodules (shallow)
-              run: |
-                git submodule update --init --recursive --depth 1
 
             - name: Install Dependencies
               run: ${{ matrix.install }}
