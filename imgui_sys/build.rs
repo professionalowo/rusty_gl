@@ -5,7 +5,8 @@ use build_utils::{opengl_builder, print_build_flags};
 fn main() {
     print_build_flags();
 
-    cc::Build::new()
+    let mut build = cc::Build::new();
+    build
         .cpp(true)
         .files([
             "imgui/imgui.cpp",
@@ -19,7 +20,12 @@ fn main() {
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
         .include("imgui")
         .include("imgui/backends")
-        .flag_if_supported("-std=c++17")
+        .flag_if_supported("-std=c++17");
+
+    #[cfg(target_os = "macos")]
+    build.include("/opt/homebrew/include");
+
+    build
         .try_compile("imgui")
         .expect("Could not compile imgui header");
 
