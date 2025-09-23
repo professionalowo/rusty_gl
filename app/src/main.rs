@@ -109,7 +109,7 @@ fn main() -> ExitCode {
 
         window.poll_events();
 
-        imgui_sys::begin_drawing();
+        imgui_sys::begin_drawing(window.as_mut_ptr());
 
         imgui_sys::set_next_window_size(
             Vec2::new(1800.0, 800.0),
