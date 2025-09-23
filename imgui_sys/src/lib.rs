@@ -17,6 +17,7 @@ pub fn init<S: Into<Vec<u8>>>(window: *mut GLFWwindow, glsl_version: S) -> Resul
         let io = ImGui_GetIO();
         (*io).ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard as i32;
         (*io).ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad as i32;
+        //FIXME: may overwrite existing callbacks
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init(glsl_version.as_ptr());
     };
