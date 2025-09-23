@@ -7,6 +7,8 @@ fn main() {
 
     const CXXSTD: &'static str = "-std=c++14";
 
+    const INCLUDES: [&'static str; 2] = ["imgui", "imgui/backends"];
+
     let mut build = cc::Build::new();
     build
         .cpp(true)
@@ -20,7 +22,7 @@ fn main() {
         ])
         .file("imguiwrapper.cpp")
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
-        .includes(["imgui", "imgui/backends"])
+        .includes(INCLUDES)
         .flag_if_supported(CXXSTD);
 
     #[cfg(target_os = "macos")]
@@ -34,7 +36,7 @@ fn main() {
         .header("imguiwrapper.h")
         .clang_args(["-x", "c++"])
         .clang_arg(CXXSTD)
-        .clang_args(["-Iimgui", "-Iimgui/backends"])
+        .clang_args(INCLUDES.map(|i| format!("-I{i}")))
         .allowlist_function("ImGui.*")
         .allowlist_type("ImGui.*")
         .allowlist_var("ImGui.*")
