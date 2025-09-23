@@ -126,7 +126,7 @@ where
     let raw = Box::into_raw(Box::new(closure));
 
     unsafe {
-        bindings::glfwSetWindowUserPointer(window, raw as *mut c_void);
+        bindings::glfwSetWindowUserPointer(window, raw as _);
         bindings::glfwSetKeyCallback(window, Some(key_callback_trampoline));
     }
 }
