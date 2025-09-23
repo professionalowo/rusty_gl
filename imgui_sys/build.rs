@@ -20,7 +20,7 @@ fn main() {
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
         .include("imgui")
         .include("imgui/backends")
-        .flag_if_supported("-std=c++17");
+        .flag_if_supported("-std=c++14");
 
     #[cfg(target_os = "macos")]
     build.include("/opt/homebrew/include");
@@ -36,6 +36,9 @@ fn main() {
         .clang_arg("-std=c++17")
         .clang_arg("-Iimgui")
         .clang_arg("-Iimgui/backends")
+        .allowlist_function("ImGui.*")
+        .allowlist_type("ImGui.*")
+        .allowlist_var("ImGui.*")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .generate()
         .expect("Unable to generate bindings");
