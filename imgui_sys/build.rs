@@ -9,10 +9,10 @@ fn main() {
         .file(manifest_dir.join("imguiwrapper.cpp"))
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
         .include(&imgui_path)
-        .include(format!("{}/backends", imgui_path.display()))
+        .include(imgui_path.join("backends"))
         .flag_if_supported("-std=c++17")
         .try_compile("imgui")
-        .expect("Could not compile STBI header");
+        .expect("Could not compile imgui header");
 
     let bindings = bindgen::Builder::default()
         .header(manifest_dir.join("imguiwrapper.h").to_str().unwrap())
