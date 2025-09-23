@@ -18,8 +18,7 @@ fn main() {
         ])
         .file("imguiwrapper.cpp")
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
-        .include("imgui")
-        .include("imgui/backends")
+        .includes(["imgui", "imgui/backends"])
         .flag_if_supported("-std=c++14");
 
     #[cfg(target_os = "macos")]
@@ -34,8 +33,7 @@ fn main() {
         .clang_arg("-x")
         .clang_arg("c++")
         .clang_arg("-std=c++17")
-        .clang_arg("-Iimgui")
-        .clang_arg("-Iimgui/backends")
+        .clang_args(["-Iimgui", "-Iimgui/backends"])
         .allowlist_function("ImGui.*")
         .allowlist_type("ImGui.*")
         .allowlist_var("ImGui.*")
