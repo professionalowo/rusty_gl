@@ -2,6 +2,12 @@
 
 ## Installation
 
+Start by initializing submodules:
+
+```sh
+git submodule update --init --recursive --depth 1
+```
+
 ### Linux
 
 If you are using Ubuntu install the following components:
