@@ -1,6 +1,10 @@
 use std::path::PathBuf;
 
+use build_utils::print_build_flags;
+
 fn main() {
+    print_build_flags();
+
     cc::Build::new()
         .cpp(true)
         .files([
