@@ -1,20 +1,13 @@
-use std::{env, io, path::PathBuf};
+use std::{env, path::PathBuf};
 
-use build_utils::{LazyBindings, bindgen, opengl_builder, print_build_flags};
+use build_utils::{LazyBindings, opengl_builder, print_build_flags};
 
 fn main() {
     print_build_flags();
 
-    let out_path = env::var("OUT_DIR")
-        .map(PathBuf::from)
-        .expect("OUT_DIR not set");
+    let out_path: PathBuf = env::var("OUT_DIR").expect("OUT_DIR not set").into();
 
-    bind_glfw(opengl_builder(), &out_path.join("glfw_bindings.rs"))
-        .expect("Failed to build GLFW bindings");
-}
-
-fn bind_glfw(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
-    builder
+    opengl_builder()
         .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
         .allowlist_function("glfw.*")
         .allowlist_type("GLFW.*")
@@ -22,5 +15,6 @@ fn bind_glfw(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
         .generate()
         .map(LazyBindings)
         .expect("Unable to generate GLFW bindings")
-        .write_if_changed(out_path)
+        .write_if_changed(out_path.join("glfw_bindings.rs"))
+        .expect("Could not write glfw bindings");
 }

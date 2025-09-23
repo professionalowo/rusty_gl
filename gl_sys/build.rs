@@ -1,20 +1,13 @@
-use std::{env, io, path::PathBuf};
+use std::{env, path::PathBuf};
 
-use build_utils::{LazyBindings, bindgen, opengl_builder, print_build_flags};
+use build_utils::{LazyBindings, opengl_builder, print_build_flags};
 
 fn main() {
     print_build_flags();
 
-    let out_path = env::var("OUT_DIR")
-        .map(PathBuf::from)
-        .expect("OUT_DIR not set");
+    let out_path: PathBuf = env::var("OUT_DIR").expect("OUT_DIR not set").into();
 
-    bind_gl(opengl_builder(), &out_path.join("gl_bindings.rs"))
-        .expect("Failed to build OpenGL bindings");
-}
-
-fn bind_gl(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
-    builder
+    opengl_builder()
         .header("glwrapper.h")
         .allowlist_var("GL_.*")
         .allowlist_function("gl.*")
@@ -22,5 +15,6 @@ fn bind_gl(builder: bindgen::Builder, out_path: &PathBuf) -> io::Result<()> {
         .generate()
         .map(LazyBindings)
         .expect("Unable to generate OpenGL bindings")
-        .write_if_changed(out_path)
+        .write_if_changed(out_path.join("gl_bindings.rs"))
+        .expect("Failed to build OpenGL bindings");
 }
