@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use build_utils::print_build_flags;
+use build_utils::{opengl_builder, print_build_flags};
 
 fn main() {
     print_build_flags();
@@ -23,7 +23,7 @@ fn main() {
         .try_compile("imgui")
         .expect("Could not compile imgui header");
 
-    let bindings = bindgen::Builder::default()
+    let bindings = opengl_builder()
         .header("imguiwrapper.h")
         .clang_arg("-x")
         .clang_arg("c++")
