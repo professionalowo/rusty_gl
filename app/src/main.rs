@@ -99,7 +99,7 @@ fn main() -> ExitCode {
 
     gl_sys::enable(gl_sys::bindings::GL_DEPTH_TEST);
 
-    imgui_sys::init(window.as_mut_ptr());
+    imgui_sys::init(window.as_mut_ptr(), "#version 410 core");
 
     let mut timer = Timer::<144>::new();
     while let Ok(false) = window.should_close() {

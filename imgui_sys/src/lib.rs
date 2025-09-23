@@ -8,13 +8,14 @@ use crate::bindings::{
 
 pub mod bindings;
 
-pub fn init(window: *mut GLFWwindow) {
+pub fn init<S: AsRef<str>>(window: *mut GLFWwindow, glsl_version: S) {
+    let glsl_version = glsl_version.as_ref();
     unsafe {
         ImGui_CreateContext(std::ptr::null_mut());
         let io = ImGui_GetIO();
         (*io).ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard as i32;
         (*io).ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad as i32;
         ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init("#version 410 core".as_ptr().cast());
+        ImGui_ImplOpenGL3_Init(glsl_version.as_ptr().cast());
     };
 }
