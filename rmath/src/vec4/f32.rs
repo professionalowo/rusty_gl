@@ -1,3 +1,6 @@
+#[cfg(feature = "imgui")]
+use imgui_sys::bindings::ImVec4;
+
 use super::Vec4;
 
 impl Vec4<f32> {
@@ -20,6 +23,20 @@ impl From<Vec4<f32>> for assimp::Color4D {
     }
 }
 
+#[cfg(feature = "imgui")]
+impl From<ImVec4> for Vec4<f32> {
+    fn from(ImVec4 { x, y, z, w }: ImVec4) -> Self {
+        Self { x, y, z, w }
+    }
+}
+
+#[cfg(feature = "imgui")]
+impl From<Vec4<f32>> for ImVec4 {
+    fn from(Vec4 { x, y, z, w }: Vec4<f32>) -> Self {
+        Self { x, y, z, w }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -34,7 +51,7 @@ mod tests {
     }
 
     #[test]
-	#[cfg(feature = "assimp")]
+    #[cfg(feature = "assimp")]
     fn test_vec4_from_color4d() {
         let color = assimp::Color4D::new(1.0, 0.0, 0.0, 1.0);
         let vec4: Vec4<f32> = color.into();
@@ -45,7 +62,7 @@ mod tests {
     }
 
     #[test]
-	#[cfg(feature = "assimp")]
+    #[cfg(feature = "assimp")]
     fn test_vec4_to_color4d() {
         let vec4 = Vec4::rgba(1.0, 0.0, 0.0, 1.0);
         let color: assimp::Color4D = vec4.into();

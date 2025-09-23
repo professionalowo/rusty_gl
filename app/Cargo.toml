@@ -16,4 +16,4 @@ gl_sys = { path = "../gl_sys" }
 glfw_sys = { path = "../glfw_sys" }
 stbi_sys = { path = "../stbi_sys" }
 imgui_sys = { path = "../imgui_sys" }
-rmath = { path = "../rmath", features = ["assimp"] }
+rmath = { path = "../rmath", features = ["assimp", "imgui"] }

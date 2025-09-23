@@ -313,6 +313,7 @@ version = "0.1.0"
 dependencies = [
  "assimp",
  "assimp-sys",
+ "imgui_sys",
 ]
 
 [[package]]
