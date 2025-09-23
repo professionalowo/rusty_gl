@@ -3,7 +3,7 @@ use std::path::PathBuf;
 fn main() {
     cc::Build::new()
         .cpp(true)
-        .file("imguiwrapper.h")
+        .file("imguiwrapper.cpp")
         .flags(["-Wno-unused-parameter", "-Wno-unused-function"])
         .include("imgui")
         .include("imgui/backends")
