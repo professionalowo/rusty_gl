@@ -33,6 +33,8 @@ fn main() {
         .try_compile("imgui")
         .expect("Could not compile imgui header");
 
+    const PREFIX: &'static str = "ImGui.*";
+
     let bindings = opengl_builder()
         .header_contents(
             "imguiwrapper.h",
@@ -45,10 +47,10 @@ fn main() {
         .clang_args(["-x", "c++"])
         .clang_arg(CXXSTD)
         .clang_args(INCLUDES.map(|i| format!("-I{i}")))
-        .allowlist_function("ImGui.*")
-        .allowlist_function("IMGUI.*")
-        .allowlist_type("ImGui.*")
-        .allowlist_var("ImGui.*")
+        .allowlist_function(PREFIX)
+        .allowlist_function(PREFIX)
+        .allowlist_type(PREFIX)
+        .allowlist_var(PREFIX)
         .blocklist_type("GL.*")
         .blocklist_function("gl.*")
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))

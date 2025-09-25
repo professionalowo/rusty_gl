@@ -7,11 +7,13 @@ fn main() {
 
     let out_path: PathBuf = env::var("OUT_DIR").expect("OUT_DIR not set").into();
 
+    const PREFIX: &'static str = "GLFW.*";
+
     opengl_builder()
         .header_contents("glfwwrapper.h", "#include <GLFW/glfw3.h>")
-        .allowlist_function("glfw.*")
-        .allowlist_type("GLFW.*")
-        .allowlist_var("GLFW.*")
+        .allowlist_function(PREFIX.to_lowercase())
+        .allowlist_type(PREFIX)
+        .allowlist_var(PREFIX)
         .generate()
         .map(LazyBindings)
         .expect("Unable to generate GLFW bindings")
