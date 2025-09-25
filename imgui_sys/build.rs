@@ -34,7 +34,14 @@ fn main() {
         .expect("Could not compile imgui header");
 
     let bindings = opengl_builder()
-        .header("imguiwrapper.h")
+        .header_contents(
+            "imguiwrapper.h",
+            concat!(
+                "#include \"imgui.h\"\n",
+                "#include \"imgui_impl_glfw.h\"\n",
+                "#include \"imgui_impl_opengl3.h\""
+            ),
+        )
         .clang_args(["-x", "c++"])
         .clang_arg(CXXSTD)
         .clang_args(INCLUDES.map(|i| format!("-I{i}")))
