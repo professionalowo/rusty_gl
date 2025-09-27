@@ -1,12 +1,9 @@
-use std::{
-    fmt,
-    path::PathBuf,
-};
+use std::{fmt, path::PathBuf};
 
 use crate::framework::{
-        material::{Material, MaterialConversionError},
-        mesh::normalize::NormalizeOptions,
-    };
+    material::{Material, MaterialConversionError},
+    mesh::normalize::NormalizeOptions,
+};
 
 use rmath::{vec2::Vec2, vec3::Vec3};
 
@@ -113,13 +110,13 @@ impl Mesh {
         let mut m = Self::with_defaults();
         m.add_vbo(0, 3, positions.as_slice())?;
         if !normals.is_empty() {
-            m.add_vbo(1, 3, normals.as_slice())?;
+            m.add_vbo(1, 3, &normals)?;
         }
         if !texcoords.is_empty() {
-            m.add_vbo(2, 2, texcoords.as_slice())?;
+            m.add_vbo(2, 2, &texcoords)?;
         }
         if !tangents.is_empty() {
-            m.add_vbo(3, 3, tangents.as_slice())?;
+            m.add_vbo(3, 3, &tangents)?;
         }
         m.num_indices = indices.len() as _;
         VertexArrayObject::bind_vertex_array(&m.vao);
