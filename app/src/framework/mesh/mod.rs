@@ -224,12 +224,6 @@ impl From<VBOError> for MeshLoadError {
     }
 }
 
-impl From<&str> for MeshLoadError {
-    fn from(s: &str) -> Self {
-        Self::LoadFailed(s.to_string())
-    }
-}
-
 impl From<MaterialConversionError> for MeshLoadError {
     fn from(value: MaterialConversionError) -> Self {
         Self::MaterialConversionFailed(value)

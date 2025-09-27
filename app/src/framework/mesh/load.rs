@@ -94,9 +94,15 @@ fn load_ai_scene<'a>(path: &Path) -> Result<assimp::Scene<'a>, MeshLoadError> {
     importer.triangulate(true);
     importer.generate_normals(|opt| opt.smooth = true);
 
-    let path_str = path
-        .to_str()
-        .ok_or_else(|| MeshLoadError::InvalidPath(path.to_path_buf()))?;
-    let scene = importer.read_file(path_str)?;
+    let path_str = match path.to_str() {
+        Some(str) => str,
+        None => return Err(MeshLoadError::InvalidPath(path.to_path_buf())),
+    };
+
+    let scene = match importer.read_file(path_str) {
+        Ok(s) => s,
+        Err(str) => return Err(MeshLoadError::LoadFailed(str.into())),
+    };
+
     Ok(scene)
 }
