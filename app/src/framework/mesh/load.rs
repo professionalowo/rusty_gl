@@ -84,8 +84,8 @@ impl From<Box<[Drawelement]>> for SceneImport {
 }
 
 impl From<SceneImport> for Box<[Drawelement]> {
-    fn from(value: SceneImport) -> Self {
-        value.0
+    fn from(SceneImport(elements): SceneImport) -> Self {
+        elements
     }
 }
 
