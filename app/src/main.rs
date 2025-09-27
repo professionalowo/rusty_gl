@@ -12,7 +12,7 @@ use rusty_gl::{
         camera::Camera,
         color::rgb::ColorRGB,
         material::material_textures::MaterialTextureType,
-        mesh::{self, normalize::NormalizeOptions},
+        mesh::{self, load::SceneImport, normalize::NormalizeOptions},
     },
 };
 
@@ -76,8 +76,8 @@ fn main() -> ExitCode {
 
     let mut window = Window::try_new(960, 540, "Rust").expect("Failed to create GLFW window");
 
-    let scene =
-        mesh::load_mesh(entrypoint, NormalizeOptions::Scale(200)).expect("Failed to load model");
+    let scene = SceneImport::import(entrypoint, NormalizeOptions::Scale(200))
+        .expect("Failed to load model");
 
     let vertex_shader =
         Shader::try_from_path(ShaderType::Vertex, get_shader_file_path("vertex.vert"))
@@ -182,7 +182,7 @@ fn main() -> ExitCode {
             );
 
             let aspect_ratio = window.aspect_ratio();
-            for element in &scene {
+            for element in &scene.drawelements {
                 element
                     .bind(&program, &camera, aspect_ratio)
                     .expect("Failed to bind element");
