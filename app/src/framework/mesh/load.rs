@@ -1,4 +1,4 @@
-use std::{ops::Deref, path::Path, rc::Rc};
+use std::{path::Path, rc::Rc};
 
 use crate::{
     assimp::{AMaterial, material_key::MaterialKey},
