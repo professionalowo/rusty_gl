@@ -81,9 +81,9 @@ impl Mesh {
             let a_pos = match mesh.get_vertex(i) {
                 Some(vec) => vec,
                 None => {
-                    return Err(MeshLoadError::MeshConversionFailed(
-                        ConversionFailureReason::Vertex(i),
-                    ));
+                    return Err(MeshLoadError::MeshConversionFailed(FailureReason::Vertex(
+                        i,
+                    )));
                 }
             };
             positions.push(a_pos.into());
@@ -92,9 +92,9 @@ impl Mesh {
                 let a_norm = match mesh.get_normal(i) {
                     Some(vec) => vec,
                     None => {
-                        return Err(MeshLoadError::MeshConversionFailed(
-                            ConversionFailureReason::Normal(i),
-                        ));
+                        return Err(MeshLoadError::MeshConversionFailed(FailureReason::Normal(
+                            i,
+                        )));
                     }
                 };
                 normals.push(a_norm.into());
@@ -104,7 +104,7 @@ impl Mesh {
                     Some(vec) => vec,
                     None => {
                         return Err(MeshLoadError::MeshConversionFailed(
-                            ConversionFailureReason::TextureCoordinate(i),
+                            FailureReason::TextureCoordinate(i),
                         ));
                     }
                 };
@@ -115,7 +115,7 @@ impl Mesh {
                     Some(vec) => vec,
                     None => {
                         return Err(MeshLoadError::MeshConversionFailed(
-                            ConversionFailureReason::TangentAndBitangent(i),
+                            FailureReason::TangentAndBitangent(i),
                         ));
                     }
                 };
@@ -201,14 +201,14 @@ impl Mesh {
 }
 #[derive(Debug)]
 #[repr(u32)]
-pub enum ConversionFailureReason {
+pub enum FailureReason {
     Vertex(u32),
     Normal(u32),
     TextureCoordinate(u32),
     TangentAndBitangent(u32),
 }
 
-impl fmt::Display for ConversionFailureReason {
+impl fmt::Display for FailureReason {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::Normal(i) => writeln!(f, "Could not get normal[{i}]"),
@@ -226,7 +226,7 @@ pub enum MeshLoadError {
     InvalidParent(PathBuf),
     MaterialNotFound(usize),
     MaterialConversionFailed(MaterialConversionError),
-    MeshConversionFailed(ConversionFailureReason),
+    MeshConversionFailed(FailureReason),
     UnequalNumberOfVertices { expected: u32, actual: u32 },
     VboError(VBOError),
 }
@@ -237,7 +237,7 @@ impl fmt::Display for MeshLoadError {
             Self::LoadFailed(s) => write!(f, "Failed to load mesh: {}", s),
             Self::InvalidPath(p) => write!(f, "Invalid path: {:?}", p),
             Self::InvalidParent(p) => write!(f, "Invalid parent: {:?}", p),
-            Self::MaterialNotFound(index) => write!(f, "Material not found: {}", index),
+            Self::MaterialNotFound(index) => write!(f, "Material[{index}] not found"),
             Self::MaterialConversionFailed(e) => fmt::Display::fmt(e, f),
             Self::MeshConversionFailed(reason) => fmt::Display::fmt(reason, f),
             Self::VboError(e) => fmt::Display::fmt(e, f),
