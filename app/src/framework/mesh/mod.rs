@@ -78,26 +78,36 @@ impl Mesh {
             });
 
         for i in 0..mesh.num_vertices() {
-            positions.push(Vec3::from(mesh.get_vertex(i).ok_or(
-                MeshLoadError::MeshConversionFailed(format!("Could not get vertex[{i}]")),
-            )?));
+            let a_pos = mesh
+                .get_vertex(i)
+                .ok_or(MeshLoadError::MeshConversionFailed(format!(
+                    "Could not get vertex[{i}]"
+                )))?;
+            positions.push(a_pos.into());
+
             if mesh.has_normals() {
-                normals.push(Vec3::from(mesh.get_normal(i).ok_or(
-                    MeshLoadError::MeshConversionFailed(format!("Could not get normal[{i}]")),
-                )?));
+                let a_norm = mesh
+                    .get_normal(i)
+                    .ok_or(MeshLoadError::MeshConversionFailed(format!(
+                        "Could not get normal[{i}]"
+                    )))?;
+                normals.push(a_norm.into());
             }
             if mesh.has_texture_coords(0) {
-                let v = mesh
-                    .get_texture_coord(0, i)
-                    .ok_or(MeshLoadError::MeshConversionFailed(format!(
-                        "Could not get texture_coord[{i}]"
-                    )))?;
-                texcoords.push(Vec2::new(v.x, v.y))
+                let a_tc =
+                    mesh.get_texture_coord(0, i)
+                        .ok_or(MeshLoadError::MeshConversionFailed(format!(
+                            "Could not get texture_coord[{i}]"
+                        )))?;
+                texcoords.push(Vec2::new(a_tc.x, a_tc.y))
             }
             if mesh.has_tangents_and_bitangents() {
-                tangents.push(Vec3::from(mesh.get_tangent(i).ok_or(
-                    MeshLoadError::MeshConversionFailed(format!("Could not get tangent[{i}]")),
-                )?));
+                let a_tan = mesh
+                    .get_tangent(i)
+                    .ok_or(MeshLoadError::MeshConversionFailed(format!(
+                        "Could not get tangent[{i}]"
+                    )))?;
+                tangents.push(a_tan.into());
             }
         }
 
@@ -108,7 +118,7 @@ impl Mesh {
             .collect();
 
         let mut m = Self::with_defaults();
-        m.add_vbo(0, 3, positions.as_slice())?;
+        m.add_vbo(0, 3, &positions)?;
         if !normals.is_empty() {
             m.add_vbo(1, 3, &normals)?;
         }
