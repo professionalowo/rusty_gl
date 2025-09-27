@@ -33,14 +33,7 @@ impl SceneImport {
             .parent()
             .ok_or_else(|| MeshLoadError::InvalidParent(path.to_path_buf()))?;
 
-        let mut importer = assimp::Importer::new();
-        importer.triangulate(true);
-        importer.generate_normals(|opt| opt.smooth = true);
-
-        let path_str = &path
-            .to_str()
-            .ok_or_else(|| MeshLoadError::InvalidPath(path.to_path_buf()))?;
-        let mut scene = importer.read_file(path_str)?;
+        let mut scene = load_ai_scene(path)?;
 
         normalize.normalize_scene(&mut scene);
 
@@ -58,11 +51,8 @@ impl SceneImport {
         for aimesh in scene.mesh_iter() {
             let mesh = Mesh::from_ai_mesh(&aimesh)?;
 
-            let index = aimesh.material_index as _;
-            let material = materials
-                .get(index)
-                .ok_or_else(|| MeshLoadError::MaterialNotFound(index))?
-                .clone();
+            let index = aimesh.material_index as usize;
+            let material = materials[index].clone();
 
             drawelements.push(Drawelement { material, mesh });
         }
@@ -73,4 +63,16 @@ impl SceneImport {
     pub fn elements(&self) -> &[Drawelement] {
         &self.0
     }
+}
+
+fn load_ai_scene<'a>(path: &Path) -> Result<assimp::Scene<'a>, MeshLoadError> {
+    let mut importer = assimp::Importer::new();
+    importer.triangulate(true);
+    importer.generate_normals(|opt| opt.smooth = true);
+
+    let path_str = &path
+        .to_str()
+        .ok_or_else(|| MeshLoadError::InvalidPath(path.to_path_buf()))?;
+    let scene = importer.read_file(path_str)?;
+    Ok(scene)
 }
