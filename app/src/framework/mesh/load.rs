@@ -83,6 +83,12 @@ impl From<Box<[Drawelement]>> for SceneImport {
     }
 }
 
+impl From<SceneImport> for Box<[Drawelement]> {
+    fn from(value: SceneImport) -> Self {
+        value.0
+    }
+}
+
 fn load_ai_scene<'a>(path: &Path) -> Result<assimp::Scene<'a>, MeshLoadError> {
     let mut importer = assimp::Importer::new();
     importer.triangulate(true);
