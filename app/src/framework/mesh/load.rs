@@ -37,15 +37,15 @@ impl SceneImport {
 
         normalize.normalize_scene(&mut scene);
 
-        let mut drawelements: Vec<Drawelement> = Vec::with_capacity(scene.num_meshes() as _);
-        let mut materials: Vec<Rc<Material>> = Vec::with_capacity(scene.num_materials() as _);
+        let mut drawelements = Vec::with_capacity(scene.num_meshes() as _);
+        let mut materials = Vec::with_capacity(scene.num_materials() as _);
 
         for mat in scene.material_iter().map(AMaterial) {
             let name = mat
                 .get_material_string(MaterialProperty::Name, 0, 0)
                 .map_err(MaterialConversionError::AiError)?;
-            let rc = Rc::new(Material::from_ai_mesh(&mat, name, base_path)?);
-            materials.push(rc);
+            let material = Material::from_ai_mesh(&mat, name, base_path)?;
+            materials.push(Rc::new(material));
         }
 
         for aimesh in scene.mesh_iter() {
