@@ -29,9 +29,10 @@ impl SceneImport {
         P: AsRef<Path>,
     {
         let path = path.as_ref();
-        let base_path = path
-            .parent()
-            .ok_or_else(|| MeshLoadError::InvalidParent(path.to_path_buf()))?;
+        let base_path = match path.parent() {
+            Some(parent) => parent,
+            None => return Err(MeshLoadError::InvalidParent(path.to_path_buf())),
+        };
 
         let mut scene = load_ai_scene(path)?;
 

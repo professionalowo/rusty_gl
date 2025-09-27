@@ -78,35 +78,43 @@ impl Mesh {
             });
 
         for i in 0..mesh.num_vertices() {
-            let a_pos = mesh
-                .get_vertex(i)
-                .ok_or(MeshLoadError::MeshConversionFailed(format!(
-                    "Could not get vertex[{i}]"
-                )))?;
+            let a_pos = match mesh.get_vertex(i) {
+                Some(vec) => vec,
+                None => {
+                    let message = format!("Could not get vertex[{i}]");
+                    return Err(MeshLoadError::MeshConversionFailed(message));
+                }
+            };
             positions.push(a_pos.into());
 
             if mesh.has_normals() {
-                let a_norm = mesh
-                    .get_normal(i)
-                    .ok_or(MeshLoadError::MeshConversionFailed(format!(
-                        "Could not get normal[{i}]"
-                    )))?;
+                let a_norm = match mesh.get_normal(i) {
+                    Some(vec) => vec,
+                    None => {
+                        let message = format!("Could not get normal[{i}]");
+                        return Err(MeshLoadError::MeshConversionFailed(message));
+                    }
+                };
                 normals.push(a_norm.into());
             }
             if mesh.has_texture_coords(0) {
-                let a_tc =
-                    mesh.get_texture_coord(0, i)
-                        .ok_or(MeshLoadError::MeshConversionFailed(format!(
-                            "Could not get texture_coord[{i}]"
-                        )))?;
+                let a_tc = match mesh.get_texture_coord(0, i) {
+                    Some(vec) => vec,
+                    None => {
+                        let message = format!("Could not get texture_coord[{i}]");
+                        return Err(MeshLoadError::MeshConversionFailed(message));
+                    }
+                };
                 texcoords.push(Vec2::new(a_tc.x, a_tc.y))
             }
             if mesh.has_tangents_and_bitangents() {
-                let a_tan = mesh
-                    .get_tangent(i)
-                    .ok_or(MeshLoadError::MeshConversionFailed(format!(
-                        "Could not get tangent[{i}]"
-                    )))?;
+                let a_tan = match mesh.get_tangent(i) {
+                    Some(vec) => vec,
+                    None => {
+                        let message = format!("Could not get tangent[{i}]");
+                        return Err(MeshLoadError::MeshConversionFailed(message));
+                    }
+                };
                 tangents.push(a_tan.into());
             }
         }
