@@ -19,9 +19,9 @@ impl MaterialKey for MaterialProperty {
     }
 }
 
-pub struct SceneImport {
-    pub drawelements: Box<[Drawelement]>,
-}
+#[derive(Debug)]
+#[repr(transparent)]
+pub struct SceneImport(Box<[Drawelement]>);
 
 impl SceneImport {
     pub fn import<P>(path: P, normalize: NormalizeOptions) -> Result<Self, MeshLoadError>
@@ -67,8 +67,10 @@ impl SceneImport {
             drawelements.push(Drawelement { material, mesh });
         }
 
-        Ok(Self {
-            drawelements: drawelements.into_boxed_slice(),
-        })
+        Ok(Self(drawelements.into_boxed_slice()))
+    }
+
+    pub fn elements(&self) -> &[Drawelement] {
+        &self.0
     }
 }

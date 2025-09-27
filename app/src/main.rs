@@ -182,7 +182,7 @@ fn main() -> ExitCode {
             );
 
             let aspect_ratio = window.aspect_ratio();
-            for element in &scene.drawelements {
+            for element in scene.elements() {
                 element
                     .bind(&program, &camera, aspect_ratio)
                     .expect("Failed to bind element");
