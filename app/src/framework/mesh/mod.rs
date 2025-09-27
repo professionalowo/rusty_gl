@@ -81,8 +81,9 @@ impl Mesh {
             let a_pos = match mesh.get_vertex(i) {
                 Some(vec) => vec,
                 None => {
-                    let message = format!("Could not get vertex[{i}]");
-                    return Err(MeshLoadError::MeshConversionFailed(message));
+                    return Err(MeshLoadError::MeshConversionFailed(
+                        ConversionFailureReason::Vertex(i),
+                    ));
                 }
             };
             positions.push(a_pos.into());
@@ -91,8 +92,9 @@ impl Mesh {
                 let a_norm = match mesh.get_normal(i) {
                     Some(vec) => vec,
                     None => {
-                        let message = format!("Could not get normal[{i}]");
-                        return Err(MeshLoadError::MeshConversionFailed(message));
+                        return Err(MeshLoadError::MeshConversionFailed(
+                            ConversionFailureReason::Normal(i),
+                        ));
                     }
                 };
                 normals.push(a_norm.into());
@@ -101,8 +103,9 @@ impl Mesh {
                 let a_tc = match mesh.get_texture_coord(0, i) {
                     Some(vec) => vec,
                     None => {
-                        let message = format!("Could not get texture_coord[{i}]");
-                        return Err(MeshLoadError::MeshConversionFailed(message));
+                        return Err(MeshLoadError::MeshConversionFailed(
+                            ConversionFailureReason::TextureCoordinate(i),
+                        ));
                     }
                 };
                 texcoords.push(Vec2::new(a_tc.x, a_tc.y))
@@ -111,8 +114,9 @@ impl Mesh {
                 let a_tan = match mesh.get_tangent(i) {
                     Some(vec) => vec,
                     None => {
-                        let message = format!("Could not get tangent[{i}]");
-                        return Err(MeshLoadError::MeshConversionFailed(message));
+                        return Err(MeshLoadError::MeshConversionFailed(
+                            ConversionFailureReason::TangentAndBitangent(i),
+                        ));
                     }
                 };
                 tangents.push(a_tan.into());
@@ -195,6 +199,25 @@ impl Mesh {
         Ok(())
     }
 }
+#[derive(Debug)]
+#[repr(u32)]
+pub enum ConversionFailureReason {
+    Vertex(u32),
+    Normal(u32),
+    TextureCoordinate(u32),
+    TangentAndBitangent(u32),
+}
+
+impl fmt::Display for ConversionFailureReason {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Normal(i) => writeln!(f, "Could not get normal[{i}]"),
+            Self::Vertex(i) => writeln!(f, "Could not get vertex[{i}]"),
+            Self::TextureCoordinate(i) => writeln!(f, "Could not get texture coordinate[{i}]"),
+            Self::TangentAndBitangent(i) => writeln!(f, "Could not get tangent[{i}]"),
+        }
+    }
+}
 
 #[derive(Debug)]
 pub enum MeshLoadError {
@@ -203,7 +226,7 @@ pub enum MeshLoadError {
     InvalidParent(PathBuf),
     MaterialNotFound(usize),
     MaterialConversionFailed(MaterialConversionError),
-    MeshConversionFailed(String),
+    MeshConversionFailed(ConversionFailureReason),
     UnequalNumberOfVertices { expected: u32, actual: u32 },
     VboError(VBOError),
 }
@@ -216,7 +239,7 @@ impl fmt::Display for MeshLoadError {
             Self::InvalidParent(p) => write!(f, "Invalid parent: {:?}", p),
             Self::MaterialNotFound(index) => write!(f, "Material not found: {}", index),
             Self::MaterialConversionFailed(e) => fmt::Display::fmt(e, f),
-            Self::MeshConversionFailed(reason) => write!(f, "Mesh conversion failed: {:?}", reason),
+            Self::MeshConversionFailed(reason) => fmt::Display::fmt(reason, f),
             Self::VboError(e) => fmt::Display::fmt(e, f),
             Self::UnequalNumberOfVertices {
                 expected: e,
