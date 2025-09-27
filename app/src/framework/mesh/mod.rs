@@ -235,8 +235,8 @@ impl fmt::Display for MeshLoadError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::LoadFailed(s) => write!(f, "Failed to load mesh: {}", s),
-            Self::InvalidPath(p) => write!(f, "Invalid path: {:?}", p),
-            Self::InvalidParent(p) => write!(f, "Invalid parent: {:?}", p),
+            Self::InvalidPath(p) => write!(f, "Invalid path: {}", p.display()),
+            Self::InvalidParent(p) => write!(f, "Invalid parent: {}", p.display()),
             Self::MaterialNotFound(index) => write!(f, "Material[{index}] not found"),
             Self::MaterialConversionFailed(e) => fmt::Display::fmt(e, f),
             Self::MeshConversionFailed(reason) => fmt::Display::fmt(reason, f),
