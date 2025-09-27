@@ -1,4 +1,4 @@
-use std::{path::Path, rc::Rc};
+use std::{ops::Deref, path::Path, rc::Rc};
 
 use crate::{
     assimp::{AMaterial, material_key::MaterialKey},
@@ -49,10 +49,10 @@ impl SceneImport {
         }
 
         for aimesh in scene.mesh_iter() {
-            let mesh = Mesh::from_ai_mesh(&aimesh)?;
-
             let index = aimesh.material_index as usize;
             let material = materials[index].clone();
+
+            let mesh = Mesh::from_ai_mesh(&aimesh)?;
 
             drawelements.push(Drawelement { material, mesh });
         }
@@ -62,6 +62,24 @@ impl SceneImport {
 
     pub fn elements(&self) -> &[Drawelement] {
         &self.0
+    }
+}
+
+impl AsRef<[Drawelement]> for SceneImport {
+    fn as_ref(&self) -> &[Drawelement] {
+        &self.0
+    }
+}
+
+impl From<Vec<Drawelement>> for SceneImport {
+    fn from(value: Vec<Drawelement>) -> Self {
+        Self(value.into_boxed_slice())
+    }
+}
+
+impl From<Box<[Drawelement]>> for SceneImport {
+    fn from(value: Box<[Drawelement]>) -> Self {
+        Self(value)
     }
 }
 
