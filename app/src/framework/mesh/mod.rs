@@ -1,17 +1,12 @@
 use std::{
     fmt,
-    path::{Path, PathBuf},
-    rc::Rc,
+    path::PathBuf,
 };
 
-use crate::{
-    assimp::{AMaterial, material_key::MaterialKey},
-    framework::{
-        drawelement::Drawelement,
+use crate::framework::{
         material::{Material, MaterialConversionError},
         mesh::normalize::NormalizeOptions,
-    },
-};
+    };
 
 use rmath::{vec2::Vec2, vec3::Vec3};
 

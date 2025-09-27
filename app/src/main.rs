@@ -12,7 +12,7 @@ use rusty_gl::{
         camera::Camera,
         color::rgb::ColorRGB,
         material::material_textures::MaterialTextureType,
-        mesh::{self, load::SceneImport, normalize::NormalizeOptions},
+        mesh::{load::SceneImport, normalize::NormalizeOptions},
     },
 };
 
