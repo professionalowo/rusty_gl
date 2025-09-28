@@ -54,7 +54,7 @@ impl fmt::Display for MaterialConversionError {
 
 #[derive(Debug)]
 pub struct Material {
-    pub name: String,
+    //pub name: String,
     pub textures: MaterialTextures,
     pub k_amb: Vec4<f32>,
     pub k_diff: Vec4<f32>,
@@ -87,7 +87,6 @@ impl Material {
 
     pub fn from_ai_mesh(
         mat: &AMaterial,
-        name: String,
         base_path: &Path,
     ) -> Result<Self, MaterialConversionError> {
         let k_diff = get_plain_color(mat, AiTextureType::Diffuse)?;
@@ -125,7 +124,6 @@ impl Material {
         };
 
         Ok(Self {
-            name,
             textures,
             k_amb,
             k_diff,

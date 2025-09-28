@@ -1,23 +1,11 @@
 use std::{path::Path, rc::Rc};
 
 use crate::{
-    assimp::{AMaterial, material_key::MaterialKey},
-    framework::{drawelement::Drawelement, material::MaterialConversionError, mesh::Mesh},
+    assimp::AMaterial,
+    framework::{drawelement::Drawelement, mesh::Mesh},
 };
 
 use super::{Material, MeshLoadError, NormalizeOptions};
-
-enum MaterialProperty {
-    Name,
-}
-
-impl MaterialKey for MaterialProperty {
-    fn get_key(&self) -> &str {
-        match self {
-            Self::Name => "?mat.name",
-        }
-    }
-}
 
 #[derive(Debug)]
 #[repr(transparent)]
@@ -42,10 +30,7 @@ impl SceneImport {
         let mut materials = Vec::with_capacity(scene.num_materials() as _);
 
         for mat in scene.material_iter().map(AMaterial) {
-            let name = mat
-                .get_material_string(MaterialProperty::Name, 0, 0)
-                .map_err(MaterialConversionError::AiError)?;
-            let material = Material::from_ai_mesh(&mat, name, base_path)?;
+            let material = Material::from_ai_mesh(&mat, base_path)?;
             materials.push(Rc::new(material));
         }
 
