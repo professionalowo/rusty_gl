@@ -26,13 +26,14 @@ impl SceneImport {
 
         normalize.normalize_scene(&mut scene);
 
-        let mut drawelements = Vec::with_capacity(scene.num_meshes() as _);
         let mut materials = Vec::with_capacity(scene.num_materials() as _);
 
-        for mat in scene.material_iter().map(AMaterial) {
-            let material = Material::from_ai_mesh(&mat, base_path)?;
+        for mat in scene.material_iter() {
+            let material = Material::from_ai_material(&AMaterial(mat), base_path)?;
             materials.push(Rc::new(material));
         }
+
+        let mut drawelements = Vec::with_capacity(scene.num_meshes() as _);
 
         for aimesh in scene.mesh_iter() {
             let index = aimesh.material_index as usize;

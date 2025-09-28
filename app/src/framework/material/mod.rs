@@ -85,7 +85,7 @@ impl Material {
         self.textures.unbind();
     }
 
-    pub fn from_ai_mesh(
+    pub fn from_ai_material(
         mat: &AMaterial,
         base_path: &Path,
     ) -> Result<Self, MaterialConversionError> {
