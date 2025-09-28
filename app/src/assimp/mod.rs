@@ -14,6 +14,7 @@ use self::material_key::MaterialKey;
 
 pub mod material_key;
 
+#[repr(transparent)]
 pub struct AMaterial<'a>(pub assimp::Material<'a>);
 
 impl<'a> Deref for AMaterial<'a> {
