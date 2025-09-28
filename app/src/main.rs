@@ -76,7 +76,7 @@ fn main() -> ExitCode {
 
     let mut window = Window::try_new(960, 540, "Rust").expect("Failed to create GLFW window");
 
-    let scene = SceneImport::import(entrypoint, NormalizeOptions::Scale(200))
+    let scene = SceneImport::import(entrypoint.as_str(), NormalizeOptions::Scale(200))
         .expect("Failed to load model");
 
     let vertex_shader =
