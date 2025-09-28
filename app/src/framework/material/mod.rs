@@ -1,7 +1,4 @@
-use std::{
-    fmt,
-    path::{Path, PathBuf},
-};
+use std::{fmt, path::PathBuf};
 
 use assimp_sys::AiTextureType;
 use material_color::material_color;
@@ -87,7 +84,7 @@ impl Material {
 
     pub fn from_ai_material(
         mat: &AMaterial,
-        base_path: &Path,
+        base_path: &PathBuf,
     ) -> Result<Self, MaterialConversionError> {
         let k_diff = get_plain_color(mat, AiTextureType::Diffuse)?;
 
@@ -159,7 +156,7 @@ where
 fn get_texture_option(
     texture_type: AiTextureType,
     mat: &AMaterial<'_>,
-    base_path: &Path,
+    base_path: &PathBuf,
 ) -> Result<Option<Texture2D>, MaterialConversionError> {
     let text = if mat.get_texture_count(texture_type) > 0 {
         let texture = get_texture(base_path, mat, texture_type)?;
@@ -173,12 +170,12 @@ fn get_texture_option(
 }
 
 fn get_texture(
-    base_path: &Path,
+    base_path: &PathBuf,
     mat: &AMaterial<'_>,
     texture_type: AiTextureType,
 ) -> Result<Texture2D, MaterialConversionError> {
     let tex = mat.get_texture(texture_type, 0)?;
-    let buf = PathBuf::from(base_path).join(tex);
+    let buf = base_path.join(tex);
     let t = Texture2D::try_from_file(buf, false)?;
     Ok(t)
 }

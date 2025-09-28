@@ -17,19 +17,20 @@ impl SceneImport {
         P: AsRef<Path>,
     {
         let path = path.as_ref();
+
+        let mut scene = load_ai_scene(path)?;
+        normalize.normalize_scene(&mut scene);
+
         let base_path = match path.parent() {
             Some(parent) => parent,
             None => return Err(MeshLoadError::InvalidParent(path.to_path_buf())),
-        };
-
-        let mut scene = load_ai_scene(path)?;
-
-        normalize.normalize_scene(&mut scene);
+        }
+        .to_path_buf();
 
         let mut materials = Vec::with_capacity(scene.num_materials() as _);
 
         for mat in scene.material_iter() {
-            let material = Material::from_ai_material(&AMaterial(mat), base_path)?;
+            let material = Material::from_ai_material(&AMaterial(mat), &base_path)?;
             materials.push(Rc::new(material));
         }
 
