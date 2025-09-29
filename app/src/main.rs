@@ -16,7 +16,7 @@ use rusty_gl::{
     },
 };
 
-use rmath::{mat4::Mat4, vec2::Vec2, vec3::Vec3};
+use rmath::{mat4::Mat4, vec3::Vec3};
 
 use gl_sys::{
     self,
