@@ -122,27 +122,27 @@ fn main() -> ExitCode {
         window.poll_events();
 
         imgui_sys::begin_drawing();
-
-        imgui_sys::set_next_window_size(Vec2::new(250.0, 70.0), ImGuiCondition::Once);
-
-        imgui_sys::set_next_window_pos(
-            Vec2::new(10.0, 10.0),
-            ImGuiCondition::Once,
-            Vec2::new(0.0, 0.0),
-        );
-
-        imgui_sys::begin("Camera").expect("Could not init window");
         {
-            let Vec3 { x, y, z } = camera.position();
-            imgui_sys::text(format!("Pos: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
-                .expect("Could not format Camera position");
+            imgui_sys::set_next_window_size(Vec2::new(250.0, 70.0), ImGuiCondition::Once);
 
-            let Vec3 { x, y, z } = camera.dir();
-            imgui_sys::text(format!("View: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
-                .expect("Could not format Camera position");
+            imgui_sys::set_next_window_pos(
+                Vec2::new(10.0, 10.0),
+                ImGuiCondition::Once,
+                Vec2::new(0.0, 0.0),
+            );
+
+            imgui_sys::begin("Camera").expect("Could not init window");
+            {
+                let Vec3 { x, y, z } = camera.position();
+                imgui_sys::text(format!("Pos: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
+                    .expect("Could not format Camera position");
+
+                let Vec3 { x, y, z } = camera.dir();
+                imgui_sys::text(format!("View: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
+                    .expect("Could not format Camera position");
+            }
+            imgui_sys::end();
         }
-        imgui_sys::end();
-
         imgui_sys::end_drawing();
         window.swap_buffers();
 
