@@ -123,13 +123,9 @@ fn main() -> ExitCode {
 
         imgui_sys::begin_drawing();
         {
-            imgui_sys::set_next_window_size(Vec2::new(250.0, 70.0), ImGuiCondition::Once);
+            imgui_sys::set_next_window_size([250.0, 70.0], ImGuiCondition::Once);
 
-            imgui_sys::set_next_window_pos(
-                Vec2::new(10.0, 10.0),
-                ImGuiCondition::Once,
-                Vec2::new(0.0, 0.0),
-            );
+            imgui_sys::set_next_window_pos([10.0, 10.0], ImGuiCondition::Once, [0.0, 0.0]);
 
             imgui_sys::begin("Camera").expect("Could not init window");
             {
