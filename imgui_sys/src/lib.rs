@@ -7,9 +7,7 @@ use crate::bindings::{
     ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame, ImGui_ImplGlfw_Shutdown,
     ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame, ImGui_ImplOpenGL3_RenderDrawData,
     ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render, ImGui_SetNextWindowPos,
-    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond, ImGuiCond__ImGuiCond_Always,
-    ImGuiCond__ImGuiCond_Appearing, ImGuiCond__ImGuiCond_FirstUseEver, ImGuiCond__ImGuiCond_None,
-    ImGuiCond__ImGuiCond_Once, ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
+    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond, ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext, ImVec2,
 };
 
@@ -137,11 +135,11 @@ pub enum ImGuiCondition {
 impl From<ImGuiCondition> for ImGuiCond {
     fn from(value: ImGuiCondition) -> Self {
         let v = match value {
-            ImGuiCondition::Always => ImGuiCond__ImGuiCond_Always,
-            ImGuiCondition::Appearing => ImGuiCond__ImGuiCond_Appearing,
-            ImGuiCondition::FirstEverUse => ImGuiCond__ImGuiCond_FirstUseEver,
-            ImGuiCondition::Once => ImGuiCond__ImGuiCond_Once,
-            ImGuiCondition::None => ImGuiCond__ImGuiCond_None,
+            ImGuiCondition::Always => bindings::ImGuiCond__ImGuiCond_Always,
+            ImGuiCondition::Appearing => bindings::ImGuiCond__ImGuiCond_Appearing,
+            ImGuiCondition::FirstEverUse => bindings::ImGuiCond__ImGuiCond_FirstUseEver,
+            ImGuiCondition::Once => bindings::ImGuiCond__ImGuiCond_Once,
+            ImGuiCondition::None => bindings::ImGuiCond__ImGuiCond_None,
         };
         v as _
     }
