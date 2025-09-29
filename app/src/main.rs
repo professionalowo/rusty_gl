@@ -134,11 +134,11 @@ fn main() -> ExitCode {
             imgui_sys::begin("Camera").expect("Could not init window");
             {
                 let Vec3 { x, y, z } = camera.position();
-                imgui_sys::text(format!("Pos: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
+                imgui_sys::text!("Pos: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z)
                     .expect("Could not format Camera position");
 
                 let Vec3 { x, y, z } = camera.dir();
-                imgui_sys::text(format!("View: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z))
+                imgui_sys::text!("View: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z)
                     .expect("Could not format Camera position");
             }
             imgui_sys::end();

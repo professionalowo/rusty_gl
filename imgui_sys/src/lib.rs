@@ -61,9 +61,16 @@ pub fn end() {
     }
 }
 
-pub fn text<T: Into<Vec<u8>>>(title: T) -> Result<(), NulError> {
+#[macro_export]
+macro_rules! text {
+	($($arg:tt)*) => {
+        $crate::text(format!($($arg)*))
+    };
+}
+
+pub fn text(title: impl AsRef<[u8]>) -> Result<(), NulError> {
     unsafe {
-        ImGui_Text(CString::new(title)?.as_ptr());
+        ImGui_Text(CString::new(title.as_ref())?.as_ptr());
     }
     Ok(())
 }
