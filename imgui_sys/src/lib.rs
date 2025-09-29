@@ -86,9 +86,9 @@ macro_rules! text {
 }
 
 #[inline]
-pub fn text(title: impl AsRef<[u8]>) -> Result<(), ImGuiError> {
+pub fn text(title: impl Into<Vec<u8>>) -> Result<(), ImGuiError> {
     unsafe {
-        ImGui_Text(CString::new(title.as_ref())?.as_ptr());
+        ImGui_Text(CString::new(title)?.as_ptr());
     }
     Ok(())
 }
