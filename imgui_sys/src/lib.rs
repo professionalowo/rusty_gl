@@ -63,8 +63,12 @@ pub fn end() {
 
 #[macro_export]
 macro_rules! text {
-	($($arg:tt)*) => {
-        $crate::text(format!($($arg)*))
+	($s:expr) => {
+		$crate::text($s)
+	};
+
+	($fmt:expr, $($arg:tt)*) => {
+        $crate::text(format!($fmt, $($arg)*))
     };
 }
 
