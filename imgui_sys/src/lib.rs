@@ -7,7 +7,8 @@ use crate::bindings::{
     ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame, ImGui_ImplGlfw_Shutdown,
     ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame, ImGui_ImplOpenGL3_RenderDrawData,
     ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render, ImGui_SetNextWindowPos,
-    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond, ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
+    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
+    ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext, ImVec2,
 };
 
@@ -79,7 +80,7 @@ macro_rules! text {
 	}};
 
 	($fmt:expr, $($arg:tt)*) => {{
-        $crate::text(format!($fmt, $($arg)*))
+        $crate::text(format!($fmt, $($arg)*).as_str())
     }};
 }
 
