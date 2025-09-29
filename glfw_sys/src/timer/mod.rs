@@ -1,12 +1,12 @@
 use crate::get_time;
 
 #[derive(Debug)]
-pub struct Timer<const FPS: u32> {
+pub struct Timer<const FPS: u8> {
     now: f64,
     last_frame: f64,
 }
 
-impl<const FPS: u32> Timer<FPS> {
+impl<const FPS: u8> Timer<FPS> {
     pub fn new() -> Self {
         Self::default()
     }
@@ -24,7 +24,7 @@ impl<const FPS: u32> Timer<FPS> {
     }
 }
 
-impl<const FPS: u32> Default for Timer<FPS> {
+impl<const FPS: u8> Default for Timer<FPS> {
     fn default() -> Self {
         Self {
             last_frame: 0.0,
