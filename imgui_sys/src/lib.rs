@@ -63,13 +63,13 @@ pub fn end() {
 
 #[macro_export]
 macro_rules! text {
-	($s:expr) => {
+	($s:expr) => {{
 		$crate::text($s)
-	};
+	}};
 
-	($fmt:expr, $($arg:tt)*) => {
+	($fmt:expr, $($arg:tt)*) => {{
         $crate::text(format!($fmt, $($arg)*))
-    };
+    }};
 }
 
 pub fn text(title: impl AsRef<[u8]>) -> Result<(), NulError> {
