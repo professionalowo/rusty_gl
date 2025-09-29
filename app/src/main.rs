@@ -135,7 +135,7 @@ fn main() -> ExitCode {
 
                 let Vec3 { x, y, z } = camera.dir();
                 imgui_sys::text!("View: (x:{:.2}, y:{:.2}, z:{:.2})", x, y, z)
-                    .expect("Could not format Camera position");
+                    .expect("Could not format Camera view");
             }
             imgui_sys::end();
         }
