@@ -48,6 +48,7 @@ impl Context {
     }
 }
 
+#[inline]
 pub fn begin<T: Into<Vec<u8>>>(title: T) -> Result<(), NulError> {
     unsafe {
         ImGui_Begin(CString::new(title)?.as_ptr(), std::ptr::null_mut(), 0);
@@ -55,6 +56,7 @@ pub fn begin<T: Into<Vec<u8>>>(title: T) -> Result<(), NulError> {
     Ok(())
 }
 
+#[inline]
 pub fn end() {
     unsafe {
         ImGui_End();
@@ -72,6 +74,7 @@ macro_rules! text {
     }};
 }
 
+#[inline]
 pub fn text(title: impl AsRef<[u8]>) -> Result<(), NulError> {
     unsafe {
         ImGui_Text(CString::new(title.as_ref())?.as_ptr());
@@ -79,12 +82,14 @@ pub fn text(title: impl AsRef<[u8]>) -> Result<(), NulError> {
     Ok(())
 }
 
+#[inline]
 pub fn set_next_window_size<V: Into<ImVec2>, C: Into<ImGuiCond>>(size: V, cond: C) {
     unsafe {
         ImGui_SetNextWindowSize(&size.into(), cond.into());
     }
 }
 
+#[inline]
 pub fn set_next_window_pos<V: Into<ImVec2>, C: Into<ImGuiCond>, P: Into<ImVec2>>(
     pos: V,
     cond: C,
