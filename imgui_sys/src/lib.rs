@@ -7,8 +7,9 @@ use crate::bindings::{
     ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame, ImGui_ImplGlfw_Shutdown,
     ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame, ImGui_ImplOpenGL3_RenderDrawData,
     ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render, ImGui_SetNextWindowPos,
-    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
-    ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
+    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond, ImGuiCond__ImGuiCond_Always,
+    ImGuiCond__ImGuiCond_Appearing, ImGuiCond__ImGuiCond_FirstUseEver, ImGuiCond__ImGuiCond_None,
+    ImGuiCond__ImGuiCond_Once, ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
     ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext, ImVec2,
 };
 
@@ -67,15 +68,19 @@ pub fn text<T: Into<Vec<u8>>>(title: T) -> Result<(), NulError> {
     Ok(())
 }
 
-pub fn set_next_window_size<V: Into<ImVec2>>(size: V, cond: ImGuiCond) {
+pub fn set_next_window_size<V: Into<ImVec2>, C: Into<ImGuiCond>>(size: V, cond: C) {
     unsafe {
-        ImGui_SetNextWindowSize(&size.into(), cond);
+        ImGui_SetNextWindowSize(&size.into(), cond.into());
     }
 }
 
-pub fn set_next_window_pos<V: Into<ImVec2>, P: Into<ImVec2>>(pos: V, cond: ImGuiCond, pivot: P) {
+pub fn set_next_window_pos<V: Into<ImVec2>, C: Into<ImGuiCond>, P: Into<ImVec2>>(
+    pos: V,
+    cond: C,
+    pivot: P,
+) {
     unsafe {
-        ImGui_SetNextWindowPos(&pos.into(), cond, &pivot.into());
+        ImGui_SetNextWindowPos(&pos.into(), cond.into(), &pivot.into());
     }
 }
 
@@ -90,5 +95,27 @@ pub fn end_drawing() {
     unsafe {
         ImGui_Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui_GetDrawData());
+    }
+}
+
+#[derive(Debug)]
+pub enum ImGuiCondition {
+    Once,
+    Always,
+    Appearing,
+    FirstEverUse,
+    None,
+}
+
+impl From<ImGuiCondition> for ImGuiCond {
+    fn from(value: ImGuiCondition) -> Self {
+        let v = match value {
+            ImGuiCondition::Always => ImGuiCond__ImGuiCond_Always,
+            ImGuiCondition::Appearing => ImGuiCond__ImGuiCond_Appearing,
+            ImGuiCondition::FirstEverUse => ImGuiCond__ImGuiCond_FirstUseEver,
+            ImGuiCondition::Once => ImGuiCond__ImGuiCond_Once,
+            ImGuiCondition::None => ImGuiCond__ImGuiCond_None,
+        };
+        v as _
     }
 }

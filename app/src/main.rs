@@ -5,7 +5,7 @@ use std::{
     process::ExitCode,
 };
 
-use imgui_sys::bindings::ImGuiCond__ImGuiCond_Once;
+use imgui_sys::ImGuiCondition;
 use rusty_gl::{
     UniformWrapper,
     framework::{
@@ -123,11 +123,11 @@ fn main() -> ExitCode {
 
         imgui_sys::begin_drawing();
 
-        imgui_sys::set_next_window_size(Vec2::new(250.0, 70.0), ImGuiCond__ImGuiCond_Once as _);
+        imgui_sys::set_next_window_size(Vec2::new(250.0, 70.0), ImGuiCondition::Once);
 
         imgui_sys::set_next_window_pos(
             Vec2::new(10.0, 10.0),
-            ImGuiCond__ImGuiCond_Once as _,
+            ImGuiCondition::Once,
             Vec2::new(0.0, 0.0),
         );
 
