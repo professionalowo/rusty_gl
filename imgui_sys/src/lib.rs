@@ -80,7 +80,8 @@ macro_rules! text {
 	}};
 
 	($fmt:expr, $($arg:tt)*) => {{
-        $crate::text(format!($fmt, $($arg)*).as_str())
+		let str = format!($fmt, $($arg)*);
+        $crate::text(str.as_str())
     }};
 }
 
