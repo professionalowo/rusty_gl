@@ -16,6 +16,17 @@ use crate::bindings::{
 pub mod bindings;
 
 #[derive(Debug)]
+pub enum ImGuiError {
+    NulError(NulError),
+}
+
+impl From<NulError> for ImGuiError {
+    fn from(value: NulError) -> Self {
+        Self::NulError(value)
+    }
+}
+
+#[derive(Debug)]
 #[repr(transparent)]
 pub struct Context(*mut ImGuiContext);
 impl Context {
@@ -23,7 +34,7 @@ impl Context {
     pub fn init<S: Into<Vec<u8>>, W: AsMut<GLFWwindow>>(
         window: &mut W,
         glsl_version: S,
-    ) -> Result<Self, NulError> {
+    ) -> Result<Self, ImGuiError> {
         let glsl_version = CString::new(glsl_version)?;
         let window = window.as_mut();
         let c = unsafe {
@@ -49,7 +60,7 @@ impl Context {
 }
 
 #[inline]
-pub fn begin<T: Into<Vec<u8>>>(title: T) -> Result<(), NulError> {
+pub fn begin<T: Into<Vec<u8>>>(title: T) -> Result<(), ImGuiError> {
     unsafe {
         ImGui_Begin(CString::new(title)?.as_ptr(), std::ptr::null_mut(), 0);
     }
@@ -75,7 +86,7 @@ macro_rules! text {
 }
 
 #[inline]
-pub fn text(title: impl AsRef<[u8]>) -> Result<(), NulError> {
+pub fn text(title: impl AsRef<[u8]>) -> Result<(), ImGuiError> {
     unsafe {
         ImGui_Text(CString::new(title.as_ref())?.as_ptr());
     }
