@@ -1,6 +1,6 @@
 use std::{
     borrow::{Borrow, BorrowMut},
-    ops::{Deref, DerefMut, Index, IndexMut, Range},
+    ops::{Deref, DerefMut, Index, IndexMut, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo},
     ptr::NonNull,
     slice,
 };
@@ -165,6 +165,69 @@ impl<T> IndexMut<Range<usize>> for StbiPtr<T> {
     #[inline]
     fn index_mut(&mut self, index: Range<usize>) -> &mut Self::Output {
         &mut self.as_slice_mut()[index]
+    }
+}
+
+impl<T> Index<RangeFrom<usize>> for StbiPtr<T> {
+    type Output = [T];
+
+    #[inline]
+    fn index(&self, index: RangeFrom<usize>) -> &Self::Output {
+        &self.as_slice()[index]
+    }
+}
+
+impl<T> IndexMut<RangeFrom<usize>> for StbiPtr<T> {
+    #[inline]
+    fn index_mut(&mut self, index: RangeFrom<usize>) -> &mut Self::Output {
+        &mut self.as_slice_mut()[index]
+    }
+}
+
+impl<T> Index<RangeTo<usize>> for StbiPtr<T> {
+    type Output = [T];
+
+    #[inline]
+    fn index(&self, index: RangeTo<usize>) -> &Self::Output {
+        &self.as_slice()[index]
+    }
+}
+
+impl<T> IndexMut<RangeTo<usize>> for StbiPtr<T> {
+    #[inline]
+    fn index_mut(&mut self, index: RangeTo<usize>) -> &mut Self::Output {
+        &mut self.as_slice_mut()[index]
+    }
+}
+
+impl<T> Index<RangeInclusive<usize>> for StbiPtr<T> {
+    type Output = [T];
+
+    #[inline]
+    fn index(&self, index: RangeInclusive<usize>) -> &Self::Output {
+        &self.as_slice()[index]
+    }
+}
+
+impl<T> IndexMut<RangeInclusive<usize>> for StbiPtr<T> {
+    #[inline]
+    fn index_mut(&mut self, index: RangeInclusive<usize>) -> &mut Self::Output {
+        &mut self.as_slice_mut()[index]
+    }
+}
+
+impl<T> Index<RangeFull> for StbiPtr<T> {
+    type Output = [T];
+    #[inline]
+    fn index(&self, _: RangeFull) -> &Self::Output {
+        self.as_slice()
+    }
+}
+
+impl<T> IndexMut<RangeFull> for StbiPtr<T> {
+    #[inline]
+    fn index_mut(&mut self, _: RangeFull) -> &mut Self::Output {
+        self.as_slice_mut()
     }
 }
 
