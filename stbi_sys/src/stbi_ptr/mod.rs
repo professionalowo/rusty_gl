@@ -24,6 +24,14 @@ impl<T> Drop for StbiPtr<T> {
 }
 
 impl<T> StbiPtr<T> {
+    pub fn from_raw_parts(data: *mut T, len: usize) -> Option<Self> {
+        match NonNull::new(data) {
+            None => None,
+            //SAFETY: data is not null
+            Some(data) => unsafe { Some(Self::from_raw_parts_unchecked(data.as_ptr(), len)) },
+        }
+    }
+
     pub unsafe fn from_raw_parts_unchecked(data: *mut T, len: usize) -> Self {
         unsafe {
             let ptr = slice::from_raw_parts_mut(data, len);

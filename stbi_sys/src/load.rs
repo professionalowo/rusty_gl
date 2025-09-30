@@ -89,10 +89,9 @@ pub trait Load {
             Self::load_from_memory(buffer.as_ptr(), buffer.len() as _, x, y, channels, 0)
         };
         let len = (*x) * (*y) * (*channels);
-        if data.is_null() {
-            Err(failure_reason().unwrap_or_else(|| String::from("Unknown error")))
-        } else {
-            Ok(unsafe { StbiPtr::from_raw_parts_unchecked(data, len as _) })
+        match StbiPtr::from_raw_parts(data, len as _) {
+            None => Err(failure_reason().unwrap_or_else(|| String::from("Unknown error"))),
+            Some(ptr) => Ok(ptr),
         }
     }
 
