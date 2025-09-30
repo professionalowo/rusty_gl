@@ -21,7 +21,7 @@ pub struct StbiPtr<T> {
 impl<T> Drop for StbiPtr<T> {
     fn drop(&mut self) {
         //SAFETY: Safe as long as 'raw' was allocated by stb_image
-        unsafe { stbi_image_free(self.inner.as_ptr() as _) };
+        unsafe { stbi_image_free(self.as_ptr() as _) };
     }
 }
 
@@ -41,14 +41,18 @@ impl<T> StbiPtr<T> {
         }
     }
 
+    const fn as_ptr(&self) -> *mut T {
+        self.inner.as_ptr()
+    }
+
     #[inline]
     pub const fn as_slice(&self) -> &[T] {
-        unsafe { slice::from_raw_parts(self.inner.as_ptr(), self.len) }
+        unsafe { slice::from_raw_parts(self.as_ptr(), self.len) }
     }
 
     #[inline]
     pub const fn as_slice_mut(&mut self) -> &mut [T] {
-        unsafe { slice::from_raw_parts_mut(self.inner.as_ptr(), self.len) }
+        unsafe { slice::from_raw_parts_mut(self.as_ptr(), self.len) }
     }
 
     #[inline]
@@ -56,7 +60,7 @@ impl<T> StbiPtr<T> {
     where
         T: Clone,
     {
-        self.as_slice().to_vec()
+        (*self).to_vec()
     }
 
     #[inline]
@@ -70,25 +74,6 @@ impl<T> StbiPtr<T> {
     #[inline]
     pub const fn len(&self) -> usize {
         self.len
-    }
-
-    #[inline]
-    pub const fn is_empty(&self) -> bool {
-        self.len == 0
-    }
-}
-
-impl<T> AsRef<[T]> for StbiPtr<T> {
-    #[inline]
-    fn as_ref(&self) -> &[T] {
-        self.as_slice()
-    }
-}
-
-impl<T> AsMut<[T]> for StbiPtr<T> {
-    #[inline]
-    fn as_mut(&mut self) -> &mut [T] {
-        self.as_slice_mut()
     }
 }
 
@@ -108,17 +93,31 @@ impl<T> DerefMut for StbiPtr<T> {
     }
 }
 
+impl<T> AsRef<[T]> for StbiPtr<T> {
+    #[inline]
+    fn as_ref(&self) -> &[T] {
+        &(**self)
+    }
+}
+
+impl<T> AsMut<[T]> for StbiPtr<T> {
+    #[inline]
+    fn as_mut(&mut self) -> &mut [T] {
+        &mut (**self)
+    }
+}
+
 impl<T> Borrow<[T]> for StbiPtr<T> {
     #[inline]
     fn borrow(&self) -> &[T] {
-        self.as_slice()
+        &(**self)
     }
 }
 
 impl<T> BorrowMut<[T]> for StbiPtr<T> {
     #[inline]
     fn borrow_mut(&mut self) -> &mut [T] {
-        self.as_slice_mut()
+        &mut (**self)
     }
 }
 
@@ -141,14 +140,14 @@ impl<T> Index<usize> for StbiPtr<T> {
 
     #[inline]
     fn index(&self, index: usize) -> &Self::Output {
-        &self.as_slice()[index]
+        &(**self)[index]
     }
 }
 
 impl<T> IndexMut<usize> for StbiPtr<T> {
     #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut self.as_slice_mut()[index]
+        &mut (**self)[index]
     }
 }
 
@@ -157,14 +156,14 @@ impl<T> Index<Range<usize>> for StbiPtr<T> {
 
     #[inline]
     fn index(&self, index: Range<usize>) -> &Self::Output {
-        &self.as_slice()[index]
+        &(**self)[index]
     }
 }
 
 impl<T> IndexMut<Range<usize>> for StbiPtr<T> {
     #[inline]
     fn index_mut(&mut self, index: Range<usize>) -> &mut Self::Output {
-        &mut self.as_slice_mut()[index]
+        &mut (**self)[index]
     }
 }
 
@@ -173,14 +172,14 @@ impl<T> Index<RangeFrom<usize>> for StbiPtr<T> {
 
     #[inline]
     fn index(&self, index: RangeFrom<usize>) -> &Self::Output {
-        &self.as_slice()[index]
+        &(**self)[index]
     }
 }
 
 impl<T> IndexMut<RangeFrom<usize>> for StbiPtr<T> {
     #[inline]
     fn index_mut(&mut self, index: RangeFrom<usize>) -> &mut Self::Output {
-        &mut self.as_slice_mut()[index]
+        &mut (**self)[index]
     }
 }
 
@@ -189,14 +188,14 @@ impl<T> Index<RangeTo<usize>> for StbiPtr<T> {
 
     #[inline]
     fn index(&self, index: RangeTo<usize>) -> &Self::Output {
-        &self.as_slice()[index]
+        &(**self)[index]
     }
 }
 
 impl<T> IndexMut<RangeTo<usize>> for StbiPtr<T> {
     #[inline]
     fn index_mut(&mut self, index: RangeTo<usize>) -> &mut Self::Output {
-        &mut self.as_slice_mut()[index]
+        &mut (**self)[index]
     }
 }
 
@@ -205,14 +204,14 @@ impl<T> Index<RangeInclusive<usize>> for StbiPtr<T> {
 
     #[inline]
     fn index(&self, index: RangeInclusive<usize>) -> &Self::Output {
-        &self.as_slice()[index]
+        &(**self)[index]
     }
 }
 
 impl<T> IndexMut<RangeInclusive<usize>> for StbiPtr<T> {
     #[inline]
     fn index_mut(&mut self, index: RangeInclusive<usize>) -> &mut Self::Output {
-        &mut self.as_slice_mut()[index]
+        &mut (**self)[index]
     }
 }
 
@@ -220,14 +219,14 @@ impl<T> Index<RangeFull> for StbiPtr<T> {
     type Output = [T];
     #[inline]
     fn index(&self, _: RangeFull) -> &Self::Output {
-        self.as_slice()
+        &(**self)
     }
 }
 
 impl<T> IndexMut<RangeFull> for StbiPtr<T> {
     #[inline]
     fn index_mut(&mut self, _: RangeFull) -> &mut Self::Output {
-        self.as_slice_mut()
+        &mut (**self)
     }
 }
 
