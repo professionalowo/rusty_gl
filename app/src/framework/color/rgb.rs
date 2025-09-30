@@ -7,6 +7,7 @@ use rmath::vec3::Vec3;
 pub struct ColorRGB(Vec3<f32>);
 
 impl ColorRGB {
+    #[inline]
     pub const fn new(r: f32, g: f32, b: f32) -> Self {
         Self(Vec3 { x: r, y: g, z: b })
     }
@@ -32,24 +33,28 @@ const fn blend_color(ratio: f32, a: f32, b: f32) -> f32 {
 }
 
 impl From<Vec3<f32>> for ColorRGB {
+    #[inline]
     fn from(value: Vec3<f32>) -> Self {
         Self(value)
     }
 }
 
 impl From<ColorRGB> for Vec3<f32> {
+    #[inline]
     fn from(ColorRGB(v): ColorRGB) -> Self {
         v
     }
 }
 
 impl From<(f32, f32, f32)> for ColorRGB {
+    #[inline]
     fn from(t: (f32, f32, f32)) -> Self {
         Self(t.into())
     }
 }
 
 impl From<[f32; 3]> for ColorRGB {
+    #[inline]
     fn from(a: [f32; 3]) -> Self {
         Self(a.into())
     }
