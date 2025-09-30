@@ -1,6 +1,6 @@
 use std::{
     borrow::{Borrow, BorrowMut},
-    ops::{Deref, DerefMut},
+    ops::{Deref, DerefMut, Index, Range},
     ptr::NonNull,
     slice,
 };
@@ -136,12 +136,48 @@ impl<T: Clone> From<StbiPtr<T>> for Box<[T]> {
     }
 }
 
-impl<T: Clone> IntoIterator for StbiPtr<T> {
-    type Item = T;
-    type IntoIter = std::vec::IntoIter<Self::Item>;
+impl<T> Index<usize> for StbiPtr<T> {
+    type Output = T;
+    fn index(&self, index: usize) -> &Self::Output {
+        &self.as_slice()[index]
+    }
+}
+
+impl<T> Index<Range<usize>> for StbiPtr<T> {
+    type Output = [T];
+    fn index(&self, index: Range<usize>) -> &Self::Output {
+        &self.as_slice()[index]
+    }
+}
+
+impl<'a, T> IntoIterator for &'a StbiPtr<T> {
+    type Item = &'a T;
+    type IntoIter = IntoIter<'a, T>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        self.to_vec().into_iter()
+        Self::IntoIter {
+            index: 0,
+            inner: &self,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct IntoIter<'a, T> {
+    index: usize,
+    inner: &'a StbiPtr<T>,
+}
+
+impl<'a, T> Iterator for IntoIter<'a, T> {
+    type Item = &'a T;
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.index >= self.inner.len {
+            None
+        } else {
+            let item = &self.inner[self.index];
+            self.index += 1;
+            Some(item)
+        }
     }
 }
