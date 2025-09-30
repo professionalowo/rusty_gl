@@ -1,5 +1,6 @@
 use std::{
     ffi::{CString, NulError},
+    ops::{Deref, DerefMut},
     ptr::NonNull,
 };
 
@@ -80,6 +81,20 @@ impl Context {
             ImGui_ImplGlfw_Shutdown();
             ImGui_DestroyContext(self.as_ptr());
         }
+    }
+}
+
+impl Deref for Context {
+    type Target = ImGuiContext;
+
+    fn deref(&self) -> &Self::Target {
+        unsafe { self.0.as_ref() }
+    }
+}
+
+impl DerefMut for Context {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        unsafe { self.0.as_mut() }
     }
 }
 

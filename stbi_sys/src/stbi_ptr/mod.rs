@@ -41,7 +41,7 @@ impl<T> StbiPtr<T> {
 
     #[inline]
     pub const fn as_slice(&self) -> &[T] {
-        unsafe { &self.0.as_ref() }
+        unsafe { self.0.as_ref() }
     }
 
     #[inline]
