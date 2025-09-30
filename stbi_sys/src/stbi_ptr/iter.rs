@@ -8,7 +8,7 @@ pub struct IntoIter<'a, T> {
 
 impl<'a, T> IntoIter<'a, T> {
     #[inline]
-    pub fn new(inner: &'a StbiPtr<T>) -> Self {
+    pub const fn new(inner: &'a StbiPtr<T>) -> Self {
         Self { index: 0, inner }
     }
 }
