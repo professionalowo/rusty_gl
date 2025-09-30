@@ -43,6 +43,7 @@ pub struct LoadOptions {
 }
 
 impl Default for LoadOptions {
+    #[inline]
     fn default() -> Self {
         Self {
             flip_vertically_on_load: true,
