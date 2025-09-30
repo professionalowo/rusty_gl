@@ -48,30 +48,35 @@ impl SceneImport {
         Ok(Self(drawelements.into_boxed_slice()))
     }
 
-    pub fn elements(&self) -> &[Drawelement] {
+    #[inline]
+    pub const fn elements(&self) -> &[Drawelement] {
         &self.0
     }
 }
 
 impl AsRef<[Drawelement]> for SceneImport {
+	#[inline]
     fn as_ref(&self) -> &[Drawelement] {
         &self.0
     }
 }
 
 impl From<Vec<Drawelement>> for SceneImport {
+	#[inline]
     fn from(value: Vec<Drawelement>) -> Self {
         Self(value.into_boxed_slice())
     }
 }
 
 impl From<Box<[Drawelement]>> for SceneImport {
+	#[inline]
     fn from(value: Box<[Drawelement]>) -> Self {
         Self(value)
     }
 }
 
 impl From<SceneImport> for Box<[Drawelement]> {
+	#[inline]
     fn from(SceneImport(elements): SceneImport) -> Self {
         elements
     }
