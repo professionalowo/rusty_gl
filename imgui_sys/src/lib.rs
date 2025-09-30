@@ -5,21 +5,26 @@ use std::{
 
 use glfw_sys::bindings::GLFWwindow;
 
-use crate::bindings::{
-    ImGui_Begin, ImGui_CreateContext, ImGui_DestroyContext, ImGui_End, ImGui_GetDrawData,
-    ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame, ImGui_ImplGlfw_Shutdown,
-    ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame, ImGui_ImplOpenGL3_RenderDrawData,
-    ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render, ImGui_SetNextWindowPos,
-    ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
-    ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
-    ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext, ImVec2,
+use crate::{
+    bindings::{
+        ImGui_Begin, ImGui_CreateContext, ImGui_DestroyContext, ImGui_End, ImGui_GetDrawData,
+        ImGui_GetIO, ImGui_ImplGlfw_InitForOpenGL, ImGui_ImplGlfw_NewFrame,
+        ImGui_ImplGlfw_Shutdown, ImGui_ImplOpenGL3_Init, ImGui_ImplOpenGL3_NewFrame,
+        ImGui_ImplOpenGL3_RenderDrawData, ImGui_ImplOpenGL3_Shutdown, ImGui_NewFrame, ImGui_Render,
+        ImGui_SetNextWindowPos, ImGui_SetNextWindowSize, ImGui_Text, ImGuiCond,
+        ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad,
+        ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard, ImGuiContext, ImVec2,
+    },
+    io::IO,
 };
 
 pub mod bindings;
+pub mod io;
 
 #[derive(Debug)]
 pub enum ImGuiError {
     CreateContextFailed,
+    CreateIoFailed,
     NulError(NulError),
 }
 
@@ -37,28 +42,36 @@ impl Context {
         self.0.as_ptr()
     }
 
+    const fn new(ptr: *mut ImGuiContext) -> Option<Self> {
+        match NonNull::new(ptr) {
+            None => None,
+            Some(nn) => Some(Self(nn)),
+        }
+    }
+
     #[must_use]
     pub fn init<W: AsMut<GLFWwindow>, S: Into<Vec<u8>>>(
         window: &mut W,
         glsl_version: S,
     ) -> Result<Self, ImGuiError> {
         let glsl_version = CString::new(glsl_version)?;
-        let window = window.as_mut();
         let c = unsafe {
-            let ctx = ImGui_CreateContext(std::ptr::null_mut());
-            let io = ImGui_GetIO();
-            (*io).ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard as i32;
-            (*io).ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad as i32;
+            let ctx = match Self::new(ImGui_CreateContext(std::ptr::null_mut())) {
+                None => return Err(ImGuiError::CreateContextFailed),
+                Some(ctx) => ctx,
+            };
+            let mut io = match IO::new(ImGui_GetIO()) {
+                None => return Err(ImGuiError::CreateIoFailed),
+                Some(io) => io,
+            };
+            io.ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard as i32;
+            io.ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad as i32;
             //FIXME: may overwrite existing callbacks
-            ImGui_ImplGlfw_InitForOpenGL(window, true);
+            ImGui_ImplGlfw_InitForOpenGL(window.as_mut(), true);
             ImGui_ImplOpenGL3_Init(glsl_version.as_ptr());
-            NonNull::new(ctx)
+            ctx
         };
-
-        match c {
-            None => Err(ImGuiError::CreateContextFailed),
-            Some(ctx) => Ok(Self(ctx)),
-        }
+        Ok(c)
     }
 
     pub fn shutdown(self) {
