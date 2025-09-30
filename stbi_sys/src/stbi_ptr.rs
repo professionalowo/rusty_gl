@@ -1,4 +1,5 @@
 use std::{
+    borrow::{Borrow, BorrowMut},
     ops::{Deref, DerefMut},
     ptr::NonNull,
     slice,
@@ -46,7 +47,7 @@ impl<T> StbiPtr<T> {
     }
 
     #[inline]
-    pub const fn as_mut_slice(&mut self) -> &mut [T] {
+    pub const fn as_slice_mut(&mut self) -> &mut [T] {
         unsafe { slice::from_raw_parts_mut(self.inner.as_ptr(), self.len) }
     }
 
@@ -87,7 +88,7 @@ impl<T> AsRef<[T]> for StbiPtr<T> {
 impl<T> AsMut<[T]> for StbiPtr<T> {
     #[inline]
     fn as_mut(&mut self) -> &mut [T] {
-        self.as_mut_slice()
+        self.as_slice_mut()
     }
 }
 
@@ -103,7 +104,21 @@ impl<T> Deref for StbiPtr<T> {
 impl<T> DerefMut for StbiPtr<T> {
     #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
-        self.as_mut_slice()
+        self.as_slice_mut()
+    }
+}
+
+impl<T> Borrow<[T]> for StbiPtr<T> {
+    #[inline]
+    fn borrow(&self) -> &[T] {
+        self.as_slice()
+    }
+}
+
+impl<T> BorrowMut<[T]> for StbiPtr<T> {
+    #[inline]
+    fn borrow_mut(&mut self) -> &mut [T] {
+        self.as_slice_mut()
     }
 }
 
