@@ -14,16 +14,13 @@ pub struct Vec4<T: Copy> {
 }
 
 impl<T: Copy> Vec4<T> {
+    #[inline]
     pub const fn new(x: T, y: T, z: T, w: T) -> Self {
         Self { x, y, z, w }
     }
 
     pub const fn data(&self) -> [T; 4] {
         [self.x, self.y, self.z, self.w]
-    }
-
-    pub const fn size() -> usize {
-        4
     }
 }
 
@@ -121,12 +118,14 @@ impl<T: Copy + Mul<Output = T>> Mul<Vec4<T>> for Scalar<T> {
 }
 
 impl<T: Copy> From<(T, T, T, T)> for Vec4<T> {
+    #[inline]
     fn from((x, y, z, w): (T, T, T, T)) -> Self {
         Self::new(x, y, z, w)
     }
 }
 
 impl<T: Copy> From<[T; 4]> for Vec4<T> {
+    #[inline]
     fn from([x, y, z, w]: [T; 4]) -> Self {
         Self::new(x, y, z, w)
     }
