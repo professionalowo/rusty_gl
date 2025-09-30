@@ -19,7 +19,7 @@ pub struct StbiPtr<T>(NonNull<[T]>);
 impl<T> Drop for StbiPtr<T> {
     fn drop(&mut self) {
         //SAFETY: Safe as long as 'raw' was allocated by stb_image
-        unsafe { stbi_image_free(self.as_ptr() as _) };
+        unsafe { stbi_image_free(self.as_mut_ptr() as _) };
     }
 }
 
