@@ -14,6 +14,7 @@ pub struct Mat4<T: Copy> {
 }
 
 impl<T: Copy> Mat4<T> {
+    #[inline]
     pub const fn new(c0: Vec4<T>, c1: Vec4<T>, c2: Vec4<T>, c3: Vec4<T>) -> Self {
         Self {
             cols: [c0, c1, c2, c3],
@@ -72,6 +73,7 @@ impl<T: Copy> Mat4<T> {
 }
 
 impl Mat4<f32> {
+    #[inline]
     pub const fn identity() -> Self {
         Self::new(
             Vec4::new(1.0, 0.0, 0.0, 0.0),
