@@ -1,4 +1,7 @@
-use std::ffi::{CString, NulError};
+use std::{
+    ffi::{CString, NulError},
+    ptr::NonNull,
+};
 
 use glfw_sys::bindings::GLFWwindow;
 
@@ -16,6 +19,7 @@ pub mod bindings;
 
 #[derive(Debug)]
 pub enum ImGuiError {
+    CreateContextFailed,
     NulError(NulError),
 }
 
@@ -27,8 +31,12 @@ impl From<NulError> for ImGuiError {
 
 #[derive(Debug)]
 #[repr(transparent)]
-pub struct Context(*mut ImGuiContext);
+pub struct Context(NonNull<ImGuiContext>);
 impl Context {
+    const fn as_ptr(&self) -> *mut ImGuiContext {
+        self.0.as_ptr()
+    }
+
     #[must_use]
     pub fn init<W: AsMut<GLFWwindow>, S: Into<Vec<u8>>>(
         window: &mut W,
@@ -44,22 +52,26 @@ impl Context {
             //FIXME: may overwrite existing callbacks
             ImGui_ImplGlfw_InitForOpenGL(window, true);
             ImGui_ImplOpenGL3_Init(glsl_version.as_ptr());
-            ctx
+            NonNull::new(ctx)
         };
-        Ok(Self(c))
+
+        match c {
+            None => Err(ImGuiError::CreateContextFailed),
+            Some(ctx) => Ok(Self(ctx)),
+        }
     }
 
     pub fn shutdown(self) {
         unsafe {
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
-            ImGui_DestroyContext(self.0);
+            ImGui_DestroyContext(self.as_ptr());
         }
     }
 }
 
 #[inline]
-pub fn begin(title: impl Into<Vec<u8>>) -> Result<(), ImGuiError> {
+pub fn begin(title: impl Into<Vec<u8>>) -> Result<(), NulError> {
     unsafe {
         ImGui_Begin(CString::new(title)?.as_ptr(), std::ptr::null_mut(), 0);
     }
@@ -86,7 +98,7 @@ macro_rules! text {
 }
 
 #[inline]
-pub fn text(title: impl Into<Vec<u8>>) -> Result<(), ImGuiError> {
+pub fn text(title: impl Into<Vec<u8>>) -> Result<(), NulError> {
     unsafe {
         ImGui_Text(CString::new(title)?.as_ptr());
     }
