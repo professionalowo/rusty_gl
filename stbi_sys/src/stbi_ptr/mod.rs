@@ -7,6 +7,8 @@ use std::{
 
 use crate::bindings::stbi_image_free;
 
+pub mod iter;
+
 /// A buffer that holds image data loaded by stb_image.
 /// Safe as long as the pointer is obtained from stb_image and not freed manually.
 /// Constructing from a pointer managed by Rust's allocator is undefined behavior.
@@ -138,12 +140,15 @@ impl<T: Clone> From<StbiPtr<T>> for Box<[T]> {
 
 impl<T> Index<usize> for StbiPtr<T> {
     type Output = T;
+
+    #[inline]
     fn index(&self, index: usize) -> &Self::Output {
         &self.as_slice()[index]
     }
 }
 
 impl<T> IndexMut<usize> for StbiPtr<T> {
+    #[inline]
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         &mut self.as_slice_mut()[index]
     }
@@ -151,12 +156,15 @@ impl<T> IndexMut<usize> for StbiPtr<T> {
 
 impl<T> Index<Range<usize>> for StbiPtr<T> {
     type Output = [T];
+
+    #[inline]
     fn index(&self, index: Range<usize>) -> &Self::Output {
         &self.as_slice()[index]
     }
 }
 
 impl<T> IndexMut<Range<usize>> for StbiPtr<T> {
+    #[inline]
     fn index_mut(&mut self, index: Range<usize>) -> &mut Self::Output {
         &mut self.as_slice_mut()[index]
     }
@@ -164,32 +172,10 @@ impl<T> IndexMut<Range<usize>> for StbiPtr<T> {
 
 impl<'a, T> IntoIterator for &'a StbiPtr<T> {
     type Item = &'a T;
-    type IntoIter = IntoIter<'a, T>;
+    type IntoIter = iter::IntoIter<'a, T>;
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        Self::IntoIter {
-            index: 0,
-            inner: &self,
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct IntoIter<'a, T> {
-    index: usize,
-    inner: &'a StbiPtr<T>,
-}
-
-impl<'a, T> Iterator for IntoIter<'a, T> {
-    type Item = &'a T;
-    fn next(&mut self) -> Option<Self::Item> {
-        if self.index >= self.inner.len {
-            None
-        } else {
-            let item = &self.inner[self.index];
-            self.index += 1;
-            Some(item)
-        }
+        Self::IntoIter::new(&self)
     }
 }
