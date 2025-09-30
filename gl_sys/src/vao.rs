@@ -4,10 +4,12 @@ use crate::{GLuint, glBindVertexArray, glDeleteVertexArrays, glGenVertexArrays};
 pub struct VertexArrayObject(pub GLuint);
 
 impl VertexArrayObject {
+    #[inline]
     pub const fn zero() -> Self {
         Self(0)
     }
 
+    #[inline]
     pub fn gen_vertex_arrays() -> Self {
         let mut vao = 0;
         unsafe {
@@ -16,6 +18,7 @@ impl VertexArrayObject {
         Self(vao)
     }
 
+    #[inline]
     pub fn bind_vertex_array(vao: &Self) {
         let Self(index) = vao;
         unsafe {
@@ -23,6 +26,7 @@ impl VertexArrayObject {
         }
     }
 
+    #[inline]
     pub fn delete_vertex_array(vao: &Self) {
         let Self(index) = vao;
         unsafe {

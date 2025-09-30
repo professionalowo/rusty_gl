@@ -25,12 +25,14 @@ impl ShaderType {
 }
 
 impl From<io::Error> for ShaderError {
+	#[inline]
     fn from(value: io::Error) -> Self {
         Self::FileSystemError(value)
     }
 }
 
 impl From<ffi::NulError> for ShaderError {
+	#[inline]
     fn from(value: ffi::NulError) -> Self {
         Self::FFIError(value)
     }

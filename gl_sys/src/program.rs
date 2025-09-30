@@ -74,19 +74,17 @@ impl Program {
         Ok(())
     }
 
+    #[inline]
     pub fn bind(&self) {
         unsafe {
-            glUseProgram(self.id());
+            glUseProgram(self.0);
         }
     }
 
+    #[inline]
     pub fn unbind(&self) {
         unsafe {
             glUseProgram(0);
         }
-    }
-
-    pub const fn id(&self) -> u32 {
-        self.0
     }
 }

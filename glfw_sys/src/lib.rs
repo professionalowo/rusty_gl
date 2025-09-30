@@ -13,6 +13,7 @@ pub fn init() -> Result<(), GLFWError> {
     Ok(())
 }
 
+#[inline]
 pub fn terminate() {
     unsafe {
         bindings::glfwTerminate();
@@ -28,6 +29,7 @@ pub fn window_hint<U: TryInto<i32>>(target: U, hint: U) -> Result<(), U::Error> 
     Ok(())
 }
 
+#[inline]
 pub fn get_time() -> f64 {
     unsafe { bindings::glfwGetTime() }
 }
@@ -67,6 +69,7 @@ impl GLFWError {
 }
 
 impl From<i32> for GLFWError {
+	#[inline]
     fn from(code: i32) -> Self {
         Self::new(code)
     }

@@ -7,24 +7,28 @@
 use glfw_sys::bindings::*;
 
 impl From<(f32, f32)> for ImVec2 {
+	#[inline]
     fn from((x, y): (f32, f32)) -> Self {
         Self { x, y }
     }
 }
 
 impl From<[f32; 2]> for ImVec2 {
+	#[inline]
     fn from([x, y]: [f32; 2]) -> Self {
         Self { x, y }
     }
 }
 
 impl From<(f32, f32, f32, f32)> for ImVec4 {
+	#[inline]
     fn from((x, y, z, w): (f32, f32, f32, f32)) -> Self {
         Self { x, y, z, w }
     }
 }
 
 impl From<[f32; 4]> for ImVec4 {
+	#[inline]
     fn from([x, y, z, w]: [f32; 4]) -> Self {
         Self { x, y, z, w }
     }

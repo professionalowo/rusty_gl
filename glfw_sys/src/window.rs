@@ -61,18 +61,21 @@ impl Window {
         }
     }
 
+	#[inline]
     pub fn set_should_close(&self, value: bool) {
         unsafe {
             bindings::glfwSetWindowShouldClose(self.handle.as_ptr(), if value { 1 } else { 0 });
         }
     }
 
+	#[inline]
     pub fn poll_events(&self) {
         unsafe {
             bindings::glfwPollEvents();
         }
     }
 
+	#[inline]
     pub fn swap_buffers(&self) {
         unsafe {
             bindings::glfwSwapBuffers(self.handle.as_ptr());
@@ -120,12 +123,14 @@ impl Window {
 }
 
 impl AsRef<bindings::GLFWwindow> for Window {
+	#[inline]
     fn as_ref(&self) -> &bindings::GLFWwindow {
         unsafe { self.handle.as_ref() }
     }
 }
 
 impl AsMut<bindings::GLFWwindow> for Window {
+	#[inline]
     fn as_mut(&mut self) -> &mut bindings::GLFWwindow {
         unsafe { self.handle.as_mut() }
     }

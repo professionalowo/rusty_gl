@@ -12,10 +12,12 @@ pub struct Location(pub GLuint);
 pub struct VertexBufferObject(pub GLuint);
 
 impl VertexBufferObject {
+	#[inline]
     pub const fn zero() -> Self {
         Self(0)
     }
 
+	#[inline]
     pub fn gen_buffers() -> Self {
         let mut buffer = 0;
         unsafe {
@@ -24,18 +26,21 @@ impl VertexBufferObject {
         Self(buffer)
     }
 
+	#[inline]
     pub fn bind_buffer(n: u32, Self(buffer): &Self) {
         unsafe {
             glBindBuffer(n, *buffer);
         }
     }
 
+	#[inline]
     pub fn delete_buffer(Self(buffer): &Self) {
         unsafe {
             glDeleteBuffers(1, buffer);
         }
     }
 
+	#[inline]
     pub fn enable_vertex_attrib_array(Location(index): &Location) {
         unsafe {
             glEnableVertexAttribArray(*index);
