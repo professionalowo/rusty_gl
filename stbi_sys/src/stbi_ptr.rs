@@ -1,6 +1,6 @@
 use std::{
     borrow::{Borrow, BorrowMut},
-    ops::{Deref, DerefMut, Index, Range},
+    ops::{Deref, DerefMut, Index, IndexMut, Range},
     ptr::NonNull,
     slice,
 };
@@ -143,10 +143,22 @@ impl<T> Index<usize> for StbiPtr<T> {
     }
 }
 
+impl<T> IndexMut<usize> for StbiPtr<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        &mut self.as_slice_mut()[index]
+    }
+}
+
 impl<T> Index<Range<usize>> for StbiPtr<T> {
     type Output = [T];
     fn index(&self, index: Range<usize>) -> &Self::Output {
         &self.as_slice()[index]
+    }
+}
+
+impl<T> IndexMut<Range<usize>> for StbiPtr<T> {
+    fn index_mut(&mut self, index: Range<usize>) -> &mut Self::Output {
+        &mut self.as_slice_mut()[index]
     }
 }
 
