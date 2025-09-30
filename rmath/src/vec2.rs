@@ -13,24 +13,14 @@ pub struct Vec2<T: Copy> {
 }
 
 impl<T: Copy> Vec2<T> {
+    #[inline]
     pub const fn new(x: T, y: T) -> Self {
         Self { x, y }
     }
 
-    pub const fn x(&self) -> T {
-        self.x
-    }
-
-    pub const fn y(&self) -> T {
-        self.y
-    }
-
+    #[inline]
     pub const fn data(&self) -> [T; 2] {
         [self.x, self.y]
-    }
-
-    pub const fn size() -> usize {
-        2
     }
 }
 

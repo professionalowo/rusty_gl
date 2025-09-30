@@ -19,16 +19,14 @@ impl<T> Vec3<T>
 where
     T: Copy,
 {
+	#[inline]
     pub const fn new(x: T, y: T, z: T) -> Self {
         Self { x, y, z }
     }
 
+	#[inline]
     pub const fn data(&self) -> [T; 3] {
         [self.x, self.y, self.z]
-    }
-
-    pub const fn size() -> usize {
-        3
     }
 
     pub fn map<U, F>(&self, f: F) -> Vec3<U>
@@ -226,6 +224,7 @@ impl<T> From<[T; 3]> for Vec3<T>
 where
     T: Copy,
 {
+	#[inline]
     fn from([x, y, z]: [T; 3]) -> Self {
         Self::new(x, y, z)
     }
@@ -235,6 +234,7 @@ impl<T> From<(T, T, T)> for Vec3<T>
 where
     T: Copy,
 {
+	#[inline]
     fn from((x, y, z): (T, T, T)) -> Self {
         Self::new(x, y, z)
     }
