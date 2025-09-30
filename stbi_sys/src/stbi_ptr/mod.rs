@@ -24,10 +24,10 @@ impl<T> Drop for StbiPtr<T> {
 }
 
 impl<T> StbiPtr<T> {
-    pub unsafe fn from_raw_parts_unchecked(ptr: *mut T, len: usize) -> Self {
+    pub unsafe fn from_raw_parts_unchecked(data: *mut T, len: usize) -> Self {
         unsafe {
-            let slice = slice::from_raw_parts_mut(ptr, len);
-            Self(NonNull::new_unchecked(slice))
+            let ptr = slice::from_raw_parts_mut(data, len);
+            Self(NonNull::new_unchecked(ptr))
         }
     }
 
