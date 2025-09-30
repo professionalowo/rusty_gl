@@ -28,7 +28,7 @@ impl<T> StbiPtr<T> {
         match NonNull::new(data) {
             None => None,
             //SAFETY: data is not null
-            Some(data) => unsafe { Some(Self::from_raw_parts_unchecked(data.as_ptr(), len)) },
+            Some(data) => Some(Self(NonNull::slice_from_raw_parts(data, len))),
         }
     }
 
