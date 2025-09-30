@@ -30,7 +30,7 @@ impl From<NulError> for ImGuiError {
 pub struct Context(*mut ImGuiContext);
 impl Context {
     #[must_use]
-    pub fn init<S: Into<Vec<u8>>, W: AsMut<GLFWwindow>>(
+    pub fn init<W: AsMut<GLFWwindow>, S: Into<Vec<u8>>>(
         window: &mut W,
         glsl_version: S,
     ) -> Result<Self, ImGuiError> {
@@ -59,7 +59,7 @@ impl Context {
 }
 
 #[inline]
-pub fn begin<T: Into<Vec<u8>>>(title: T) -> Result<(), ImGuiError> {
+pub fn begin(title: impl Into<Vec<u8>>) -> Result<(), ImGuiError> {
     unsafe {
         ImGui_Begin(CString::new(title)?.as_ptr(), std::ptr::null_mut(), 0);
     }
