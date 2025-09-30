@@ -37,14 +37,29 @@ impl fmt::Display for LoadError {
         }
     }
 }
+#[derive(Debug, Clone, Copy)]
+pub struct LoadOptions {
+    pub flip_vertically_on_load: bool,
+}
+
+impl Default for LoadOptions {
+    fn default() -> Self {
+        Self {
+            flip_vertically_on_load: true,
+        }
+    }
+}
+
 impl LoadData {
-    pub fn try_load<L, B>(bytes: B) -> Result<Self, LoadError>
+    pub fn try_load<L, B>(bytes: B, options: LoadOptions) -> Result<Self, LoadError>
     where
         L: Load,
         B: AsRef<[u8]>,
     {
-        unsafe {
-            stbi_set_flip_vertically_on_load(1);
+        if options.flip_vertically_on_load {
+            unsafe {
+                stbi_set_flip_vertically_on_load(1);
+            }
         }
 
         let mut dimensions = Dimensions::default();
@@ -138,11 +153,11 @@ mod tests {
 
     #[test]
     fn test_empty_data() {
-        assert!(LoadData::try_load::<LoadInt, _>([]).is_err())
+        assert!(LoadData::try_load::<LoadInt, _>([], Default::default()).is_err())
     }
 
     #[test]
     fn test_minimal_data() {
-        assert!(LoadData::try_load::<LoadInt, _>(MINIMAL).is_ok())
+        assert!(LoadData::try_load::<LoadInt, _>(MINIMAL, Default::default(),).is_ok())
     }
 }

@@ -2,7 +2,7 @@ use std::{fmt, fs, io, num, path::Path};
 
 use stbi_sys::{
     dimensions::Dimensions,
-    load::{Load, LoadData, LoadError, LoadFloat, LoadInt},
+    load::{Load, LoadData, LoadError, LoadFloat, LoadInt, LoadOptions},
     stbi_ptr::StbiPtr,
 };
 
@@ -77,7 +77,7 @@ fn load_from_memory<L: Load + MapChannels, B: AsRef<[u8]>>(bytes: B) -> ImageRes
         ref channels,
         data,
         dimensions: Dimensions { height, width },
-    } = LoadData::try_load::<L, _>(bytes)?;
+    } = LoadData::try_load::<L, _>(bytes, LoadOptions::default())?;
     let Format {
         format,
         internal_format,
