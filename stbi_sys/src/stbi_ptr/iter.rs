@@ -16,7 +16,7 @@ impl<'a, T> IntoIter<'a, T> {
 impl<'a, T> Iterator for IntoIter<'a, T> {
     type Item = &'a T;
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index >= self.inner.len {
+        if self.index >= self.inner.len() {
             None
         } else {
             let item = &self.inner[self.index];

@@ -13,10 +13,8 @@ pub mod iter;
 /// Safe as long as the pointer is obtained from stb_image and not freed manually.
 /// Constructing from a pointer managed by Rust's allocator is undefined behavior.
 #[derive(Debug, PartialEq)]
-pub struct StbiPtr<T> {
-    inner: NonNull<T>,
-    len: usize,
-}
+#[repr(transparent)]
+pub struct StbiPtr<T>(NonNull<[T]>);
 
 impl<T> Drop for StbiPtr<T> {
     fn drop(&mut self) {
@@ -26,33 +24,21 @@ impl<T> Drop for StbiPtr<T> {
 }
 
 impl<T> StbiPtr<T> {
-    pub const unsafe fn from_raw_parts_unchecked(ptr: *mut T, len: usize) -> Self {
-        //SAFETY: Caller must ensure that the pointer is valid and was allocated by stb_image, len must be smaller than or equal to the number of elements in raw
-        Self {
-            inner: unsafe { NonNull::new_unchecked(ptr) },
-            len,
+    pub unsafe fn from_raw_parts_unchecked(ptr: *mut T, len: usize) -> Self {
+        unsafe {
+            let slice = slice::from_raw_parts_mut(ptr, len);
+            Self(NonNull::new_unchecked(slice))
         }
-    }
-
-    pub const fn from_raw_parts(ptr: *mut T, len: usize) -> Option<Self> {
-        match NonNull::new(ptr) {
-            None => None,
-            Some(inner) => Some(Self { inner, len }),
-        }
-    }
-
-    const fn as_ptr(&self) -> *mut T {
-        self.inner.as_ptr()
     }
 
     #[inline]
     pub const fn as_slice(&self) -> &[T] {
-        unsafe { slice::from_raw_parts(self.as_ptr(), self.len) }
+        unsafe { &self.0.as_ref() }
     }
 
     #[inline]
     pub const fn as_slice_mut(&mut self) -> &mut [T] {
-        unsafe { slice::from_raw_parts_mut(self.as_ptr(), self.len) }
+        unsafe { self.0.as_mut() }
     }
 
     #[inline]
@@ -73,7 +59,7 @@ impl<T> StbiPtr<T> {
 
     #[inline]
     pub const fn len(&self) -> usize {
-        self.len
+        self.0.len()
     }
 }
 
