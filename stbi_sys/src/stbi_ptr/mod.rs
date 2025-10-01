@@ -1,6 +1,6 @@
 use std::{
     borrow::{Borrow, BorrowMut},
-    ops::{Deref, DerefMut, Index, IndexMut, Range, RangeFrom, RangeFull, RangeInclusive, RangeTo},
+    ops::{Deref, DerefMut},
     ptr::NonNull,
     slice,
 };
@@ -131,7 +131,7 @@ impl<T: Clone> From<StbiPtr<T>> for Box<[T]> {
 
 macro_rules! index_impl {
     (for<$($gen:tt),*> $base:ty [$idx:ty] => $output:ty) => {
-        impl<$($gen),*> Index<$idx> for $base {
+        impl<$($gen),*> ::std::ops::Index<$idx> for $base {
             type Output = $output;
             #[inline]
             fn index(&self, index: $idx) -> &Self::Output {
@@ -139,7 +139,7 @@ macro_rules! index_impl {
             }
         }
 
-        impl<$($gen),*> IndexMut<$idx> for $base {
+        impl<$($gen),*> ::std::ops::IndexMut<$idx> for $base {
             #[inline]
             fn index_mut(&mut self, index: $idx) -> &mut Self::Output {
                 &mut (**self)[index]
@@ -149,11 +149,11 @@ macro_rules! index_impl {
 }
 
 index_impl! {for<T> StbiPtr<T>[usize] => T}
-index_impl! {for<T> StbiPtr<T>[Range<usize>] => [T]}
-index_impl! {for<T> StbiPtr<T>[RangeFrom<usize>] => [T]}
-index_impl! {for<T> StbiPtr<T>[RangeTo<usize>] => [T]}
-index_impl! {for<T> StbiPtr<T>[RangeInclusive<usize>] => [T]}
-index_impl! {for<T> StbiPtr<T>[RangeFull] => [T]}
+index_impl! {for<T> StbiPtr<T>[std::ops::Range<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[std::ops::RangeFrom<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[std::ops::RangeTo<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[std::ops::RangeInclusive<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[std::ops::RangeFull] => [T]}
 
 impl<'a, T> IntoIterator for &'a StbiPtr<T> {
     type Item = &'a T;
