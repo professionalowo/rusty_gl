@@ -100,6 +100,18 @@ impl DerefMut for Context {
     }
 }
 
+impl AsRef<ImGuiContext> for Context {
+    fn as_ref(&self) -> &ImGuiContext {
+        &(**self)
+    }
+}
+
+impl AsMut<ImGuiContext> for Context {
+    fn as_mut(&mut self) -> &mut ImGuiContext {
+        &mut (**self)
+    }
+}
+
 #[inline]
 pub fn begin(title: impl Into<Vec<u8>>) -> Result<(), NulError> {
     unsafe {
