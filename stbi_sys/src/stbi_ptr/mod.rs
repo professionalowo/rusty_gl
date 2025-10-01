@@ -129,100 +129,31 @@ impl<T: Clone> From<StbiPtr<T>> for Box<[T]> {
     }
 }
 
-impl<T> Index<usize> for StbiPtr<T> {
-    type Output = T;
+macro_rules! index_impl {
+    (for<$t:ident> $base:ty [$index:ty] => $output:ty) => {
+        impl<$t> Index<$index> for $base {
+            type Output = $output;
+            #[inline]
+            fn index(&self, index: $index) -> &Self::Output {
+                &(**self)[index]
+            }
+        }
 
-    #[inline]
-    fn index(&self, index: usize) -> &Self::Output {
-        &(**self)[index]
-    }
+        impl<$t> IndexMut<$index> for $base {
+            #[inline]
+            fn index_mut(&mut self, index: $index) -> &mut Self::Output {
+                &mut (**self)[index]
+            }
+        }
+    };
 }
 
-impl<T> IndexMut<usize> for StbiPtr<T> {
-    #[inline]
-    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
-        &mut (**self)[index]
-    }
-}
-
-impl<T> Index<Range<usize>> for StbiPtr<T> {
-    type Output = [T];
-
-    #[inline]
-    fn index(&self, index: Range<usize>) -> &Self::Output {
-        &(**self)[index]
-    }
-}
-
-impl<T> IndexMut<Range<usize>> for StbiPtr<T> {
-    #[inline]
-    fn index_mut(&mut self, index: Range<usize>) -> &mut Self::Output {
-        &mut (**self)[index]
-    }
-}
-
-impl<T> Index<RangeFrom<usize>> for StbiPtr<T> {
-    type Output = [T];
-
-    #[inline]
-    fn index(&self, index: RangeFrom<usize>) -> &Self::Output {
-        &(**self)[index]
-    }
-}
-
-impl<T> IndexMut<RangeFrom<usize>> for StbiPtr<T> {
-    #[inline]
-    fn index_mut(&mut self, index: RangeFrom<usize>) -> &mut Self::Output {
-        &mut (**self)[index]
-    }
-}
-
-impl<T> Index<RangeTo<usize>> for StbiPtr<T> {
-    type Output = [T];
-
-    #[inline]
-    fn index(&self, index: RangeTo<usize>) -> &Self::Output {
-        &(**self)[index]
-    }
-}
-
-impl<T> IndexMut<RangeTo<usize>> for StbiPtr<T> {
-    #[inline]
-    fn index_mut(&mut self, index: RangeTo<usize>) -> &mut Self::Output {
-        &mut (**self)[index]
-    }
-}
-
-impl<T> Index<RangeInclusive<usize>> for StbiPtr<T> {
-    type Output = [T];
-
-    #[inline]
-    fn index(&self, index: RangeInclusive<usize>) -> &Self::Output {
-        &(**self)[index]
-    }
-}
-
-impl<T> IndexMut<RangeInclusive<usize>> for StbiPtr<T> {
-    #[inline]
-    fn index_mut(&mut self, index: RangeInclusive<usize>) -> &mut Self::Output {
-        &mut (**self)[index]
-    }
-}
-
-impl<T> Index<RangeFull> for StbiPtr<T> {
-    type Output = [T];
-    #[inline]
-    fn index(&self, _: RangeFull) -> &Self::Output {
-        &(**self)
-    }
-}
-
-impl<T> IndexMut<RangeFull> for StbiPtr<T> {
-    #[inline]
-    fn index_mut(&mut self, _: RangeFull) -> &mut Self::Output {
-        &mut (**self)
-    }
-}
+index_impl! {for<T> StbiPtr<T>[usize] => T}
+index_impl! {for<T> StbiPtr<T>[Range<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[RangeFrom<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[RangeTo<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[RangeInclusive<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[RangeFull] => [T]}
 
 impl<'a, T> IntoIterator for &'a StbiPtr<T> {
     type Item = &'a T;
