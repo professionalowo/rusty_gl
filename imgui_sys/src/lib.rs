@@ -25,7 +25,7 @@ pub mod io;
 #[derive(Debug)]
 pub enum ImGuiError {
     CreateContextFailed,
-    CreateIoFailed,
+    GetIoFailed,
     NulError(NulError),
 }
 
@@ -56,23 +56,22 @@ impl Context {
         glsl_version: S,
     ) -> Result<Self, ImGuiError> {
         let glsl_version = CString::new(glsl_version)?;
-        let c = unsafe {
-            let ctx = match Self::new(ImGui_CreateContext(std::ptr::null_mut())) {
-                None => return Err(ImGuiError::CreateContextFailed),
-                Some(ctx) => ctx,
-            };
-            let mut io = match IO::new(ImGui_GetIO()) {
-                None => return Err(ImGuiError::CreateIoFailed),
-                Some(io) => io,
-            };
-            io.ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard as i32;
-            io.ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad as i32;
+        let ctx = match Self::new(unsafe { ImGui_CreateContext(std::ptr::null_mut()) }) {
+            None => return Err(ImGuiError::CreateContextFailed),
+            Some(ctx) => ctx,
+        };
+        let mut io = match IO::new(unsafe { ImGui_GetIO() }) {
+            None => return Err(ImGuiError::GetIoFailed),
+            Some(io) => io,
+        };
+        io.ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableKeyboard as i32;
+        io.ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad as i32;
+        unsafe {
             //FIXME: may overwrite existing callbacks
             ImGui_ImplGlfw_InitForOpenGL(window.as_mut(), true);
             ImGui_ImplOpenGL3_Init(glsl_version.as_ptr());
-            ctx
         };
-        Ok(c)
+        Ok(ctx)
     }
 }
 
