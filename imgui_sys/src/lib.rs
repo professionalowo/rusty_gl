@@ -51,8 +51,8 @@ impl Context {
     }
 
     #[must_use]
-    pub fn init<W: AsMut<GLFWwindow>, S: Into<Vec<u8>>>(
-        window: &mut W,
+    pub fn init<S: Into<Vec<u8>>>(
+        window: &mut GLFWwindow,
         glsl_version: S,
     ) -> Result<Self, ImGuiError> {
         let glsl_version = CString::new(glsl_version)?;
@@ -68,7 +68,7 @@ impl Context {
         io.ConfigFlags |= ImGuiConfigFlags__ImGuiConfigFlags_NavEnableGamepad as i32;
         unsafe {
             //FIXME: may overwrite existing callbacks
-            ImGui_ImplGlfw_InitForOpenGL(window.as_mut(), true);
+            ImGui_ImplGlfw_InitForOpenGL(window, true);
             ImGui_ImplOpenGL3_Init(glsl_version.as_ptr());
         };
         Ok(ctx)
