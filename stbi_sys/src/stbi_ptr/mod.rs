@@ -153,7 +153,9 @@ index_impl! {for<T> StbiPtr<T>[std::ops::Range<usize>] => [T]}
 index_impl! {for<T> StbiPtr<T>[std::ops::RangeFrom<usize>] => [T]}
 index_impl! {for<T> StbiPtr<T>[std::ops::RangeTo<usize>] => [T]}
 index_impl! {for<T> StbiPtr<T>[std::ops::RangeInclusive<usize>] => [T]}
+index_impl! {for<T> StbiPtr<T>[std::ops::RangeToInclusive<usize>] => [T]}
 index_impl! {for<T> StbiPtr<T>[std::ops::RangeFull] => [T]}
+index_impl! {for<T> StbiPtr<T>[(std::ops::Bound<usize>, std::ops::Bound<usize>)] => [T]}
 
 impl<'a, T> IntoIterator for &'a StbiPtr<T> {
     type Item = &'a T;
