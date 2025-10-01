@@ -130,18 +130,18 @@ impl<T: Clone> From<StbiPtr<T>> for Box<[T]> {
 }
 
 macro_rules! index_impl {
-    (for<$($gen:tt),*> $base:ty [$index:ty] => $output:ty) => {
-        impl<$($gen),*> Index<$index> for $base {
+    (for<$($gen:tt),*> $base:ty [$idx:ty] => $output:ty) => {
+        impl<$($gen),*> Index<$idx> for $base {
             type Output = $output;
             #[inline]
-            fn index(&self, index: $index) -> &Self::Output {
+            fn index(&self, index: $idx) -> &Self::Output {
                 &(**self)[index]
             }
         }
 
-        impl<$($gen),*> IndexMut<$index> for $base {
+        impl<$($gen),*> IndexMut<$idx> for $base {
             #[inline]
-            fn index_mut(&mut self, index: $index) -> &mut Self::Output {
+            fn index_mut(&mut self, index: $idx) -> &mut Self::Output {
                 &mut (**self)[index]
             }
         }
