@@ -89,24 +89,28 @@ impl Drop for Context {
 impl Deref for Context {
     type Target = ImGuiContext;
 
+    #[inline]
     fn deref(&self) -> &Self::Target {
         unsafe { self.0.as_ref() }
     }
 }
 
 impl DerefMut for Context {
+    #[inline]
     fn deref_mut(&mut self) -> &mut Self::Target {
         unsafe { self.0.as_mut() }
     }
 }
 
 impl AsRef<ImGuiContext> for Context {
+    #[inline]
     fn as_ref(&self) -> &ImGuiContext {
         &(**self)
     }
 }
 
 impl AsMut<ImGuiContext> for Context {
+    #[inline]
     fn as_mut(&mut self) -> &mut ImGuiContext {
         &mut (**self)
     }
