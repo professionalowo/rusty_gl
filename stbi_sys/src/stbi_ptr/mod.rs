@@ -129,22 +129,22 @@ impl<T: Clone> From<StbiPtr<T>> for Box<[T]> {
     }
 }
 
-impl<T, I> Index<I> for StbiPtr<T>
+impl<T, Idx> Index<Idx> for StbiPtr<T>
 where
-    I: SliceIndex<[T]>,
+    Idx: SliceIndex<[T]>,
 {
-    type Output = I::Output;
+    type Output = Idx::Output;
 
-    fn index(&self, index: I) -> &Self::Output {
+    fn index(&self, index: Idx) -> &Self::Output {
         &(**self)[index]
     }
 }
 
-impl<T, I> IndexMut<I> for StbiPtr<T>
+impl<T, Idx> IndexMut<Idx> for StbiPtr<T>
 where
-    I: SliceIndex<[T]>,
+    Idx: SliceIndex<[T]>,
 {
-    fn index_mut(&mut self, index: I) -> &mut Self::Output {
+    fn index_mut(&mut self, index: Idx) -> &mut Self::Output {
         &mut (**self)[index]
     }
 }
