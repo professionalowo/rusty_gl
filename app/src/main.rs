@@ -112,7 +112,7 @@ fn main() -> ExitCode {
 
     gl_sys::enable(gl_sys::bindings::GL_DEPTH_TEST);
 
-    let ctx = imgui_sys::Context::init(&mut window, "#version 410 core")
+    let _ctx = imgui_sys::Context::init(&mut window, "#version 410 core")
         .expect("Failed to initialize ImGui");
 
     let mut timer = Timer::<144>::new();
@@ -232,7 +232,6 @@ fn main() -> ExitCode {
             timer.rendered();
         }
     }
-    ctx.shutdown();
     glfw_sys::terminate();
     ExitCode::SUCCESS
 }

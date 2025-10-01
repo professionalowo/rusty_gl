@@ -1,6 +1,7 @@
 use std::{
     cell::RefCell,
     ffi::{CStr, CString, NulError, c_int},
+    ops::{Deref, DerefMut},
     ptr::NonNull,
     rc::Rc,
 };
@@ -61,21 +62,21 @@ impl Window {
         }
     }
 
-	#[inline]
+    #[inline]
     pub fn set_should_close(&self, value: bool) {
         unsafe {
             bindings::glfwSetWindowShouldClose(self.handle.as_ptr(), if value { 1 } else { 0 });
         }
     }
 
-	#[inline]
+    #[inline]
     pub fn poll_events(&self) {
         unsafe {
             bindings::glfwPollEvents();
         }
     }
 
-	#[inline]
+    #[inline]
     pub fn swap_buffers(&self) {
         unsafe {
             bindings::glfwSwapBuffers(self.handle.as_ptr());
@@ -122,17 +123,33 @@ impl Window {
     }
 }
 
-impl AsRef<bindings::GLFWwindow> for Window {
-	#[inline]
-    fn as_ref(&self) -> &bindings::GLFWwindow {
+impl Deref for Window {
+    type Target = bindings::GLFWwindow;
+
+    #[inline]
+    fn deref(&self) -> &Self::Target {
         unsafe { self.handle.as_ref() }
     }
 }
 
-impl AsMut<bindings::GLFWwindow> for Window {
-	#[inline]
-    fn as_mut(&mut self) -> &mut bindings::GLFWwindow {
+impl DerefMut for Window {
+    #[inline]
+    fn deref_mut(&mut self) -> &mut Self::Target {
         unsafe { self.handle.as_mut() }
+    }
+}
+
+impl AsRef<bindings::GLFWwindow> for Window {
+    #[inline]
+    fn as_ref(&self) -> &bindings::GLFWwindow {
+        &(**self)
+    }
+}
+
+impl AsMut<bindings::GLFWwindow> for Window {
+    #[inline]
+    fn as_mut(&mut self) -> &mut bindings::GLFWwindow {
+        &mut (**self)
     }
 }
 

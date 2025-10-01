@@ -74,8 +74,10 @@ impl Context {
         };
         Ok(c)
     }
+}
 
-    pub fn shutdown(self) {
+impl Drop for Context {
+    fn drop(&mut self) {
         unsafe {
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
