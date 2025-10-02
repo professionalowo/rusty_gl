@@ -155,6 +155,6 @@ impl<'a, T> IntoIterator for &'a StbiPtr<T> {
 
     #[inline]
     fn into_iter(self) -> Self::IntoIter {
-        Self::IntoIter::new(&self)
+        Self::IntoIter::new(self)
     }
 }
