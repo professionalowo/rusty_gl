@@ -135,6 +135,7 @@ where
 {
     type Output = Idx::Output;
 
+	#[inline]
     fn index(&self, index: Idx) -> &Self::Output {
         &(**self)[index]
     }
@@ -144,6 +145,7 @@ impl<T, Idx> IndexMut<Idx> for StbiPtr<T>
 where
     Idx: SliceIndex<[T]>,
 {
+	#[inline]
     fn index_mut(&mut self, index: Idx) -> &mut Self::Output {
         &mut (**self)[index]
     }
