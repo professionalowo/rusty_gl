@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! wrapper_impl {
     (struct $name:ident($inner:ty)) => {
-        #[derive(Debug)]
+        #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
         #[repr(transparent)]
         pub struct $name(::std::ptr::NonNull<$inner>);
 
