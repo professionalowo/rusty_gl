@@ -18,10 +18,10 @@ macro_rules! wrapper_impl {
             }
 
             #[inline]
-            pub const fn new(ptr: *mut $inner) -> Option<Self> {
+            pub const fn new(ptr: *mut $inner) -> ::std::option::Option<Self> {
                 match ::std::ptr::NonNull::new(ptr) {
-                    None => None,
-                    Some(nn) => Some(Self(nn)),
+                    ::std::option::Option::None => ::std::option::Option::None,
+                    ::std::option::Option::Some(nn) => ::std::option::Option::Some(Self(nn)),
                 }
             }
 
