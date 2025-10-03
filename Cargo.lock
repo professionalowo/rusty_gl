@@ -186,6 +186,7 @@ version = "0.1.0"
 dependencies = [
  "build_utils",
  "glfw_sys",
+ "transparent-wrapper",
 ]
 
 [[package]]
@@ -359,6 +360,10 @@ dependencies = [
  "quote",
  "unicode-ident",
 ]
+
+[[package]]
+name = "transparent-wrapper"
+version = "0.1.0"
 
 [[package]]
 name = "unicode-ident"

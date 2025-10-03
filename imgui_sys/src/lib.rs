@@ -1,8 +1,4 @@
-use std::{
-    ffi::{CString, NulError},
-    ops::{Deref, DerefMut},
-    ptr::NonNull,
-};
+use std::ffi::{CString, NulError};
 
 use glfw_sys::bindings::GLFWwindow;
 
@@ -35,21 +31,11 @@ impl From<NulError> for ImGuiError {
     }
 }
 
-#[derive(Debug)]
-#[repr(transparent)]
-pub struct Context(NonNull<ImGuiContext>);
+transparent_wrapper::wrapper_impl! {
+    struct Context(ImGuiContext)
+}
+
 impl Context {
-    const fn as_ptr(&self) -> *mut ImGuiContext {
-        self.0.as_ptr()
-    }
-
-    const fn new(ptr: *mut ImGuiContext) -> Option<Self> {
-        match NonNull::new(ptr) {
-            None => None,
-            Some(nn) => Some(Self(nn)),
-        }
-    }
-
     #[must_use]
     pub fn init<S: Into<Vec<u8>>>(
         window: &mut GLFWwindow,
@@ -82,36 +68,6 @@ impl Drop for Context {
             ImGui_ImplGlfw_Shutdown();
             ImGui_DestroyContext(self.as_ptr());
         }
-    }
-}
-
-impl Deref for Context {
-    type Target = ImGuiContext;
-
-    #[inline]
-    fn deref(&self) -> &Self::Target {
-        unsafe { self.0.as_ref() }
-    }
-}
-
-impl DerefMut for Context {
-    #[inline]
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        unsafe { self.0.as_mut() }
-    }
-}
-
-impl AsRef<ImGuiContext> for Context {
-    #[inline]
-    fn as_ref(&self) -> &ImGuiContext {
-        &(**self)
-    }
-}
-
-impl AsMut<ImGuiContext> for Context {
-    #[inline]
-    fn as_mut(&mut self) -> &mut ImGuiContext {
-        &mut (**self)
     }
 }
 
