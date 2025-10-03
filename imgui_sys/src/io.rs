@@ -1,5 +1,5 @@
-use crate::bindings::ImGuiIO;
+use crate::{bindings::ImGuiIO, wrapper_impl};
 
-transparent_wrapper::wrapper_impl! {
+wrapper_impl! {
     struct IO(ImGuiIO)
 }

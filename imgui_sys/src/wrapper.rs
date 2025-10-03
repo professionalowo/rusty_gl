@@ -5,6 +5,7 @@ macro_rules! wrapper_impl {
         #[repr(transparent)]
         pub struct $name(::std::ptr::NonNull<$inner>);
 
+        #[allow(dead_code)]
         impl $name {
             #[inline]
             pub const fn as_ref(&self) -> &$inner {

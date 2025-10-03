@@ -17,6 +17,7 @@ use crate::{
 
 pub mod bindings;
 pub mod io;
+mod wrapper;
 
 #[derive(Debug)]
 pub enum ImGuiError {
@@ -31,7 +32,7 @@ impl From<NulError> for ImGuiError {
     }
 }
 
-transparent_wrapper::wrapper_impl! {
+wrapper_impl! {
     struct Context(ImGuiContext)
 }
 

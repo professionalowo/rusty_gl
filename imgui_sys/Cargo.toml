@@ -8,4 +8,3 @@ build_utils = { path = "../build_utils" }
 
 [dependencies]
 glfw_sys = { path = "../glfw_sys" }
-transparent-wrapper = {path = "../transparent-wrapper"}
