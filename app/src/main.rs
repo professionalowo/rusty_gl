@@ -150,6 +150,10 @@ fn main() -> ExitCode {
                 KeyEvent {
                     keycode: Keycode::Escape,
                     ..
+                }
+                | KeyEvent {
+                    keycode: Keycode::Q,
+                    ..
                 } => window.set_should_close(true),
                 KeyEvent {
                     modifier: Modifier::Shift,
