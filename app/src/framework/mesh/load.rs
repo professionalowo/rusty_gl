@@ -24,13 +24,12 @@ impl SceneImport {
         let base_path = match path.parent() {
             Some(parent) => parent,
             None => return Err(MeshLoadError::InvalidParent(path.to_path_buf())),
-        }
-        .to_path_buf();
+        };
 
         let mut materials = Vec::with_capacity(scene.num_materials() as _);
 
         for mat in scene.material_iter() {
-            let material = Material::from_ai_material(&AMaterial(mat), &base_path)?;
+            let material = Material::from_ai_material(&AMaterial(mat), base_path)?;
             materials.push(Rc::new(material));
         }
 
@@ -55,28 +54,28 @@ impl SceneImport {
 }
 
 impl AsRef<[Drawelement]> for SceneImport {
-	#[inline]
+    #[inline]
     fn as_ref(&self) -> &[Drawelement] {
         &self.0
     }
 }
 
 impl From<Vec<Drawelement>> for SceneImport {
-	#[inline]
+    #[inline]
     fn from(value: Vec<Drawelement>) -> Self {
         Self(value.into_boxed_slice())
     }
 }
 
 impl From<Box<[Drawelement]>> for SceneImport {
-	#[inline]
+    #[inline]
     fn from(value: Box<[Drawelement]>) -> Self {
         Self(value)
     }
 }
 
 impl From<SceneImport> for Box<[Drawelement]> {
-	#[inline]
+    #[inline]
     fn from(SceneImport(elements): SceneImport) -> Self {
         elements
     }

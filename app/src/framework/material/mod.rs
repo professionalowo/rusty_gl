@@ -1,4 +1,4 @@
-use std::{fmt, path::PathBuf};
+use std::{fmt, path::Path};
 
 use assimp_sys::AiTextureType;
 use material_color::material_color;
@@ -81,19 +81,22 @@ impl Material {
         self.textures.unbind();
     }
 
-    pub fn from_ai_material(
+    pub fn from_ai_material<P>(
         mat: &AMaterial,
-        base_path: &PathBuf,
-    ) -> Result<Self, MaterialConversionError> {
+        base_path: P,
+    ) -> Result<Self, MaterialConversionError>
+    where
+        P: AsRef<Path>,
+    {
         let k_diff = get_plain_color(mat, AiTextureType::Diffuse)?;
 
         let k_spec = get_plain_color(mat, AiTextureType::Specular)?;
 
         let k_amb = get_plain_color(mat, AiTextureType::Ambient)?;
 
-        let diffuse = get_texture_option(AiTextureType::Diffuse, mat, base_path)?;
+        let diffuse = get_texture_option(AiTextureType::Diffuse, mat, &base_path)?;
 
-        let specular = get_texture_option(AiTextureType::Specular, mat, base_path)?;
+        let specular = get_texture_option(AiTextureType::Specular, mat, &base_path)?;
 
         let normalmap = None;
         /*
@@ -106,7 +109,7 @@ impl Material {
         */
 
         let alphamap = if mat.get_texture_count(AiTextureType::Opacity) > 0 {
-            let texture = get_texture(base_path, mat, AiTextureType::Opacity)?;
+            let texture = get_texture(&base_path, mat, AiTextureType::Opacity)?;
             Some(texture)
         } else {
             None
@@ -152,11 +155,14 @@ where
     Ok(Vec3::from(material_color(mat, key)?).expand(1.0))
 }
 
-fn get_texture_option(
+fn get_texture_option<P>(
     texture_type: AiTextureType,
     mat: &AMaterial<'_>,
-    base_path: &PathBuf,
-) -> Result<Option<Texture2D>, MaterialConversionError> {
+    base_path: P,
+) -> Result<Option<Texture2D>, MaterialConversionError>
+where
+    P: AsRef<Path>,
+{
     let text = if mat.get_texture_count(texture_type) > 0 {
         let texture = get_texture(base_path, mat, texture_type)?;
         Some(texture)
@@ -168,13 +174,16 @@ fn get_texture_option(
     Ok(text)
 }
 
-fn get_texture(
-    base_path: &PathBuf,
+fn get_texture<P>(
+    base_path: P,
     mat: &AMaterial<'_>,
     texture_type: AiTextureType,
-) -> Result<Texture2D, MaterialConversionError> {
+) -> Result<Texture2D, MaterialConversionError>
+where
+    P: AsRef<Path>,
+{
     let tex = mat.get_texture(texture_type, 0)?;
-    let buf = base_path.join(tex);
+    let buf = base_path.as_ref().join(tex);
     let t = Texture2D::try_from_file(buf, false)?;
     Ok(t)
 }
