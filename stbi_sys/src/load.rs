@@ -12,9 +12,9 @@ use crate::{
 
 #[derive(Debug)]
 pub struct LoadData {
+    pub data: StbiPtr<u8>,
     pub dimensions: Dimensions,
     pub channels: Channels,
-    pub data: StbiPtr<u8>,
 }
 
 #[derive(Debug)]
