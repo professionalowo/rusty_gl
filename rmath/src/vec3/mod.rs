@@ -73,10 +73,6 @@ where
         }
     }
 
-    pub unsafe fn from_raw(ptr: *const T) -> Self {
-        unsafe { [ptr.read(), ptr.add(1).read(), ptr.add(2).read()] }.into()
-    }
-
     pub fn cmin(&self) -> T
     where
         T: Ord,
@@ -327,15 +323,6 @@ mod tests {
         let c = Vec3::new(4, 5, 6);
         assert_eq!(a, b);
         assert_ne!(a, c);
-    }
-
-    #[test]
-    fn test_vec3_from_raw() {
-        let data = [1, 2, 3, 4, 5];
-        let ptr = data.as_ptr();
-        let vec = unsafe { Vec3::from_raw(ptr.add(1)) };
-
-        assert_eq!(vec, Vec3::new(2, 3, 4));
     }
 
     #[test]
