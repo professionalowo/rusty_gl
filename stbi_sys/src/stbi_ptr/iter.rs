@@ -24,4 +24,11 @@ impl<'a, T> Iterator for IntoIter<'a, T> {
             Some(item)
         }
     }
+
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        let remaining = self.inner.len() - self.index;
+        (remaining, Some(remaining))
+    }
 }
+
+impl<'a, T> ExactSizeIterator for IntoIter<'a, T> {}
