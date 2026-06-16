@@ -52,7 +52,7 @@ where
         T: Into<U>,
         U: Copy,
     {
-        self.map(|v| T::into(v))
+        self.map(T::into)
     }
 
     pub const fn truncate(&self) -> Vec2<T> {
