@@ -69,7 +69,7 @@ impl GLFWError {
 }
 
 impl From<i32> for GLFWError {
-	#[inline]
+    #[inline]
     fn from(code: i32) -> Self {
         Self::new(code)
     }
