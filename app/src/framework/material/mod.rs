@@ -51,10 +51,10 @@ impl fmt::Display for MaterialConversionError {
 
 #[derive(Debug)]
 pub struct Material {
-    pub textures: MaterialTextures,
     pub k_amb: Vec4<f32>,
     pub k_diff: Vec4<f32>,
     pub k_spec: Vec4<f32>,
+    pub textures: MaterialTextures,
 }
 
 impl Material {
